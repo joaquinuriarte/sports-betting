@@ -1,21 +1,34 @@
 # sports-betting
 
-### I prefer to create python environments to house all dependencies. Here are steps to create/activate/deactivate virtual envs on Mac
+## Project Overview
 
-# 1. Installing: pip install virtualenv
+[description]
 
-# 2. Creating: virtualenv sports-betting
+## Virtual Environment & Dependencies
 
-# 3. Activating: source sports-betting/bin/activate
+### Virtual Environment (macOS)
 
-# 4. Deactivating: deactivate
+Use a virtual environment to manage dependencies. Follow these steps:
 
-# 5 List all packages in environment: pip list
+#### Installation & Creating Environment
 
-### Before committing new files
+pip install virtualenv
+virtualenv sports-betting
 
-# 1. Log all dependencies: pip freeze > requirements.txt
+#### Activating/Deactivating
 
-### Before starting to work on new files
+source sports-betting/bin/activate
+deactivate
 
-# 1. Install dependencies: pip install -r requirements.txt
+### Managing Dependencies with Requirements.txt file
+
+Before committing new work, generate a requirements file to log all dependencies.
+Always update dependencies using the requirements file.
+
+#### Creating the Requirements File
+
+pip freeze > requirements.txt
+
+#### Installing Dependencies
+
+pip install -r requirements.txt
