@@ -1,0 +1,31 @@
+Virtual Environment & Dependencies
+==================================
+
+
+Virtual Environment (macOS):
+----------------------------
+Use a virtual environment to manage dependencies. Follow these steps:
+
+Installation & Creating Environment:
+- - - - - - - - - - - - - - - - - -
+pip install virtualenv
+virtualenv sports-betting
+
+Activating/Deactivating:
+- - - - - - - - - - - - 
+source sports-betting/bin/activate
+deactivate
+
+
+Managing Dependencies with Requirements.txt file:
+------------------------------------------------
+Before committing new work, generate a requirements file to log all dependencies.
+Always update dependencies using the requirements file.
+
+Creating the Requirements File:
+- - - - - - - - - - - - - - - -
+pip freeze > requirements.txt
+
+Installing Dependencies:
+- - - - - - - - - - - - - - - -
+pip install -r requirements.txt
