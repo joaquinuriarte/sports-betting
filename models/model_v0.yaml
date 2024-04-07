@@ -1,0 +1,27 @@
+model_a:
+  sources:
+    - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
+      columns:
+        - 'GAME_ID'
+        - 'HOME_TEAM_ID'
+        - 'VISITOR_TEAM_ID'
+        - 'PTS_home'
+        - 'PTS_away'
+      join_keys: ['GAME_ID']
+    - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
+      columns:
+        - 'GAME_ID'
+        - 'PLAYER_ID'
+        - 'MIN'
+        - 'PTS'
+        - 'AST'
+        - 'TO'
+        - 'PLUS_MINUS'
+        - 'OREB'
+        - 'DREB'
+        - 'PF'
+        - 'FG3_PCT'
+        - 'FG_PCT'
+        - 'FT_PCT'
+      join_keys: ['GAME_ID']
+  join_type: 'inner'
