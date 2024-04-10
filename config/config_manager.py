@@ -30,3 +30,7 @@ def load_model_config(config_path: str, model_name: str) -> dict:
     # Retrieve and return the configuration for the specified model.
     model_config = config.get(model_name, {})
     return model_config
+
+  
+print(load_model_config("/Users/joaquinuriarte/Documents/GitHub/sports-betting/models/model_v0.yaml", "model_a"))
+
