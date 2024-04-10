@@ -34,10 +34,15 @@ pip install -r requirements.txt
 Running a script from terminal:
 ------------------------------------------------
 1. Navigate to project root 
-2. Run: python -m file.path.inThisFormat.scriptNameWithNoExtention
+2. Run: "python -m file.path.inThisFormat.scriptNameWithNoExtention"
 - Example: "python -m config.config_manager"
 
 
 Formatting Code:  
 ------------------------------------------------
 After writing/modifying a python script, run "black path/to/file" to format code
+
+
+Verifying Code Statically:  
+------------------------------------------------
+After writing/modifying a python script, run "mypy fileName.py"
