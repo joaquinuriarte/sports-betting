@@ -17,8 +17,7 @@ class CsvIO(DataIO):
         """
         try:
             # Read the specified columns from the CSV file at the given path
-            df = pd.read_csv(path, usecols=columns)
-            return df
+            return pd.read_csv(path, usecols=columns)
         except Exception as e:
             print(f"An error occurred while reading the CSV file: {e}")
             raise
