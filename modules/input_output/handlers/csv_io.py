@@ -2,6 +2,7 @@ from typing import List
 import pandas as pd
 from ..data_io import DataIO
 
+
 class CsvIO(DataIO):
     def read_df_from_path(self, path: str, columns: List[str]) -> pd.DataFrame:
         """

@@ -1,5 +1,6 @@
 import yaml
 
+
 def load_model_config(config_path: str, model_name: str) -> dict:
     """
     Loads and returns the configuration for a specific model from a YAML file.
@@ -22,10 +23,10 @@ def load_model_config(config_path: str, model_name: str) -> dict:
       the model is not found, returns an empty dictionary.
     """
     # Open the YAML configuration file in read mode.
-    with open(config_path, 'r') as file:
+    with open(config_path, "r") as file:
         # Parse the YAML file into a Python dictionary.
         config = yaml.safe_load(file)
-    
+
     # Retrieve and return the configuration for the specified model.
     model_config = config.get(model_name, {})
     return model_config

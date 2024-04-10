@@ -2,6 +2,7 @@ from dataclasses import dataclass
 from typing import List, Literal, Optional
 from .source import Source
 
+
 @dataclass
 class DatasetConfig:
     """
@@ -15,6 +16,7 @@ class DatasetConfig:
         name (Optional[str]): An optional name for the dataset, which can be used for identification
             or descriptive purposes.
     """
+
     sources: List[Source]
     join_type: Literal["inner", "left", "right", "outer"]
     name: Optional[str] = ""

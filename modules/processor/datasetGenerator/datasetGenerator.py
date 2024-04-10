@@ -4,6 +4,7 @@ from ....utils.wrappers.source import Source
 from ....utils.wrappers.datasetConfig import DatasetConfig
 from ....config.config_manager import load_model_config
 
+
 class DatasetGenerator:
     """Class responsible for generating datasets based on a configuration file and model name."""
 
@@ -24,9 +25,15 @@ class DatasetGenerator:
         Load the model configuration and create Source and DatasetConfig instances.
         """
         model_config = load_model_config(self.config_path, self.model_name)
-        sources = [Source(path=source_info['path'], columns=source_info['columns'], primary_key=source_info.get('primary_key')) 
-                   for source_info in model_config.get('sources', [])]
-        join_type = model_config.get('join_type', 'inner')
+        sources = [
+            Source(
+                path=source_info["path"],
+                columns=source_info["columns"],
+                primary_key=source_info.get("primary_key"),
+            )
+            for source_info in model_config.get("sources", [])
+        ]
+        join_type = model_config.get("join_type", "inner")
         self.dataset_config = DatasetConfig(sources=sources, join_type=join_type)
 
     def read_data_sources(self):
@@ -40,10 +47,11 @@ class DatasetGenerator:
                 df.set_index(source.primary_key, inplace=True)
             self.dataframes[source.path] = df
 
-    
 
 # Example usage:
-dataset_generator = DatasetGenerator(config_path='path/to/config.yaml', model_name='model_a')
+dataset_generator = DatasetGenerator(
+    config_path="path/to/config.yaml", model_name="model_a"
+)
 dataset_generator.load_config()
 dataset_generator.read_data_sources()
 print(DatasetGenerator.dataframes)
