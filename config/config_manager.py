@@ -28,5 +28,4 @@ def load_model_config(config_path: str, model_name: str) -> dict:
         config = yaml.safe_load(file)
 
     # Retrieve and return the configuration for the specified model.
-    model_config = config.get(model_name, {})
-    return model_config
+    return config.get(model_name, {})
