@@ -1,5 +1,7 @@
 import pandas as pd
 from ...input_output.handlers.csv_io import CsvIO
+from ...input_output.handlers.txt_io import TxtIO
+from ...input_output.handlers.xml_io import XmlIO
 from ....utils.wrappers.source import Source
 from ....utils.wrappers.datasetConfig import DatasetConfig
 from ....config.config_manager import load_model_config
@@ -41,13 +43,11 @@ class DatasetGenerator:
                 path=source_info["path"],
                 columns=source_info["columns"],
                 primary_key=source_info.get("primary_key"),
-                file_type=source_info.get(
-                    "file_type", "csv"
-                ),  # Assumes default file type is CSV
+                file_type=source_info.get("file_type"),
             )
             for source_info in model_config.get("sources", [])
         ]
-        join_type = model_config.get("join_type", "inner")
+        join_type = model_config.get("join_type")
         self.dataset_config = DatasetConfig(sources=sources, join_type=join_type)
 
     def read_data_sources(self):
@@ -56,9 +56,15 @@ class DatasetGenerator:
         DataFrames are indexed by their source paths for easy access.
         If a primary key is specified for a source, it is set as the index of the DataFrame.
         """
-        csv_io = CsvIO()
         for source in self.dataset_config.sources:
-            df = csv_io.read_df_from_path(source.path, source.columns)
+            if source.file_type == "csv":
+                file_io = CsvIO()
+            elif source.file_type == "xml":
+                file_io = XmlIO()
+            elif source.file_type == "txt":
+                file_io = TxtIO()
+
+            df = file_io.read_df_from_path(source.path, source.columns)
             if source.primary_key:
                 df.set_index(source.primary_key, inplace=True)
             self.dataframes[source.path] = df
