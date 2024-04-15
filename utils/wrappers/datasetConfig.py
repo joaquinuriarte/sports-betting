@@ -18,5 +18,4 @@ class DatasetConfig:
     """
 
     sources: List[Source]
-    #join_type: Literal["inner", "left", "right", "outer"]
     name: Optional[str] = ""
