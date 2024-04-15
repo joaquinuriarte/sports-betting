@@ -24,9 +24,7 @@ class DatasetGenerator:
         self.config_path = config_path
         self.model_name = model_name
         self.dataset_config = None  # Placeholder for the dataset configuration
-        self.dataframes = (
-            {}
-        )  # Dictionary to store the DataFrames loaded from data sources
+        self.dataframes = []
 
         # Load the configuration and then read data sources upon initialization
         self.load_config()
@@ -67,14 +65,7 @@ class DatasetGenerator:
         If a primary key is specified for a source, it is set as the index of the DataFrame.
         """
         for source in self.dataset_config.sources:
-            if source.file_type == "csv":
-                file_io = CsvIO()
-            elif source.file_type == "xml":
-                file_io = XmlIO()
-            elif source.file_type == "txt":
-                file_io = TxtIO()
-
-            df = file_io.read_df_from_path(source.path, source.columns)
+            df = source.file_reader.read_df_from_path(source.path, source.columns)
             if source.primary_key:
                 df.set_index(source.primary_key, inplace=True)
-            self.dataframes[source.path] = df
+            self.dataframes.append((df, self.dataset_config.join_type))
