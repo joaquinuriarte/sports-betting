@@ -1,6 +1,7 @@
 model_a:
   sources:
     - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
+      file_type: 'csv'
       columns:
         - 'GAME_ID'
         - 'HOME_TEAM_ID'
@@ -9,6 +10,7 @@ model_a:
         - 'PTS_away'
       join_keys: ['GAME_ID']
     - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
+      file_type: 'csv'
       columns:
         - 'GAME_ID'
         - 'PLAYER_ID'
