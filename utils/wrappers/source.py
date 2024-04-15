@@ -1,5 +1,6 @@
 from dataclasses import dataclass
-from typing import List, Literal
+from typing import List
+from ...modules.input_output.data_io import DataIO
 
 
 @dataclass
@@ -18,4 +19,4 @@ class Source:
     path: str
     columns: List[str]
     primary_key: str
-    file_type: Literal["csv", "xml", "txt"]
+    file_reader: DataIO()

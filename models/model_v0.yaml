@@ -26,4 +26,4 @@ model_a:
         - 'FG_PCT'
         - 'FT_PCT'
       join_keys: ['GAME_ID']
-  join_type: 'inner'
+  join_type: 'left'

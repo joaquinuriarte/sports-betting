@@ -38,15 +38,25 @@ class DatasetGenerator:
         Reads configuration from a YAML file and creates source instances for each data source specified.
         """
         model_config = load_model_config(self.config_path, self.model_name)
-        sources = [
-            Source(
+        sources = []
+        for source_info in model_config.get("sources", []):
+            file_type = source_info.get("file_type")
+            if file_type == "csv":
+                file_reader = CsvIO()
+            elif file_type == "xml":
+                file_reader = XmlIO()
+            elif file_type == "txt":
+                file_reader = TxtIO()
+
+            # Create a Source instance with the appropriate file reader
+            source_instance = Source(
                 path=source_info["path"],
                 columns=source_info["columns"],
                 primary_key=source_info.get("primary_key"),
-                file_type=source_info.get("file_type"),
+                file_reader=file_reader,
             )
-            for source_info in model_config.get("sources", [])
-        ]
+            sources.append(source_instance)
+
         join_type = model_config.get("join_type")
         self.dataset_config = DatasetConfig(sources=sources, join_type=join_type)
 
@@ -68,9 +78,3 @@ class DatasetGenerator:
             if source.primary_key:
                 df.set_index(source.primary_key, inplace=True)
             self.dataframes[source.path] = df
-
-
-# Example usage:
-dataset_generator = DatasetGenerator(
-    config_path="path/to/config.yaml", model_name="model_a"
-)
