@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import List, Literal
 from ...modules.input_output.data_io import DataIO
 
 
@@ -19,4 +19,5 @@ class Source:
     path: str
     columns: List[str]
     primary_key: str
+    join_side: Literal['left', 'right']
     file_reader: DataIO()

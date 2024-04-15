@@ -23,12 +23,15 @@ class DatasetGenerator:
         """
         self.config_path = config_path
         self.model_name = model_name
-        self.dataset_config = None  # Placeholder for the dataset configuration
-        self.dataframes = []
+        self.dataset_config = None
+        self.dataframe_left = None
+        self.dataframe_right = None
+        self.join_type = None
 
         # Load the configuration and then read data sources upon initialization
         self.load_config()
         self.read_data_sources()
+        self.process_dataframes()
 
     def load_config(self):
         """
@@ -37,8 +40,8 @@ class DatasetGenerator:
         """
         model_config = load_model_config(self.config_path, self.model_name)
         sources = []
-        for source_info in model_config.get("sources", []):
-            file_type = source_info.get("file_type")
+        for source_info in model_config["sources"]:
+            file_type = source_info["file_type"]
             if file_type == "csv":
                 file_reader = CsvIO()
             elif file_type == "xml":
@@ -50,13 +53,14 @@ class DatasetGenerator:
             source_instance = Source(
                 path=source_info["path"],
                 columns=source_info["columns"],
-                primary_key=source_info.get("primary_key"),
+                primary_key=source_info["join_keys"],
+                join_side=source_info["join_side"],
                 file_reader=file_reader,
             )
             sources.append(source_instance)
 
-        join_type = model_config.get("join_type")
-        self.dataset_config = DatasetConfig(sources=sources, join_type=join_type)
+        self.join_type = model_config["join_type"]
+        self.dataset_config = DatasetConfig(sources=sources)
 
     def read_data_sources(self):
         """
@@ -68,4 +72,21 @@ class DatasetGenerator:
             df = source.file_reader.read_df_from_path(source.path, source.columns)
             if source.primary_key:
                 df.set_index(source.primary_key, inplace=True)
-            self.dataframes.append((df, self.dataset_config.join_type))
+            if source.join_side == "right":
+                self.dataframe_right = df
+            else:
+                self.dataframe_left = df
+
+    def process_dataframes(self):
+        """
+        Merge the left and right DataFrames using the specified join type.
+        """
+        merged_pd = pd.merge(
+            self.dataframe_left,
+            self.dataframe_right,
+            left_index=True,
+            right_index=True,
+            how=self.join_type,
+        )
+        # choose feature processor? & run it with merged_df
+        # return final, usable df

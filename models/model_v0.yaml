@@ -2,6 +2,7 @@ model_a:
   sources:
     - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
       file_type: 'csv'
+      join_side: 'right'
       columns:
         - 'GAME_ID'
         - 'HOME_TEAM_ID'
@@ -11,6 +12,7 @@ model_a:
       join_keys: ['GAME_ID']
     - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
       file_type: 'csv'
+      join_side: 'left'
       columns:
         - 'GAME_ID'
         - 'PLAYER_ID'
