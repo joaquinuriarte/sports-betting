@@ -9,7 +9,6 @@ model_a:
         - 'VISITOR_TEAM_ID'
         - 'PTS_home'
         - 'PTS_away'
-      join_keys: ['GAME_ID']
     - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
       file_type: 'csv'
       join_side: 'left'
@@ -27,5 +26,5 @@ model_a:
         - 'FG3_PCT'
         - 'FG_PCT'
         - 'FT_PCT'
-      join_keys: ['GAME_ID']
+  join_keys: ['GAME_ID']
   join_type: 'left'

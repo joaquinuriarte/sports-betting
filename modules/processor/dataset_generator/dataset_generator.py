@@ -27,6 +27,7 @@ class DatasetGenerator:
         self.dataframe_left = None
         self.dataframe_right = None
         self.join_type = None
+        self.join_key = None
 
         # Load the configuration and then read data sources upon initialization
         self.load_config()
@@ -53,13 +54,13 @@ class DatasetGenerator:
             source_instance = Source(
                 path=source_info["path"],
                 columns=source_info["columns"],
-                primary_key=source_info["join_keys"],
                 join_side=source_info["join_side"],
                 file_reader=file_reader,
             )
             sources.append(source_instance)
 
         self.join_type = model_config["join_type"]
+        self.join_key = model_config["join_keys"]
         self.dataset_config = DatasetConfig(sources=sources)
 
     def read_data_sources(self):
@@ -70,8 +71,6 @@ class DatasetGenerator:
         """
         for source in self.dataset_config.sources:
             df = source.file_reader.read_df_from_path(source.path, source.columns)
-            if source.primary_key:
-                df.set_index(source.primary_key, inplace=True)
             if source.join_side == "right":
                 self.dataframe_right = df
             else:
@@ -81,13 +80,12 @@ class DatasetGenerator:
         """
         Merge the left and right DataFrames using the specified join type.
         """
-        merged_pd = pd.merge(
+        merged_df = pd.merge(
             self.dataframe_left,
             self.dataframe_right,
-            left_index=True,
-            right_index=True,
+            on=self.join_key,  # Change from index join to column join
             how=self.join_type,
         )
+        return merged_df
         # choose feature processor? & run it with merged_df
         # return final, usable df
-        return merged_pd
