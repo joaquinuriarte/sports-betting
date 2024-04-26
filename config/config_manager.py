@@ -1,4 +1,6 @@
 import yaml
+import os
+
 
 
 def load_model_config(config_path: str, model_name: str) -> dict:
@@ -22,6 +24,8 @@ def load_model_config(config_path: str, model_name: str) -> dict:
     - dict: A dictionary containing the configuration for the specified model. If
       the model is not found, returns an empty dictionary.
     """
+    config_path = os.path.join(os.path.dirname(__file__), config_path)
+
     # Open the YAML configuration file in read mode.
     with open(config_path, "r") as file:
         # Parse the YAML file into a Python dictionary.
