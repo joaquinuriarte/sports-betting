@@ -32,7 +32,6 @@ class TestDatasetGenerator(unittest.TestCase):
     def test_process_dataframes(self):
         # Test that the dataframes are merged correctly
         merged_df = self.dataset_generator.process_dataframes()
-        print(merged_df.columns)  # Add this line to see what columns are included
         self.assertIsNotNone(merged_df)
         self.assertEqual(len(merged_df.columns), 19)
 
