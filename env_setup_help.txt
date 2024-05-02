@@ -40,12 +40,12 @@ Running a script from terminal:
 
 Formatting Code:  
 ------------------------------------------------
-After writing/modifying a python script, run "black path/to/file" to format code
+After writing/modifying a python script or module, run "Black path/to/file/or/module" to format code
 
 
 Verifying Code Statically:  
 ------------------------------------------------
-After writing/modifying a python script, run "mypy fileName.py"
+After writing/modifying a python script or module, run "mypy fileName.py" or "mypy dir_name". 
 
 
 Running a test script:  
