@@ -15,6 +15,7 @@ model_a:
       join_side: 'left'
       columns:
         - 'GAME_ID'
+        - 'TEAM_ID'
         - 'PLAYER_ID'
         - 'MIN'
         - 'PTS'
