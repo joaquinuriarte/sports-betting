@@ -34,7 +34,7 @@ class TestDatasetGenerator(unittest.TestCase):
         merged_df = self.dataset_generator.process_dataframes()
         print(merged_df.columns)  # Add this line to see what columns are included
         self.assertIsNotNone(merged_df)
-        self.assertEqual(len(merged_df.columns), 17)
+        self.assertEqual(len(merged_df.columns), 18)
 
     @patch("modules.processor.dataset_generator.dataset_generator.CsvIO")
     @patch("modules.processor.dataset_generator.dataset_generator.TxtIO")
