@@ -5,7 +5,7 @@ from modules.input_output.handlers.txt_io import TxtIO
 from modules.input_output.handlers.xml_io import XmlIO
 from utils.wrappers.source import Source
 from utils.wrappers.datasetConfig import DatasetConfig
-from config.config_manager import load_model_config
+from configuration.config_manager import load_model_config
 from .dataset_generator import DatasetGenerator
 
 
