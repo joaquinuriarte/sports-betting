@@ -1,3 +1,9 @@
+"""
+Comments as I build test
+1. In the datasets there are games present in games.csv but missing in game_details.csv. I need to figure out what this means, how it gets treated in the join, and how to resolve
+2. 
+"""
+
 import pandas as pd
 
 # TODO: This could be used by the processor manager to pick the correct feature processor
