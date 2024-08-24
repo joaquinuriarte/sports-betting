@@ -20,4 +20,4 @@ class Source:
     path: str
     columns: List[str]
     join_side: Literal['left', 'right']
-    file_reader: DataIO = field(default=None)  # Updated to use default=None with field from dataclasses
+    file_reader: DataIO = field(default=None) 
