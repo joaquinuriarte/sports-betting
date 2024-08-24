@@ -1,6 +1,6 @@
 from typing import List
 import pandas as pd
-from ..data_io import DataIO
+from modules.input_output.data_io import DataIO
 
 
 class XmlIO(DataIO):
