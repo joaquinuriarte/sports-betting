@@ -3,7 +3,7 @@ from modules.input_output.handlers.csv_io import CsvIO
 from modules.input_output.handlers.txt_io import TxtIO
 from modules.input_output.handlers.xml_io import XmlIO
 from utils.wrappers.source import Source
-from utils.wrappers.datasetConfig import DatasetConfig
+from utils.wrappers.dataset_config import DatasetConfig
 from configuration.config_manager import load_model_config
 
 
