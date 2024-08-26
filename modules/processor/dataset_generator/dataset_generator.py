@@ -9,7 +9,14 @@ class DatasetGenerator:
     - Performing the join operation based on the provided join type and keys.
     - Returning the resulting merged DataFrame.
     """
-    def __init__(self, dataframe_left: pd.DataFrame, dataframe_right: pd.DataFrame, join_type: str, join_key: list):
+
+    def __init__(
+        self,
+        dataframe_left: pd.DataFrame,
+        dataframe_right: pd.DataFrame,
+        join_type: str,
+        join_key: list,
+    ):
         """
         Initialize the DatasetGenerator with the dataframes and join settings.
         :param dataframe_left: The left DataFrame to be joined.
@@ -28,9 +35,6 @@ class DatasetGenerator:
         """
         # Perform the join operation
         joined_df = self.dataframe_left.merge(
-            self.dataframe_right,
-            how=self.join_type,
-            on=self.join_key
+            self.dataframe_right, how=self.join_type, on=self.join_key
         )
         return joined_df
-

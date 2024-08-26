@@ -14,6 +14,7 @@ class DatasetLoader:
     - Instantiating Source objects.
     - Reading data from sources and returning them as DataFrames.
     """
+
     def __init__(self, config_path: str, model_name: str):
         """
         Initialize the DatasetGenerator with the configuration path and model name.
@@ -63,7 +64,7 @@ class DatasetLoader:
         self.join_type = model_config["join_type"]
         self.join_key = model_config["join_keys"]
         self.dataset_config = DatasetConfig(sources=sources)
-    
+
     def read_data_sources(self, sources):
         """
         Read data from each configured source path and return the resulting DataFrames.
