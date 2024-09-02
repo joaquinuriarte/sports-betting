@@ -29,3 +29,25 @@ pip freeze > requirements.txt
 Installing Dependencies:
 - - - - - - - - - - - - - - - -
 pip install -r requirements.txt
+
+
+Running a script from terminal:
+------------------------------------------------
+1. Navigate to project root 
+2. Run: "python -m file.path.inThisFormat.scriptNameWithNoExtention" (use . instead of /)
+- Example: "python -m config.config_manager"
+
+
+Formatting Code:  
+------------------------------------------------
+After writing/modifying a python script or module, run "Black path/to/file/or/module" to format code
+
+
+Verifying Code Statically:  
+------------------------------------------------
+After writing/modifying a python script or module, run "mypy fileName.py" or "mypy dir_name". 
+
+
+Running a test script:  
+------------------------------------------------
+Navigate to location of test script and run: "pytest test_dataset_generator.py"

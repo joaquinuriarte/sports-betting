@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List
 import pandas as pd
 
+
 class DataIO(ABC):
 
     @abstractmethod
@@ -11,7 +12,7 @@ class DataIO(ABC):
 
         Parameters:
         - path (str): Path to data source
-        - columns (List[str]): Target columns from data source 
+        - columns (List[str]): Target columns from data source
 
         Returns:
         - pd.DataFrame: The resulting dataframe after loading and optional joining operations.
