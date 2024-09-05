@@ -30,26 +30,33 @@ class ModelManagerV0(ModelManager):
             # Initialize the model with architecture from the YAML file
             self.model = Model(model_config['architecture'])
 
+        # Load the training parameters
+        self.training_config = model_config['training']
+
         if config.inference_mode:
             self.model.eval()  # Set the model to inference mode
         else:
             self.model.train()  # Set the model to training mode
 
     def train_model(self, data: ModelDataset):
-        # Example training loop
-        criterion = nn.MSELoss()
-        optimizer = optim.Adam(self.model.parameters(), lr=0.001)
+        # Load optimizer and loss function from training configuration
+        loss_function = getattr(nn, self.training_config['loss_function'])()
+        optimizer_class = getattr(optim, self.training_config['optimizer'])
+        optimizer = optimizer_class(self.model.parameters(), lr=self.training_config['learning_rate'])
 
-        for epoch in range(10):  # Example number of epochs
+        num_epochs = self.training_config['epochs']
+
+        # Training loop
+        for epoch in range(num_epochs):
             running_loss = 0.0
             for example in data.examples:
-                # Assuming each Example's features are already tensors
+                # Assuming each Example's features are already tensors # TODO make sure this is correct
                 inputs = torch.tensor([feature for feature in example.features.values()])
-                labels = torch.tensor([1.0])  # Example label; replace with actual labels
+                labels = torch.tensor([1.0])  # TODO Example label; replace with actual labels
 
                 optimizer.zero_grad()
                 outputs = self.model(inputs)
-                loss = criterion(outputs, labels)
+                loss = loss_function(outputs, labels)
                 loss.backward()
                 optimizer.step()
 
@@ -58,13 +65,4 @@ class ModelManagerV0(ModelManager):
             print(f'Epoch {epoch + 1}, Loss: {running_loss}')
 
     def run_inference(self, data: ModelDataset) -> ModelDataset:
-        results = []
-        with torch.no_grad():
-            for example in data.examples:
-                inputs = torch.tensor([feature for feature in example.features.values()])
-                outputs = self.model(inputs)
-                # Append results back into the dataset or create a new dataset
-                results.append(outputs.item())  # Assuming single output
-
-        # Optionally, return a new ModelDataset with the results
-        return ModelDataset(examples=data.examples)
+        return 
