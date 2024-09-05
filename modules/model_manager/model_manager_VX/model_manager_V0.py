@@ -34,6 +34,9 @@ class ModelManagerV0(ModelManager):
         # Load the training parameters
         self.training_config = model_config["training"]
 
+        # Load the save destination
+        self.save_path = model_config["save_path"]
+
         if config.inference_mode:
             self.model.eval()  # Set the model to inference mode
         else:
@@ -72,7 +75,7 @@ class ModelManagerV0(ModelManager):
             print(f"Epoch {epoch + 1}, Loss: {running_loss}")
         
         # Save the model after training
-        self.save_model()
+        save_model(self.save_path, self.model.state_dict())
 
     def run_inference(self, data: ModelDataset) -> ModelDataset:
         return
