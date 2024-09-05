@@ -4,7 +4,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from configuration.config_manager import load_model_config
+from configuration.config_manager import load_model_config, save_model
 
 
 class ModelManagerV0(ModelManager):
@@ -70,6 +70,9 @@ class ModelManagerV0(ModelManager):
                 running_loss += loss.item()
 
             print(f"Epoch {epoch + 1}, Loss: {running_loss}")
+        
+        # Save the model after training
+        self.save_model()
 
     def run_inference(self, data: ModelDataset) -> ModelDataset:
         return
