@@ -1,4 +1,4 @@
-model_a:
+model_v0:
   # Model's training data
   sources:
     - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
@@ -57,4 +57,4 @@ model_a:
     loss_function: MSELoss
 
   # Model save path
-  save_path: 'models/weights/model_a'
+  save_path: 'models/weights/model_v0'
