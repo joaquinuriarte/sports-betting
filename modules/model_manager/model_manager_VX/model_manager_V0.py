@@ -20,7 +20,7 @@ class ModelManagerV0(ModelManager):
         self.config_path = config_path
         self.model_name = model_name
 
-    def setup_model(self, config: ModelConfig):
+    def setup_model(self, config: ModelConfig): #TODO if modelconfig is passed with a path to a model then self.training_config would break?
         if config.model_path:  # TODO Where will this sit?
             # Load model from file
             self.model = torch.load(config.model_path)
