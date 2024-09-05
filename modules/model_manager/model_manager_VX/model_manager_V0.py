@@ -1,19 +1,34 @@
 from model_manager import ModelManager, ModelConfig, ModelDataset
+from utils.wrappers.model import Model
 from typing import Optional
 import torch
 import torch.nn as nn
 import torch.optim as optim
+from configuration.config_manager import load_model_config
 
 class ModelManagerV0(ModelManager):
+    def __init__(self, config_path: str, model_name: str):
+        """
+        Initializes ModelManagerV0 with the path to the configuration file and the model name.
+
+        Args:
+            config_path (str): Path to the YAML configuration file.
+            model_name (str): The name of the model to load from the configuration file.
+        """
+        super().__init__()
+        self.config_path = config_path
+        self.model_name = model_name
+
     def setup_model(self, config: ModelConfig):
-        if config.model_path:
+        if config.model_path: #TODO Where will this sit?
             # Load model from file
             self.model = torch.load(config.model_path)
         else:
-            # Initialize a new model
-            input_size = 10  # Example input size; should be based on your actual data
-            output_size = 1  # Example output size; should be based on your actual data
-            self.model = SimpleModel(input_size, output_size)
+            # Load model architecture from YAML using parameters from the class
+            model_config = load_model_config(self.config_path, self.model_name)
+            
+            # Initialize the model with architecture from the YAML file
+            self.model = Model(model_config['architecture'])
 
         if config.inference_mode:
             self.model.eval()  # Set the model to inference mode
@@ -53,10 +68,3 @@ class ModelManagerV0(ModelManager):
 
         # Optionally, return a new ModelDataset with the results
         return ModelDataset(examples=data.examples)
-
-# Example usage:
-# config = ModelConfig(model_path="model.pth", inference_mode=False)
-# manager = ModelManagerV0()
-# manager.setup_model(config)
-# manager.train_model(training_data)
-# results = manager.run_inference(test_data)
