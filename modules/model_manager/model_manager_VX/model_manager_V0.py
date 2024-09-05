@@ -4,20 +4,6 @@ import torch
 import torch.nn as nn
 import torch.optim as optim
 
-class SimpleModel(nn.Module):
-    def __init__(self, input_size: int, output_size: int):
-        super(SimpleModel, self).__init__()
-        self.layers = nn.Sequential(
-            # nn.Linear(input_size, 128),
-            # nn.ReLU(),
-            # nn.Linear(128, 64),
-            # nn.ReLU(),
-            # nn.Linear(64, output_size),
-        )
-
-    def forward(self, x):
-        return self.layers(x)
-
 class ModelManagerV0(ModelManager):
     def setup_model(self, config: ModelConfig):
         if config.model_path:
