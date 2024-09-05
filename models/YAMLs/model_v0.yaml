@@ -55,3 +55,6 @@ model_a:
     learning_rate: 0.001
     optimizer: Adam
     loss_function: MSELoss
+
+  # Model save path
+  save_path: 'models/weights/model_a'
