@@ -48,3 +48,10 @@ model_a:
       - type: Linear
         in_features: 64
         out_features: 1
+
+  # Training configuration
+  training:
+    epochs: 20
+    learning_rate: 0.001
+    optimizer: Adam
+    loss_function: MSELoss
