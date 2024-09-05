@@ -57,4 +57,4 @@ model_v0:
     loss_function: MSELoss
 
   # Model save path
-  save_path: 'models/weights/model_v0'
+  save_path: 'models/weights/model_v0.pth'
