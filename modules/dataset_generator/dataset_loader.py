@@ -1,9 +1,9 @@
-from modules.input_output.handlers.csv_io import CsvIO
-from modules.input_output.handlers.txt_io import TxtIO
-from modules.input_output.handlers.xml_io import XmlIO
-from utils.wrappers.source import Source
-from utils.wrappers.dataset_config import DatasetConfig
-from configuration.config_manager import load_model_config
+from modules.dataset_generator.input_output.csv_io import CsvIO
+from modules.dataset_generator.input_output.txt_io import TxtIO
+from modules.dataset_generator.input_output.xml_io import XmlIO
+from modules.data_structures.source import Source
+from modules.data_structures.dataset_config import DatasetConfig
+from modules.utils.yaml_reader import load_model_config
 
 
 class DatasetLoader:

@@ -1,10 +1,10 @@
 from model_manager import ModelManager, ModelConfig, ModelDataset
-from utils.wrappers.model import Model
+from modules.data_structures.model import Model
 from typing import Optional
 import torch
 import torch.nn as nn
 import torch.optim as optim
-from configuration.config_manager import load_model_config, save_model
+from modules.utils.yaml_reader import load_model_config
 
 
 class ModelManagerV0(ModelManager):
@@ -75,7 +75,6 @@ class ModelManagerV0(ModelManager):
             print(f"Epoch {epoch + 1}, Loss: {running_loss}")
         
         # Save the model after training
-        save_model(self.save_path, self.model.state_dict())
 
     def run_inference(self, data: ModelDataset) -> ModelDataset:
         return
