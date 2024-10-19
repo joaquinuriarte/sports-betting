@@ -1,0 +1,60 @@
+model_v0:
+  # Model's training data
+  sources:
+    - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
+      file_type: 'csv'
+      join_side: 'right'
+      columns:
+        - 'GAME_DATE_EST'
+        - 'GAME_ID'
+        - 'HOME_TEAM_ID'
+        - 'VISITOR_TEAM_ID'
+        - 'PTS_home'
+        - 'PTS_away'
+    - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
+      file_type: 'csv'
+      join_side: 'left'
+      columns:
+        - 'GAME_ID'
+        - 'TEAM_ID'
+        - 'PLAYER_ID'
+        - 'MIN'
+        - 'PTS'
+        - 'AST'
+        - 'TO'
+        - 'PLUS_MINUS'
+        - 'OREB'
+        - 'DREB'
+        - 'PF'
+        - 'FG3_PCT'
+        - 'FG_PCT'
+        - 'FT_PCT'
+  join_keys: ['GAME_ID']
+  join_type: 'left'
+
+  # Model's architecture configuration
+  architecture:
+    input_size: 178 # Each team has an input for their final score and 8 input vectors holding averaged stats for their top 8 players. Each of these vectors contains 11 stats. So the final number of inputs is 2*(1+8*11) = 178
+    output_size: 1 # TODO I need to re-red the paper to figure this one out
+    layers: # TODO We can play around with this later on
+      - type: Linear
+        in_features: 10
+        out_features: 128
+      - type: ReLU
+      - type: Linear
+        in_features: 128
+        out_features: 64
+      - type: ReLU
+      - type: Linear
+        in_features: 64
+        out_features: 1
+
+  # Training configuration
+  training:
+    epochs: 20
+    learning_rate: 0.001
+    optimizer: Adam
+    loss_function: MSELoss
+
+  # Model save path
+  save_path: 'models/weights/model_v0.pth'
