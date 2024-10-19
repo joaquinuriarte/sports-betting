@@ -1,84 +1,25 @@
-from modules.dataset_generator.input_output.csv_io import CsvIO
-from modules.dataset_generator.input_output.txt_io import TxtIO
-from modules.dataset_generator.input_output.xml_io import XmlIO
-from modules.data_structures.source import Source
-from modules.data_structures.dataset_config import DatasetConfig
-from modules.utils.yaml_reader import load_model_config
+from typing import List
+import pandas as pd
+from modules.dataset_generator.input_output.data_io import DataIO
+from modules.dataset_generator.dataset_loader_interface import IDatasetLoader
 
-
-class DatasetLoader:
+class DatasetLoader(IDatasetLoader):
     """
-    Handles loading the model configuration and reading data sources.
-    This class is responsible for:
-    - Loading configuration files.
-    - Instantiating Source objects.
-    - Reading data from sources and returning them as DataFrames.
+    Handles loading the data sources as DataFrames.
     """
 
-    def __init__(self, config_path: str, model_name: str):
-        """
-        Initialize the DatasetGenerator with the configuration path and model name.
+    def __init__(self, data_loaders: List[DataIO], data_loaders_sources: List[dict]):
+        self.data_loaders = data_loaders
+        self.data_loaders_sources = data_loaders_sources
 
-        :param config_path: Path to the configuration file.
-        :param model_name: Name of the model for which to generate the dataset.
+    def load_data(self) -> List[pd.DataFrame]:
         """
-        self.config_path = config_path
-        self.model_name = model_name
-        self.dataset_config = None
-        self.join_type = None
-        self.join_key = None
-
-        # Load the configuration and then read data sources upon initialization
-        self.load_config()
-
-    def load_sources(self):
+        Loads the data from all sources.
+        
+        Returns:
+            list: List of DataFrames for each data source.
         """
-        Load sources based on the model configuration.
-        """
-        model_config = load_model_config(self.config_path, self.model_name)
-        sources = []
-        for source_info in model_config["sources"]:
-            file_type = source_info["file_type"]
-            if file_type == "csv":
-                file_reader = CsvIO()
-            elif file_type == "xml":
-                file_reader = XmlIO()
-            elif file_type == "txt":
-                file_reader = TxtIO()
-
-            # Create a Source instance with the appropriate file reader
-            source_instance = Source(
-                path=source_info["path"],
-                columns=source_info["columns"],
-                join_side=source_info["join_side"],
-                file_reader=file_reader,
-            )
-            sources.append(source_instance)
-        return sources, model_config
-
-    def load_config(self):
-        """
-        Load the model configuration and instantiate Source and DatasetConfig objects.
-        """
-        sources, model_config = self.load_sources()
-        self.join_type = model_config["join_type"]
-        self.join_key = model_config["join_keys"]
-        self.dataset_config = DatasetConfig(sources=sources)
-
-    def read_data_sources(self, sources):
-        """
-        Read data from each configured source path and return the resulting DataFrames.
-        :param sources: List of Source instances from which to read data.
-        :return: Tuple containing the left and right DataFrames.
-        """
-        dataframe_left = None
-        dataframe_right = None
-
-        for source in sources:
-            df = source.file_reader.read_df_from_path(source.path, source.columns)
-            if source.join_side == "right":
-                dataframe_right = df
-            else:
-                dataframe_left = df
-
-        return dataframe_left, dataframe_right
+        dataframes = []
+        for loader, source in zip(self.data_loaders, self.data_loaders_sources):
+            dataframes.append(loader.read_df_from_path(path=source['path'], columns=source['columns']))
+        return dataframes

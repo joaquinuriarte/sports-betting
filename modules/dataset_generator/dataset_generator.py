@@ -1,40 +1,49 @@
 import pandas as pd
+from typing import Tuple
+from modules.dataset_generator.configuration_loader import ConfigurationLoader
+from modules.dataset_generator.dataset_loader_factory import DatasetLoaderFactory
+from modules.dataset_generator.dataset_generator_strategy_factory import DatasetGeneratorStrategyFactory
+from modules.dataset_generator.dataset_loader_interface import IDatasetLoader
+from modules.dataset_generator.dataset_generator_strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.join_factory import JoinFactory
+from modules.dataset_generator.feature_processor_factory import FeatureProcessorFactory
 
-
-class DatasetGenerator:
+class DatasetGeneration:
     """
-    Handles the dataset generation by performing a join operation on the provided DataFrames.
-    This class is responsible for:
-    - Accepting the left and right DataFrames, along with join configuration.
-    - Performing the join operation based on the provided join type and keys.
-    - Returning the resulting merged DataFrame.
+    Main orchestrator for dataset generation.
     """
 
-    def __init__(
-        self,
-        dataframe_left: pd.DataFrame,
-        dataframe_right: pd.DataFrame,
-        join_type: str,
-        join_key: list,
-    ):
-        """
-        Initialize the DatasetGenerator with the dataframes and join settings.
-        :param dataframe_left: The left DataFrame to be joined.
-        :param dataframe_right: The right DataFrame to be joined.
-        :param join_type: The type of join to perform (e.g., 'inner', 'outer').
-        :param join_key: The key(s) to join on.
-        """
-        self.dataframe_left = dataframe_left
-        self.dataframe_right = dataframe_right
-        self.join_type = join_type
-        self.join_key = join_key
+    def __init__(self, config_path: str):
+        # Step 1: Load configuration using ConfigurationLoader
+        self.config_loader = ConfigurationLoader(config_path)
+        self.config = self.config_loader.load_config()
 
-    def generate_dataset(self):
-        """
-        Perform the join operation and return the resulting DataFrame.
-        """
-        # Perform the join operation
-        joined_df = self.dataframe_left.merge(
-            self.dataframe_right, how=self.join_type, on=self.join_key
+        # Step 2: Instantiate DatasetLoader to load data sources
+        self.dataset_loader: IDatasetLoader = DatasetLoaderFactory.create_loader(self.config['sources'])
+
+        # Step 3: Use DatasetGeneratorStrategyFactory to get the appropriate strategy
+        # TODO I don't like that we are hard coding this here and we don't have an interface for DatasetGeneratorStrategyFactory. Need to fix this
+        join_factory = JoinFactory()
+        feature_processor_factory = FeatureProcessorFactory()
+        strategy_factory = DatasetGeneratorStrategyFactory(join_factory, feature_processor_factory)
+        self.dataset_generation_strategy: IDatasetGeneratorStrategy = strategy_factory.create_generator(
+            strategy_name=self.config['strategy'],
+            join_operation_type=self.config.get('join_operation', None),
+            feature_processing_type=self.config['feature_processing']
         )
-        return joined_df
+
+    def generate(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+        """
+        Generate the dataset by loading data, optionally joining, and processing features.
+        
+        Returns:
+            features_df: DataFrame containing the features.
+            labels_df: DataFrame containing the labels.
+        """
+        # Load the data sources
+        dataframes = self.dataset_loader.load_data()
+
+        # Generate the features and labels using the strategy
+        features_df, labels_df = self.dataset_generation_strategy.generate(dataframes)
+
+        return features_df, labels_df
