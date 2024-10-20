@@ -1,24 +1,28 @@
 from modules.dataset_generator.factories.data_io_factory import DataIOFactory
-from modules.dataset_generator.dataset_loader import DatasetLoader
+from modules.dataset_generator.interfaces.dataset_loader_interface import IDatasetLoader
+
 
 class DatasetLoaderCreator:
     """
-    Creates a DatasetLoader based on the sources configuration.
+    Creates an IDatasetLoader based on the sources configuration.
     """
 
-    def create_loader(self, sources_config: list) -> DatasetLoader:
+    def create_loader(self, sources_config: list) -> IDatasetLoader:
         """
-        Creates a DatasetLoader instance based on the provided sources configuration.
+        Creates an IDatasetLoader instance based on the provided sources configuration.
         
         Args:
             sources_config (list): Configuration for the data sources.
         
         Returns:
-            DatasetLoader: An instance of the DatasetLoader with the appropriate data readers.
+            IDatasetLoader: An instance of the DatasetLoader that implements IDatasetLoader.
         """
         data_loaders = []
         for source in sources_config:
             file_type = source['file_type']
             data_io = DataIOFactory.create_reader(file_type)
             data_loaders.append(data_io)
-        return DatasetLoader(data_loaders, sources_config)
+
+        # Return the object that implements the IDatasetLoader interface
+        return IDatasetLoader(data_loaders, sources_config)
+
