@@ -1,13 +1,13 @@
 import pandas as pd
 from typing import Tuple
-from modules.dataset_generator.interfaces.dataset_generator_strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
 
 class JoinBasedGenerator(IDatasetGeneratorStrategy):
     """
     Implements a strategy to join multiple data sources to generate a unified DataFrame.
     """
 
-    def __init__(self, join_operation, feature_processor):
+    def __init__(self, join_operation: object, feature_processor: object): #TODO change obkect for interface
         self.join_operation = join_operation
         self.feature_processor = feature_processor
 
@@ -35,7 +35,7 @@ class NoJoinGenerator(IDatasetGeneratorStrategy):
     Implements a strategy to generate features and labels without any join operation.
     """
 
-    def __init__(self, feature_processor):
+    def __init__(self, feature_processor: object): #TODO change obkect for interface
         self.feature_processor = feature_processor
 
     def generate(self, dataframes: list) -> Tuple[pd.DataFrame, pd.DataFrame]:

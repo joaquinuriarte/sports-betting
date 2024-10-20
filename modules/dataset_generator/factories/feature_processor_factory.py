@@ -8,7 +8,7 @@ class FeatureProcessorFactory(IFeatureProcessorFactory):
     """
 
     @staticmethod
-    def create_processor(processing_type: str) -> object:
+    def create_processor(processing_type: str) -> object: #TODO: Should return interface object
         """
         Creates a FeatureProcessor instance based on the provided processing type.
         
