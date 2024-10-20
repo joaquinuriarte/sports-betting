@@ -24,11 +24,10 @@ class DatasetGeneration:
         dataset_strategy_creator: DatasetStrategyCreator = DatasetStrategyCreator(self.config['strategy'], self.config.get('join_operation', None), feature_processing_type=self.config['feature_processing'])
         self.dataset_strategy: IDatasetGeneratorStrategy = dataset_strategy_creator.create_strategy()
 
-
         # Step 3: Use StrategyFactory to create dataset generation strategy TODO: Do we need to decouple DatasetStrategyCreator?
         self.dataset_strategy: IDatasetGeneratorStrategy = dataset_strategy_creator.create_strategy(self.config['strategy'], self.config.get('join_operation', None), feature_processing_type=self.config['feature_processing'])
 
-    def generate(self) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def generate(self) -> Tuple[pd.DataFrame, pd.DataFrame]: # TODO Consider adding interface for this datastructure or wrap it in something
         """
         Generate the dataset by loading data, optionally joining, and processing features.
         

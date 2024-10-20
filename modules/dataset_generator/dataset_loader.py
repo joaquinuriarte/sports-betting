@@ -11,7 +11,7 @@ class DatasetLoader():
         self.data_loaders = data_loaders
         self.data_loaders_sources = data_loaders_sources
 
-    def load_data(self) -> List[pd.DataFrame]:
+    def load_data(self) -> List[pd.DataFrame]: # TODO: Should we wrap this List of DF or is it okay to keep it like this?
         """
         Loads the data from all sources.
         

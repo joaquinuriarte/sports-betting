@@ -7,7 +7,10 @@ from modules.dataset_generator.interfaces.join_operator_interface import IJoinOp
 
 class DatasetStrategyCreator:
     """
-    Creates dataset generation strategies based on the configuration. #TODO: Fix comments
+    Creates dataset generation strategies based on the configuration.
+
+    This class takes in configuration details, such as the strategy name, join operation type, and feature processing type,
+    and utilizes the join and feature processor factories to create the appropriate dataset generation strategy.
     """
 
     def __init__(self, strategy_name: str, join_operation_type: str, feature_processing_type: str):
@@ -19,6 +22,11 @@ class DatasetStrategyCreator:
         """
         Creates the appropriate dataset generation strategy.
         
+        Args:
+            strategy_name (str): Name of the dataset generation strategy (e.g., 'join_based', 'no_join').
+            join_operation_type (str): Type of join operation to use (optional, e.g., 'inner', 'left', 'right').
+            feature_processing_type (str): Type of feature processor to use (e.g., 'top_n_players').
+
         Returns:
             IDatasetGeneratorStrategy: An instance of the dataset generation strategy.
         """
