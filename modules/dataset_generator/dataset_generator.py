@@ -21,6 +21,9 @@ class DatasetGeneration:
         # Step 2: Instantiate DatasetLoader to load data sources
         self.dataset_loader: IDatasetLoader = DatasetLoaderFactory.create_loader(self.config['sources'])
 
+        # Step 3: Instantiate DatasetLoader to load data sources TODO: create feature processor interface
+        self.feature_processor = FeatureProcessorFactory(self.config['feature_processing'])
+
         # Step 3: Use DatasetGeneratorStrategyFactory to get the appropriate strategy
         # TODO I don't like that we are hard coding this here and we don't have an interface for DatasetGeneratorStrategyFactory. Need to fix this
         join_factory = JoinFactory()
