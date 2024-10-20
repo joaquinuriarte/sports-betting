@@ -9,7 +9,7 @@ class StrategyFactory:
     """
 
     @staticmethod
-    def create_generator(self, strategy_name: str, feature_processor: object, join_operations: List[object]) -> IDatasetGeneratorStrategy: #TODO change object for interface
+    def create_strategy(strategy_name: str, feature_processor: object, join_operations: List[object]) -> IDatasetGeneratorStrategy: #TODO change object for interface
         """
         Creates the appropriate dataset generation strategy.
         

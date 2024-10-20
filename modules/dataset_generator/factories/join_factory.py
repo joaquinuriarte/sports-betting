@@ -1,7 +1,6 @@
 from modules.dataset_generator.operations.join_operations import InnerJoinOperation, LeftJoinOperation, RightJoinOperation
-from modules.dataset_generator.interfaces.join_factory_interface import IJoinFactory
 
-class JoinFactory(IJoinFactory):
+class JoinFactory():
     """
     Factory for creating join operations based on the type specified.
     """

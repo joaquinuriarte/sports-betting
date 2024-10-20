@@ -11,7 +11,7 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
         self.join_operation = join_operation
         self.feature_processor = feature_processor
 
-    def generate(self, dataframes: list) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def generate(self, dataframes: list) -> Tuple[pd.DataFrame, pd.DataFrame]: #TODO  consider adding data structure interface for this?
         """
         Generate features and labels by joining dataframes and processing features.
         

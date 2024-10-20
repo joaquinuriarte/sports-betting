@@ -1,9 +1,8 @@
 from typing import List
 import pandas as pd
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from modules.dataset_generator.interfaces.dataset_loader_interface import IDatasetLoader
 
-class DatasetLoader(IDatasetLoader):
+class DatasetLoader():
     """
     Handles loading the data sources as DataFrames.
     """

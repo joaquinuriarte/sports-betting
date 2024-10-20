@@ -1,4 +1,5 @@
 from modules.dataset_generator.operations.data_readers import CsvIO, TxtIO, XmlIO
+from modules.dataset_generator.interfaces.data_io_interface import DataIO
 
 class DataIOFactory:
     """
@@ -6,7 +7,7 @@ class DataIOFactory:
     """
 
     @staticmethod
-    def create_reader(file_type: str) -> object:
+    def create_reader(file_type: str) -> DataIO:
         """
         Creates a DataIO reader instance based on the provided file type.
         
