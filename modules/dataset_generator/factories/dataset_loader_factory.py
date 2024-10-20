@@ -1,4 +1,4 @@
-from modules.dataset_generator.data_io_factory import DataIOFactory
+from modules.dataset_generator.factories.data_io_factory import DataIOFactory
 from modules.dataset_generator.dataset_loader import DatasetLoader
 
 class DatasetLoaderFactory:

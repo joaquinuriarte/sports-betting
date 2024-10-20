@@ -1,12 +1,12 @@
 import pandas as pd
 from typing import Tuple
 from modules.dataset_generator.configuration_loader import ConfigurationLoader
-from modules.dataset_generator.dataset_loader_factory import DatasetLoaderFactory
-from modules.dataset_generator.dataset_generator_strategy_factory import DatasetGeneratorStrategyFactory
-from modules.dataset_generator.dataset_loader_interface import IDatasetLoader
-from modules.dataset_generator.dataset_generator_strategy_interface import IDatasetGeneratorStrategy
-from modules.dataset_generator.join_factory import JoinFactory
-from modules.dataset_generator.feature_processor_factory import FeatureProcessorFactory
+from modules.dataset_generator.factories.dataset_loader_factory import DatasetLoaderFactory
+from modules.dataset_generator.factories.dataset_generator_strategy_factory import DatasetGeneratorStrategyFactory
+from modules.dataset_generator.interfaces.dataset_loader_interface import IDatasetLoader
+from modules.dataset_generator.interfaces.dataset_generator_strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.factories.join_factory import JoinFactory
+from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
 
 class DatasetGeneration:
     """
