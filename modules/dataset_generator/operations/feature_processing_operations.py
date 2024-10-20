@@ -1,7 +1,8 @@
 import pandas as pd
 from typing import Tuple
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
 
-class TopNPlayersFeatureProcessor:
+class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     """
     Processes features by selecting the top N players based on given criteria.
     """

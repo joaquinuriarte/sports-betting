@@ -1,4 +1,5 @@
 from modules.dataset_generator.operations.feature_processing_operations import TopNPlayersFeatureProcessor
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
 
 class FeatureProcessorFactory():
     """
@@ -6,7 +7,7 @@ class FeatureProcessorFactory():
     """
 
     @staticmethod
-    def create_processor(processing_type: str) -> object: #TODO: Should return interface object
+    def create_processor(processing_type: str) -> IFeatureProcessorOperator:
         """
         Creates a FeatureProcessor instance based on the provided processing type.
         
@@ -17,6 +18,7 @@ class FeatureProcessorFactory():
             FeatureProcessor: An instance of the appropriate FeatureProcessor.
         """
         if processing_type == 'top_n_players':
-            return TopNPlayersFeatureProcessor()
+            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessor()
+            return feature_processor
         else:
             raise ValueError(f"Unsupported feature processing type: {processing_type}")

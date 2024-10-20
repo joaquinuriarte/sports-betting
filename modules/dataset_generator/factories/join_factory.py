@@ -1,4 +1,5 @@
 from modules.dataset_generator.operations.join_operations import InnerJoinOperation, LeftJoinOperation, RightJoinOperation
+from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 
 class JoinFactory():
     """
@@ -6,7 +7,7 @@ class JoinFactory():
     """
 
     @staticmethod
-    def create_join(join_type: str) -> object:
+    def create_join(join_type: str) -> IJoinOperator:
         """
         Creates a JoinOperation instance based on the provided join type.
         
@@ -17,10 +18,13 @@ class JoinFactory():
             JoinOperation: An instance of the appropriate JoinOperation.
         """
         if join_type == 'inner':
-            return InnerJoinOperation()
+            join_operator: IJoinOperator = InnerJoinOperation()
+            return join_operator
         elif join_type == 'left':
-            return LeftJoinOperation()
+            join_operator: IJoinOperator = LeftJoinOperation()
+            return join_operator
         elif join_type == 'right':
-            return RightJoinOperation()
+            join_operator: IJoinOperator = RightJoinOperation()
+            return join_operator
         else:
             raise ValueError(f"Unsupported join type: {join_type}")

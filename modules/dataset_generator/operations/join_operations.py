@@ -1,6 +1,8 @@
 import pandas as pd
+from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 
-class LeftJoinOperation:
+
+class LeftJoinOperation(IJoinOperator):
     """
     Performs a left join on the provided dataframes.
     """
@@ -8,7 +10,7 @@ class LeftJoinOperation:
     def perform_join(self, dataframes: list) -> pd.DataFrame:
         return dataframes[0].merge(dataframes[1], how='left')
 
-class RightJoinOperation:
+class RightJoinOperation(IJoinOperator):
     """
     Performs a right join on the provided dataframes.
     """
@@ -16,7 +18,7 @@ class RightJoinOperation:
     def perform_join(self, dataframes: list) -> pd.DataFrame:
         return dataframes[0].merge(dataframes[1], how='right')
 
-class InnerJoinOperation:
+class InnerJoinOperation(IJoinOperator):
     """
     Performs an inner join on the provided dataframes.
     """
