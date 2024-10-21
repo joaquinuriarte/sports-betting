@@ -2,7 +2,7 @@ from typing import List
 import pandas as pd
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 
-class DatasetLoader():
+class DatasetLoader:
     """
     Handles loading the data sources as DataFrames.
     """

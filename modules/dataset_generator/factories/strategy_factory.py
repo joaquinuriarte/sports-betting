@@ -2,16 +2,16 @@ from modules.dataset_generator.operations.dataset_generation_strategies import J
 from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from typing import List
+from modules.dataset_generator.interfaces.factory_interface import IFactory
+from typing import List, Optional
 
-
-class StrategyFactory:
+class StrategyFactory(IFactory):
     """
     Factory for creating dataset generation strategies based on the configuration.
     """
 
     @staticmethod
-    def create_strategy(strategy_name: str, feature_processor: IFeatureProcessorOperator, join_operations: List[IJoinOperator]) -> IDatasetGeneratorStrategy:
+    def create(strategy_name: str, feature_processor: IFeatureProcessorOperator, join_operations: Optional[List[IJoinOperator]] = None) -> IDatasetGeneratorStrategy:
         """
         Creates the appropriate dataset generation strategy.
         

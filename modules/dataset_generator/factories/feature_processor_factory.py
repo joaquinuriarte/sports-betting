@@ -1,7 +1,8 @@
 from modules.dataset_generator.operations.feature_processing_operations import TopNPlayersFeatureProcessor
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.factory_interface import IFactory
 
-class FeatureProcessorFactory():
+class FeatureProcessorFactory(IFactory):
     """
     Factory for creating feature processors based on the type specified.
     """

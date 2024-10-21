@@ -5,27 +5,26 @@ from modules.dataset_generator.dataset_loader_creator import DatasetLoaderCreato
 from modules.dataset_generator.dataset_loader import DatasetLoader
 from modules.dataset_generator.dataset_strategy_creator import DatasetStrategyCreator
 from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.interfaces.factory_interface import IFactory
+
 
 class DatasetGeneration:
     """
     Main orchestrator for dataset generation.
     """
 
-    def __init__(self, config_path: str):
+    def __init__(self, config_path: str, data_io_factory: IFactory, feature_processor_factory: IFactory, join_factory: IFactory, strategy_factory: IFactory):
         # Step 1: Load configuration using ConfigurationLoader 
         config_loader: ConfigurationLoader = ConfigurationLoader(config_path)
         self.config = config_loader.load_config()
 
         # Step 2: Instantiate DatasetLoader through the DatasetLoaderCreator to load data sources
-        dataset_loader_creator: DatasetLoaderCreator = DatasetLoaderCreator()
+        dataset_loader_creator: DatasetLoaderCreator = DatasetLoaderCreator(data_io_factory)
         self.dataset_loader: DatasetLoader = dataset_loader_creator.create_loader(self.config['sources'])
 
-        # Step 3: Use DatasetStrategyCreator to create a dataset generation strategy
-        dataset_strategy_creator: DatasetStrategyCreator = DatasetStrategyCreator(self.config['strategy'], self.config.get('join_operation', None), feature_processing_type=self.config['feature_processing'])
+        # Step 3: Use StrategyFactory to create dataset generation strategy 
+        dataset_strategy_creator: DatasetStrategyCreator = DatasetStrategyCreator(self.config['strategy'], self.config.get('join_operation', None), self.config['feature_processing'], feature_processor_factory, join_factory, strategy_factory)
         self.dataset_strategy: IDatasetGeneratorStrategy = dataset_strategy_creator.create_strategy()
-
-        # Step 3: Use StrategyFactory to create dataset generation strategy TODO: Do we need to decouple DatasetStrategyCreator?
-        self.dataset_strategy: IDatasetGeneratorStrategy = dataset_strategy_creator.create_strategy(self.config['strategy'], self.config.get('join_operation', None), feature_processing_type=self.config['feature_processing'])
 
     def generate(self) -> Tuple[pd.DataFrame, pd.DataFrame]: # TODO Consider adding interface for this datastructure or wrap it in something
         """
