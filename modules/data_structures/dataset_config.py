@@ -1,21 +1,23 @@
-from dataclasses import dataclass
-from typing import List, Literal, Optional
 from .source import Source
-
+from dataclasses import dataclass
+from typing import List, Optional
 
 @dataclass
 class DatasetConfig:
     """
     Configuration for constructing a dataset from multiple data sources. This class specifies
-    how different data sources should be combined and any additional identifiers for the dataset.
+    how different data sources should be combined and processed.
 
     Attributes:
-        sources (List[Source]): A list of Source objects, each specifying a data source.
-        join_type (Literal["inner", "left", "right", "outer"]): The type of join to use when
-            combining multiple sources. Determines how rows from different sources are merged.
-        name (Optional[str]): An optional name for the dataset, which can be used for identification
-            or descriptive purposes.
+        sources (List[Source]): A list of Source objects specifying data sources.
+        joins (List[str]): A list of join types (e.g., 'inner', 'left', 'right') to be used for merging.
+        feature_processor (str): The name of the feature processor to use.
+        strategy (str): The name of the dataset generation strategy to apply.
+        name (Optional[str]): An optional name for the dataset.
     """
-
+    
     sources: List[Source]
+    joins: List[str]
+    feature_processor: str
+    strategy: str
     name: Optional[str] = ""

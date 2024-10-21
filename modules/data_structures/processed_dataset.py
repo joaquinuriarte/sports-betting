@@ -3,6 +3,12 @@ import pandas as pd
 
 @dataclass
 class ProcessedDataset:
-    def __init__(self, features: pd.DataFrame, labels: pd.DataFrame):
-        self.features = features
-        self.labels = labels
+    """
+    Represents a processed dataset with features and labels.
+
+    Attributes:
+        features (pd.DataFrame): The feature data.
+        labels (pd.DataFrame): The label data.
+    """
+    features: pd.DataFrame
+    labels: pd.DataFrame
