@@ -10,7 +10,7 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
     Implements a strategy to join multiple data sources to generate a unified DataFrame.
     """
 
-    def __init__(self, join_operation: IJoinOperator, feature_processor: IFeatureProcessorOperator):
+    def __init__(self, join_operations: List[IJoinOperator], feature_processor: IFeatureProcessorOperator):
         """
         Initializes the generator with a join operation and feature processor.
 
@@ -18,7 +18,7 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
             join_operation (IJoinOperator): The operation to perform the join.
             feature_processor (IFeatureProcessorOperator): Processor for feature extraction.
         """
-        self.join_operation = join_operation
+        self.join_operations = join_operations
         self.feature_processor = feature_processor
 
     def generate(self, dataframes: List[pd.DataFrame]) -> ProcessedDataset:
@@ -31,14 +31,13 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
         Returns:
             ProcessedDataset: The generated dataset containing features and labels.
         """
-        # Perform join operation if available, otherwise use the first dataframe
-        joined_df = (
-            self.join_operation.perform_join(dataframes)
-            if self.join_operation else dataframes[0]
-        )
+        # Perform each join operation sequentially
+        result_df = dataframes[0]
+        for i, join_op in enumerate(self.join_operations):
+            result_df = join_op.perform_join([result_df, dataframes[i + 1]])
 
         # Process the joined dataframe into features and labels
-        features_df, labels_df = self.feature_processor.process(joined_df)
+        features_df, labels_df = self.feature_processor.process(result_df)
 
         # Return wrapped ProcessedDataset
         return ProcessedDataset(features=features_df, labels=labels_df)

@@ -9,13 +9,13 @@ class DatasetConfig:
     how different data sources should be combined and processed.
 
     Attributes:
-        sources (List[Source]): A list of Source objects specifying data sources.
-        joins (List[str]): A list of join types (e.g., 'inner', 'left', 'right') to be used for merging.
+        sources (List[Source]): A list of Source objects in the order they should be merged.
+        joins (List[str]): A list of join types (e.g., 'inner', 'left') for each merge operation.
         feature_processor (str): The name of the feature processor to use.
-        strategy (str): The name of the dataset generation strategy to apply.
-        name (Optional[str]): An optional name for the dataset.
+        strategy (str): The name of the strategy for dataset generation.
+        name (Optional[str]): Optional name for the dataset.
     """
-    
+
     sources: List[Source]
     joins: List[str]
     feature_processor: str

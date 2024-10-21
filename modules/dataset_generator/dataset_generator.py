@@ -23,17 +23,18 @@ class DatasetGeneration:
         dataset_loader_creator = DatasetLoaderCreator(self.config, data_io_factory)
         self.dataset_loader: DatasetLoader = dataset_loader_creator.create_loader()
 
-        # Step 3: Use StrategyFactory to create dataset generation strategy 
-        dataset_strategy_creator = DatasetStrategyCreator(self.config, feature_processor_factory, join_factory, strategy_factory)
+        #  Step 3: Use StrategyFactory to create dataset generation strategy 
+        dataset_strategy_creator = DatasetStrategyCreator(
+            self.config, feature_processor_factory, join_factory, strategy_factory
+        )
         self.dataset_strategy: IDatasetGeneratorStrategy = dataset_strategy_creator.create_strategy()
 
     def generate(self) -> ProcessedDataset:
         """
         Generate the dataset by loading data, optionally joining, and processing features.
-        
+
         Returns:
-            features_df: DataFrame containing the features.
-            labels_df: DataFrame containing the labels.
+            ProcessedDataset: The generated dataset containing features and labels.
         """
         # Load the data sources
         dataframes = self.dataset_loader.load_data()
