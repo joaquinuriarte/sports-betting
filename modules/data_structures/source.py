@@ -1,5 +1,6 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import List
+from modules.dataset_generator.interfaces.data_io_interface import DataIO
 
 @dataclass
 class Source:
@@ -15,3 +16,4 @@ class Source:
     path: str
     columns: List[str]
     file_type: str
+    file_reader: DataIO = field(default=None)
