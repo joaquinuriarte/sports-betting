@@ -1,23 +1,27 @@
 from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
-from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
-from modules.dataset_generator.factories.join_factory import JoinFactory
-from modules.dataset_generator.factories.strategy_factory import StrategyFactory
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
-from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
+from modules.data_structures.dataset_config import DatasetConfig
 
 class DatasetStrategyCreator:
     """
     Creates dataset generation strategies based on the configuration.
 
-    This class takes in configuration details, such as the strategy name, join operation type, and feature processing type,
-    and utilizes the join and feature processor factories to create the appropriate dataset generation strategy.
+    This class utilizes the feature processor, join, and strategy factories
+    to create the appropriate dataset generation strategy based on the DatasetConfig.
     """
 
-    def __init__(self, strategy_name: str, join_operation_type: str, feature_processing_type: str, feature_processor_factory: IFactory, join_factory: IFactory, strategy_factory: IFactory):
-        self.strategy_name = strategy_name
-        self.join_operation_type = join_operation_type
-        self.feature_processing_type = feature_processing_type
+    def __init__(self, config: DatasetConfig, feature_processor_factory: IFactory, join_factory: IFactory, strategy_factory: IFactory):
+        """
+        Initializes the strategy creator with the provided configuration and factories.
+
+        Args:
+            config (DatasetConfig): The dataset configuration containing strategy details.
+            feature_processor_factory (IFactory): Factory to create feature processors.
+            join_factory (IFactory): Factory to create join operations.
+            strategy_factory (IFactory): Factory to create strategies.
+        """
+        self.config = config
         self.feature_processor_factory = feature_processor_factory
         self.join_factory = join_factory
         self.strategy_factory = strategy_factory
@@ -25,27 +29,24 @@ class DatasetStrategyCreator:
     def create_strategy(self) -> IDatasetGeneratorStrategy:
         """
         Creates the appropriate dataset generation strategy.
-        
-        Args:
-            strategy_name (str): Name of the dataset generation strategy (e.g., 'join_based', 'no_join').
-            join_operation_type (str): Type of join operation to use (optional, e.g., 'inner', 'left', 'right').
-            feature_processing_type (str): Type of feature processor to use (e.g., 'top_n_players').
 
         Returns:
             IDatasetGeneratorStrategy: An instance of the dataset generation strategy.
         """
-        # Create feature processor instance
-        feature_processor: IFeatureProcessorOperator = self.feature_processor_factory.create(self.feature_processing_type)
+        # Step 1: Create feature processor instance
+        feature_processor: IFeatureProcessorOperator = self.feature_processor_factory.create(
+            self.config.feature_processor
+        )
 
-        # Create join operations list if join operation type is specified
-        join_operations = []
-        if self.join_operation_type:
-            for _ in range(len(self.join_operation_type.split(','))):
-                join_operator: IJoinOperator = self.join_factory.create(self.join_operation_type)
-                join_operations.append(join_operator)
+        # Step 2: Create join operations from the list of join types
+        join_operations = [
+            self.join_factory.create(join_type)
+            for join_type in self.config.joins
+        ]
 
-        # Create and return strategy
-        dataset_generation_strategy: IDatasetGeneratorStrategy = self.strategy_factory.create(self.strategy_name, feature_processor, join_operations)
+        # Step 3: Create and return the strategy using the strategy factory
+        dataset_generation_strategy: IDatasetGeneratorStrategy = self.strategy_factory.create(
+            self.config.strategy, feature_processor, join_operations
+        )
 
-        # Return instantiated strategy
         return dataset_generation_strategy
