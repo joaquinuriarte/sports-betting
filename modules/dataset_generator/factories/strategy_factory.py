@@ -11,7 +11,7 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.data_structures.dataset_config import JoinOperation
-from typing import List, Optional
+from typing import List
 
 
 class StrategyFactory(IFactory):
