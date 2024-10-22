@@ -1,42 +1,43 @@
 model:
   # Model's training data
-  sources:
-    - name: 'games'
-      path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
-      file_type: 'csv'
-      columns:
-        - 'GAME_DATE_EST'
-        - 'GAME_ID'
-        - 'HOME_TEAM_ID'
-        - 'VISITOR_TEAM_ID'
-        - 'PTS_home'
-        - 'PTS_away'
+  dataset:
+    sources:
+      - name: 'games'
+        path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
+        file_type: 'csv'
+        columns:
+          - 'GAME_DATE_EST'
+          - 'GAME_ID'
+          - 'HOME_TEAM_ID'
+          - 'VISITOR_TEAM_ID'
+          - 'PTS_home'
+          - 'PTS_away'
 
-    - name: 'game_details'
-      path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
-      file_type: 'csv'
-      columns:
-        - 'GAME_ID'
-        - 'TEAM_ID'
-        - 'PLAYER_ID'
-        - 'MIN'
-        - 'PTS'
-        - 'AST'
-        - 'TO'
-        - 'PLUS_MINUS'
-        - 'OREB'
-        - 'DREB'
-        - 'PF'
-        - 'FG3_PCT'
-        - 'FG_PCT'
-        - 'FT_PCT'
-  joins:
-    - left: 'games'
-      right: 'game_details'
-      keys: ['GAME_ID']
-      type: 'left'
-  feature_processor: 'top_n_players'
-  strategy: 'join_based'
+      - name: 'game_details'
+        path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
+        file_type: 'csv'
+        columns:
+          - 'GAME_ID'
+          - 'TEAM_ID'
+          - 'PLAYER_ID'
+          - 'MIN'
+          - 'PTS'
+          - 'AST'
+          - 'TO'
+          - 'PLUS_MINUS'
+          - 'OREB'
+          - 'DREB'
+          - 'PF'
+          - 'FG3_PCT'
+          - 'FG_PCT'
+          - 'FT_PCT'
+    joins:
+      - left: 'games'
+        right: 'game_details'
+        keys: ['GAME_ID']
+        type: 'left'
+    feature_processor: 'top_n_players'
+    strategy: 'join_based'
 
   # Model's architecture configuration
   architecture:
