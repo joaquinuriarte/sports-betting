@@ -26,7 +26,7 @@ class ConfigurationLoader:
                 file_type=source['file_type'],
                 columns=source['columns']
             )
-            for source in config['model_v0']['dataset']['sources']
+            for source in config['model']['dataset']['sources']
         ]
 
         # Parse the join operations
@@ -37,16 +37,16 @@ class ConfigurationLoader:
                 "keys": join['keys'],
                 "type": join['type']
             }
-            for join in config['model_v0']['dataset']['joins']
+            for join in config['model']['dataset']['joins']
         ]
 
         # Create the DatasetConfig object
         dataset_config = DatasetConfig(
             sources=sources,
             joins=joins,
-            feature_processor=config['model_v0']['dataset']['feature_processor'],
-            strategy=config['model_v0']['dataset']['strategy'],
-            name="model_v0"
+            feature_processor=config['model']['dataset']['feature_processor'],
+            strategy=config['model']['dataset']['strategy'],
+            name="model"
         )
 
         return dataset_config
