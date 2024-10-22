@@ -1,6 +1,8 @@
 from .source import Source
 from dataclasses import dataclass
 from typing import List, Optional
+from typing import TypedDict
+from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 
 @dataclass
 class DatasetConfig:
@@ -21,3 +23,10 @@ class DatasetConfig:
     feature_processor: str
     strategy: str
     name: Optional[str] = ""
+
+class JoinOperation(TypedDict):
+    """
+    TypedDict representing a join operation and its associated keys.
+    """
+    operator: IJoinOperator
+    keys: List[str]

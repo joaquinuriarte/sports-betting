@@ -1,27 +1,45 @@
 import pandas as pd
+from typing import List, Optional, Tuple
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from typing import List
 
 class LeftJoinOperation(IJoinOperator):
     """
-    Performs a left join on the provided dataframes.
+    Performs a left join on the provided DataFrames.
     """
 
-    def perform_join(self, dataframes: List[pd.DataFrame]) -> pd.DataFrame:
-        return dataframes[0].merge(dataframes[1], how='left')
+    def perform_join(
+        self, 
+        left: pd.DataFrame, 
+        right: pd.DataFrame, 
+        keys: List[str], 
+        suffixes: Optional[Tuple[str, str]] = ("_x", "_y")
+    ) -> pd.DataFrame:
+        return left.merge(right, how='left', on=keys, suffixes=suffixes)
 
 class RightJoinOperation(IJoinOperator):
     """
-    Performs a right join on the provided dataframes.
+    Performs a right join on the provided DataFrames.
     """
 
-    def perform_join(self, dataframes: List[pd.DataFrame]) -> pd.DataFrame:
-        return dataframes[0].merge(dataframes[1], how='right')
+    def perform_join(
+        self, 
+        left: pd.DataFrame, 
+        right: pd.DataFrame, 
+        keys: List[str], 
+        suffixes: Optional[Tuple[str, str]] = ("_x", "_y")
+    ) -> pd.DataFrame:
+        return left.merge(right, how='right', on=keys, suffixes=suffixes)
 
 class InnerJoinOperation(IJoinOperator):
     """
-    Performs an inner join on the provided dataframes.
+    Performs an inner join on the provided DataFrames.
     """
 
-    def perform_join(self, dataframes: List[pd.DataFrame]) -> pd.DataFrame:
-        return dataframes[0].merge(dataframes[1], how='inner')
+    def perform_join(
+        self, 
+        left: pd.DataFrame, 
+        right: pd.DataFrame, 
+        keys: List[str], 
+        suffixes: Optional[Tuple[str, str]] = ("_x", "_y")
+    ) -> pd.DataFrame:
+        return left.merge(right, how='inner', on=keys, suffixes=suffixes)

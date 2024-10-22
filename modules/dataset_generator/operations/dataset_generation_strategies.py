@@ -1,15 +1,16 @@
 import pandas as pd
-from typing import List, Dict
+from typing import List
 from modules.data_structures.processed_dataset import ProcessedDataset
 from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.data_structures.dataset_config import JoinOperation
 
 class JoinBasedGenerator(IDatasetGeneratorStrategy):
     """
     Implements a strategy to join multiple data sources to generate a unified DataFrame.
     """
 
-    def __init__(self, join_operations: List[Dict], feature_processor: IFeatureProcessorOperator):
+    def __init__(self, join_operations: List[JoinOperation], feature_processor: IFeatureProcessorOperator):
         self.join_operations = join_operations
         self.feature_processor = feature_processor
 

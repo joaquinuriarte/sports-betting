@@ -6,9 +6,6 @@ from modules.data_structures.dataset_config import DatasetConfig
 class DatasetStrategyCreator:
     """
     Creates dataset generation strategies based on the configuration.
-
-    This class utilizes the feature processor, join, and strategy factories
-    to create the appropriate dataset generation strategy based on the DatasetConfig.
     """
 
     def __init__(self, config: DatasetConfig, feature_processor_factory: IFactory, join_factory: IFactory, strategy_factory: IFactory):
@@ -38,10 +35,13 @@ class DatasetStrategyCreator:
             self.config.feature_processor
         )
 
-        # Step 2: Create join operations from the list of join types
+        # Create join operations with keys
         join_operations = [
-            self.join_factory.create(join_type)
-            for join_type in self.config.joins
+            {
+                "operator": self.join_factory.create(join),
+                "keys": join["keys"]
+            }
+            for join in self.config.joins
         ]
 
         # Step 3: Create and return the strategy using the strategy factory
@@ -50,3 +50,4 @@ class DatasetStrategyCreator:
         )
 
         return dataset_generation_strategy
+

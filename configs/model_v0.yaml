@@ -1,9 +1,9 @@
-model_v0:
+model:
   # Model's training data
   sources:
-    - path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
+    - name: 'games'
+      path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
       file_type: 'csv'
-      join_side: 'right'
       columns:
         - 'GAME_DATE_EST'
         - 'GAME_ID'
@@ -11,9 +11,10 @@ model_v0:
         - 'VISITOR_TEAM_ID'
         - 'PTS_home'
         - 'PTS_away'
-    - path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
+
+    - name: 'game_details'
+      path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
       file_type: 'csv'
-      join_side: 'left'
       columns:
         - 'GAME_ID'
         - 'TEAM_ID'
@@ -29,8 +30,13 @@ model_v0:
         - 'FG3_PCT'
         - 'FG_PCT'
         - 'FT_PCT'
-  join_keys: ['GAME_ID']
-  join_type: 'left'
+  joins:
+    - left: 'games'
+      right: 'game_details'
+      keys: ['GAME_ID']
+      type: 'left'
+  feature_processor: 'top_n_players'
+  strategy: 'join_based'
 
   # Model's architecture configuration
   architecture:
