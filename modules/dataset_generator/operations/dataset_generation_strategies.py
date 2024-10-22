@@ -1,16 +1,25 @@
 import pandas as pd
 from typing import List
 from modules.data_structures.processed_dataset import ProcessedDataset
-from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.strategy_interface import (
+    IDatasetGeneratorStrategy,
+)
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+    IFeatureProcessorOperator,
+)
 from modules.data_structures.dataset_config import JoinOperation
+
 
 class JoinBasedGenerator(IDatasetGeneratorStrategy):
     """
     Implements a strategy to join multiple data sources to generate a unified DataFrame.
     """
 
-    def __init__(self, join_operations: List[JoinOperation], feature_processor: IFeatureProcessorOperator):
+    def __init__(
+        self,
+        join_operations: List[JoinOperation],
+        feature_processor: IFeatureProcessorOperator,
+    ):
         self.join_operations = join_operations
         self.feature_processor = feature_processor
 
@@ -33,6 +42,7 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
 
         features_df, labels_df = self.feature_processor.process(result_df)
         return ProcessedDataset(features=features_df, labels=labels_df)
+
 
 class NoJoinGenerator(IDatasetGeneratorStrategy):
     """

@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 import pandas as pd
 
+
 @dataclass
 class ProcessedDataset:
     """
@@ -10,5 +11,6 @@ class ProcessedDataset:
         features (pd.DataFrame): The feature data.
         labels (pd.DataFrame): The label data.
     """
+
     features: pd.DataFrame
     labels: pd.DataFrame

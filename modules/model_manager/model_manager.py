@@ -7,11 +7,15 @@ FeatureName = str
 
 # Describes an individual model feature.
 # Feature is a mapping from a feature name to its data.
-Feature = Dict[FeatureName, 'ModelData']  # 'ModelData' can be defined according to your specific needs.
+Feature = Dict[
+    FeatureName, "ModelData"
+]  # 'ModelData' can be defined according to your specific needs.
+
 
 @dataclass
 class Example:
     features: List[Feature]
+
 
 class ModelDataset:
     examples: List[Example]
@@ -19,11 +23,14 @@ class ModelDataset:
     def __init__(self, examples: List[Example]):
         self.examples = examples
 
+
 @dataclass
 class ModelConfig:
     """Contains model configurations."""
+
     model_path: Optional[str] = None
     inference_mode: bool = True
+
 
 class ModelManager(ABC):
     def __init__(self):

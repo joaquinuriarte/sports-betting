@@ -1,6 +1,7 @@
 import yaml
 import os
 
+
 def load_model_config(config_path: str, model_name: str) -> dict:
     """
     Loads and returns the configuration for a specific model from a YAML file.

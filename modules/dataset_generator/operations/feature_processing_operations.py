@@ -1,6 +1,9 @@
 import pandas as pd
 from typing import Tuple
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+    IFeatureProcessorOperator,
+)
+
 
 class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     """
@@ -9,8 +12,8 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
 
     def process(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
         # Placeholder implementation for processing features and labels
-        features_df = dataframe.drop(columns=['label'])
-        labels_df = dataframe[['label']]
+        features_df = dataframe.drop(columns=["label"])
+        labels_df = dataframe[["label"]]
         return features_df, labels_df
 
 

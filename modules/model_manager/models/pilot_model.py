@@ -20,7 +20,9 @@ class ModelManagerV0(ModelManager):
         self.config_path = config_path
         self.model_name = model_name
 
-    def setup_model(self, config: ModelConfig): #TODO if modelconfig is passed with a path to a model then self.training_config would break?
+    def setup_model(
+        self, config: ModelConfig
+    ):  # TODO if modelconfig is passed with a path to a model then self.training_config would break?
         if config.model_path:  # TODO Where will this sit?
             # Load model from file
             self.model = torch.load(config.model_path)
@@ -73,7 +75,7 @@ class ModelManagerV0(ModelManager):
                 running_loss += loss.item()
 
             print(f"Epoch {epoch + 1}, Loss: {running_loss}")
-        
+
         # Save the model after training
 
     def run_inference(self, data: ModelDataset) -> ModelDataset:

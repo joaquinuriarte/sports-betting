@@ -10,6 +10,7 @@ class DatasetLoaderCreator:
     Creates a DatasetLoader object with its arguments.
     It uses the DataIOFactory to obtain the appropriate data readers for each source.
     """
+
     def __init__(self, config: DatasetConfig, factory: IFactory):
         """
         Initializes the DatasetLoaderCreator with the dataset configuration and factory.
@@ -35,9 +36,8 @@ class DatasetLoaderCreator:
             # Use the factory to create a DataIO reader based on the file type
             data_io: DataIO = self.factory.create(source.file_type)
             # Set the reader inside the source object (optional but useful for consistency)
-            source.file_reader = data_io  
+            source.file_reader = data_io
             data_loaders.append(data_io)
 
         # Create and return the DatasetLoader with the sources and their data readers
         return DatasetLoader(data_loaders, self.config.sources)
-

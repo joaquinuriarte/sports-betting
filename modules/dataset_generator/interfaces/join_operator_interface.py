@@ -2,6 +2,7 @@ import pandas as pd
 from abc import ABC, abstractmethod
 from typing import List, Optional, Tuple
 
+
 class IJoinOperator(ABC):
     """
     Interface for join operations.
@@ -9,11 +10,11 @@ class IJoinOperator(ABC):
 
     @abstractmethod
     def perform_join(
-        self, 
-        left: pd.DataFrame, 
-        right: pd.DataFrame, 
-        keys: List[str], 
-        suffixes: Optional[Tuple[str, str]] = ("_x", "_y")
+        self,
+        left: pd.DataFrame,
+        right: pd.DataFrame,
+        keys: List[str],
+        suffixes: Optional[Tuple[str, str]] = ("_x", "_y"),
     ) -> pd.DataFrame:
         """
         Performs a join on two DataFrames using the given keys.

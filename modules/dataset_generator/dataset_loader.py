@@ -23,7 +23,7 @@ class DatasetLoader:
     def load_data(self) -> List[pd.DataFrame]:
         """
         Loads the data from all sources.
-        
+
         Returns:
             list: List of DataFrames for each data source.
         """

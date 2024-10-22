@@ -2,6 +2,7 @@ from dataclasses import dataclass, field
 from typing import List
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 
+
 @dataclass
 class Source:
     """
@@ -13,6 +14,7 @@ class Source:
         file_type (str): The type of file (e.g., 'csv', 'xml', 'txt').
         file_reader (DataIO): Instance of DataIO for reading the file.
     """
+
     path: str
     columns: List[str]
     file_type: str
