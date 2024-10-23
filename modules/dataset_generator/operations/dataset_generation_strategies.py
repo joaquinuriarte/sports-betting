@@ -69,7 +69,9 @@ class NoJoinGenerator(IDatasetGeneratorStrategy):
             ProcessedDataset: The generated dataset containing features and labels.
         """
         # Process the first dataframe directly
-        processed_dataset: ProcessedDataset = self.feature_processor.process(dataframes[0])
+        processed_dataset: ProcessedDataset = self.feature_processor.process(
+            dataframes[0]
+        )
 
         # Return wrapped ProcessedDataset
         return processed_dataset
