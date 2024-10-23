@@ -40,8 +40,8 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
             right_df = dataframes[i + 1]
             result_df = operator.perform_join(result_df, right_df, keys)
 
-        features_df, labels_df = self.feature_processor.process(result_df)
-        return ProcessedDataset(features=features_df, labels=labels_df)
+        processed_dataset: ProcessedDataset = self.feature_processor.process(result_df)
+        return processed_dataset
 
 
 class NoJoinGenerator(IDatasetGeneratorStrategy):
@@ -69,7 +69,7 @@ class NoJoinGenerator(IDatasetGeneratorStrategy):
             ProcessedDataset: The generated dataset containing features and labels.
         """
         # Process the first dataframe directly
-        features_df, labels_df = self.feature_processor.process(dataframes[0])
+        processed_dataset: ProcessedDataset = self.feature_processor.process(dataframes[0])
 
         # Return wrapped ProcessedDataset
-        return ProcessedDataset(features=features_df, labels=labels_df)
+        return processed_dataset

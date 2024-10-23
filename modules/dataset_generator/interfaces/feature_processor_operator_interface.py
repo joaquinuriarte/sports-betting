@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from typing import Tuple
 import pandas as pd
+from modules.data_structures.processed_dataset import ProcessedDataset
 
 
 class IFeatureProcessorOperator(ABC):
@@ -9,5 +10,5 @@ class IFeatureProcessorOperator(ABC):
     """
 
     @abstractmethod
-    def process(self, dataframe: pd.DataFrame) -> Tuple[pd.DataFrame, pd.DataFrame]:
+    def process(self, dataframe: pd.DataFrame) -> ProcessedDataset:
         pass

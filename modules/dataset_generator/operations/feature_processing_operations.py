@@ -4,6 +4,7 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
     IFeatureProcessorOperator,
 )
 
+# Return the new processed dataframe object
 
 class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     """
@@ -22,7 +23,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
 # import pandas as pd
 
 
-# class FeatureProcessorParams:
+# class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
 #     """
 #     A class that stores parameters and provides methods for processing player statistics
 #     and generating feature vectors for games.
