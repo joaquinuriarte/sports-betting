@@ -18,4 +18,3 @@ class Source:
     path: str
     columns: List[str]
     file_type: str
-    file_reader: DataIO = field(default=None)

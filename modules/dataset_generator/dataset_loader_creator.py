@@ -35,8 +35,7 @@ class DatasetLoaderCreator:
         for source in self.config.sources:
             # Use the factory to create a DataIO reader based on the file type
             data_io: DataIO = self.factory.create(source.file_type)
-            # Set the reader inside the source object (optional but useful for consistency)
-            source.file_reader = data_io
+            
             data_loaders.append(data_io)
 
         # Create and return the DatasetLoader with the sources and their data readers

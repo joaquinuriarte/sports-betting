@@ -13,6 +13,7 @@ networkx==3.1
 numpy==1.24.4
 packaging==24.0
 pandas==2.0.3
+pandas-stubs==2.0.3.230814
 pathspec==0.12.1
 platformdirs==4.2.0
 pluggy==1.5.0
@@ -24,5 +25,6 @@ six==1.16.0
 sympy==1.13.2
 tomli==2.0.1
 torch==2.2.2
+types-pytz==2024.2.0.20241003
 typing_extensions==4.11.0
 tzdata==2024.1
