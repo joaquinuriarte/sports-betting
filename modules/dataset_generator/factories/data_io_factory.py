@@ -9,7 +9,7 @@ class DataIOFactory(IFactory):
     """
 
     @staticmethod
-    def create_reader(file_type: str) -> DataIO:
+    def create(file_type: str) -> DataIO:
         """
         Creates a DataIO reader instance based on the provided file type.
 

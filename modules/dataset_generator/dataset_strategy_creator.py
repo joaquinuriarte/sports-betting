@@ -43,7 +43,12 @@ class DatasetStrategyCreator:
         """
         # Step 1: Create feature processor instance
         feature_processor: IFeatureProcessorOperator = (
-            self.feature_processor_factory.create(self.config.feature_processor)
+            self.feature_processor_factory.create(
+                self.config.feature_processor_type,
+                self.config.top_n_players,
+                self.config.sorting_criteria,
+                self.config.player_stats_columns
+            )
         )
 
         # Create join operations with keys

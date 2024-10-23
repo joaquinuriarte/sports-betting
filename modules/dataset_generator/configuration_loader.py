@@ -41,13 +41,16 @@ class ConfigurationLoader:
             for join in config["model"]["dataset"]["joins"]
         ]
 
-        # Create the DatasetConfig object
-        dataset_config = DatasetConfig(
+        # Parse the feature processor section
+        feature_processor = config["model"]["feature_processor"]
+
+        # Create and return the DatasetConfig object
+        return DatasetConfig(
             sources=sources,
             joins=joins,
-            feature_processor=config["model"]["dataset"]["feature_processor"],
-            strategy=config["model"]["dataset"]["strategy"],
-            name="model",
+            strategy=config["model"]["strategy"],
+            feature_processor_type=feature_processor["type"],
+            top_n_players=feature_processor["top_n_players"],
+            sorting_criteria=feature_processor["sorting_criteria"],
+            player_stats_columns=feature_processor["player_stats_columns"],
         )
-
-        return dataset_config

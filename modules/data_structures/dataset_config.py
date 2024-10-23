@@ -21,9 +21,11 @@ class DatasetConfig:
 
     sources: List[Source]
     joins: List[str]
-    feature_processor: str
     strategy: str
-    name: Optional[str] = ""
+    feature_processor_type: str
+    top_n_players: int
+    sorting_criteria: str
+    player_stats_columns: List[str]
 
 
 class JoinOperation(TypedDict):

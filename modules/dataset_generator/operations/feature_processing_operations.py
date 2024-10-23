@@ -1,11 +1,3 @@
-################################
-###############################
-# Add to yaml, strategy creator, datastructures, configLoader, factory -> the below info pieces as info to be fed to this class upon initialization# player_stats_columns = [
-#             "MIN", "PTS", "AST", "TO", "PLUS_MINUS",
-#             "OREB", "DREB", "PF", "FG3_PCT", "FG_PCT", "FT_PCT"
-#         ]
-# top_n_players: int = 8, sorting_criteria: str = "MIN"
-
 import pandas as pd
 import numpy as np
 from typing import Optional, List

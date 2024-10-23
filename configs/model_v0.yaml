@@ -36,8 +36,23 @@ model:
         right: 'game_details'
         keys: ['GAME_ID']
         type: 'left'
-    feature_processor: 'top_n_players'
-    strategy: 'join_based'
+  feature_processor:
+    type: 'top_n_players'
+    top_n_players: 8
+    sorting_criteria: 'MIN'
+    player_stats_columns:
+      - 'MIN'
+      - 'PTS'
+      - 'AST'
+      - 'TO'
+      - 'PLUS_MINUS'
+      - 'OREB'
+      - 'DREB'
+      - 'PF'
+      - 'FG3_PCT'
+      - 'FG_PCT'
+      - 'FT_PCT'
+  strategy: 'join_based'
 
   # Model's architecture configuration
   architecture:
