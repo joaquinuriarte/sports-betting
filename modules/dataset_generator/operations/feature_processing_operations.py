@@ -1,7 +1,6 @@
 ################################
 ###############################
-# Add to yaml, strategy creator, datastructures, configLoader, factory
-# player_stats_columns = [
+# Add to yaml, strategy creator, datastructures, configLoader, factory -> the below info pieces as info to be fed to this class upon initialization# player_stats_columns = [
 #             "MIN", "PTS", "AST", "TO", "PLUS_MINUS",
 #             "OREB", "DREB", "PF", "FG3_PCT", "FG_PCT", "FT_PCT"
 #         ]
