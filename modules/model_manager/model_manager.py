@@ -2,6 +2,8 @@ from abc import ABC, abstractmethod
 from dataclasses import dataclass
 from typing import List, Dict, Optional
 
+
+########### Datastructures ###############
 # Represents a unique name for a model feature.
 FeatureName = str
 
@@ -30,7 +32,13 @@ class ModelConfig:
 
     model_path: Optional[str] = None
     inference_mode: bool = True
+    model_dataset: ModelDataset = None
 
+
+########### Datastructures ###############
+
+# We need a configuration loader
+# It needs to create the tensors 
 
 class ModelManager(ABC):
     def __init__(self):
