@@ -13,11 +13,13 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
+    def save_model(self, path: str):
+        """Saves the model weights to the specified path."""
+        pass
+
+    @abstractmethod
     def predict(self, new_data: pd.DataFrame) -> pd.DataFrame:
         """Runs inference on the new data and returns predictions."""
         pass
 
-    @abstractmethod
-    def save_model(self, path: str):
-        """Saves the model weights to the specified path."""
-        pass
+    
