@@ -1,15 +1,15 @@
 from modules.dataset_generator.operations.data_readers import CsvIO, TxtIO, XmlIO
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 from modules.dataset_generator.interfaces.factory_interface import IFactory
+from typing import Any
 
-
-class DataIOFactory(IFactory):
+class DataIOFactory(IFactory[DataIO]):
     """
     Factory for creating data readers based on file type.
     """
 
     @staticmethod
-    def create(file_type: str) -> DataIO:
+    def create(type_name: str, *args: Any, **kwargs: Any) -> DataIO:
         """
         Creates a DataIO reader instance based on the provided file type.
 
@@ -19,11 +19,11 @@ class DataIOFactory(IFactory):
         Returns:
             DataIO: An instance of the appropriate DataIO reader.
         """
-        if file_type == "csv":
+        if type_name == "csv":
             return CsvIO()
-        elif file_type == "xml":
+        elif type_name == "xml":
             return XmlIO()
-        elif file_type == "txt":
+        elif type_name == "txt":
             return TxtIO()
         else:
-            raise ValueError(f"Unsupported file type: {file_type}")
+            raise ValueError(f"Unsupported file type: {type_name}")

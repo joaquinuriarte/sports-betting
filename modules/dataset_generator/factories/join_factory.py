@@ -5,16 +5,16 @@ from modules.dataset_generator.operations.join_operations import (
 )
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
-from typing import Dict
+from typing import Dict, Any
 
 
-class JoinFactory(IFactory):
+class JoinFactory(IFactory[IJoinOperator]):
     """
     Factory for creating join operations based on the type specified.
     """
 
     @staticmethod
-    def create(join_info: Dict) -> IJoinOperator:
+    def create(type_name: str, *args: Any, **kwargs: Any) -> IJoinOperator:
         """
         Creates a JoinOperation instance based on the provided join type.
 
@@ -24,13 +24,11 @@ class JoinFactory(IFactory):
         Returns:
             IJoinOperator: An instance of the appropriate JoinOperation.
         """
-        join_type = join_info["type"]
-
-        if join_type == "inner":
+        if type_name == "inner":
             return InnerJoinOperation()
-        elif join_type == "left":
+        elif type_name == "left":
             return LeftJoinOperation()
-        elif join_type == "right":
+        elif type_name == "right":
             return RightJoinOperation()
         else:
-            raise ValueError(f"Unsupported join type: {join_type}")
+            raise ValueError(f"Unsupported join type: {type_name}")

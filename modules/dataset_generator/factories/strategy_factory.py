@@ -11,20 +11,16 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.data_structures.dataset_config import JoinOperation
-from typing import List
+from typing import List, Any
 
 
-class StrategyFactory(IFactory):
+class StrategyFactory(IFactory[IDatasetGeneratorStrategy]):
     """
     Factory for creating dataset generation strategies based on the configuration.
     """
 
     @staticmethod
-    def create(
-        strategy_name: str,
-        feature_processor: IFeatureProcessorOperator,
-        join_operations: List[JoinOperation] = None,
-    ) -> IDatasetGeneratorStrategy:
+    def create(type_name: str, *args: Any, **kwargs: Any) -> IDatasetGeneratorStrategy:
         """
         Creates the appropriate dataset generation strategy.
 
@@ -36,15 +32,15 @@ class StrategyFactory(IFactory):
         Returns:
             IDatasetGeneratorStrategy: An instance of the appropriate dataset generation strategy.
         """
-        if strategy_name == "join_based":
+        if type_name == "join_based":
             dataset_generation_strategy: IDatasetGeneratorStrategy = JoinBasedGenerator(
-                join_operations, feature_processor
+                join_operations= kwargs.get("join_operations"), feature_processor=kwargs.get("feature_processor")
             )
             return dataset_generation_strategy
-        elif strategy_name == "no_join":
+        elif type_name == "no_join":
             dataset_generation_strategy: IDatasetGeneratorStrategy = NoJoinGenerator(
-                feature_processor
+                feature_processor=kwargs.get("feature_processor")
             )
             return dataset_generation_strategy
         else:
-            raise ValueError(f"Unsupported strategy name: {strategy_name}")
+            raise ValueError(f"Unsupported strategy name: {type_name}")

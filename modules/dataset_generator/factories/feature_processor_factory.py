@@ -5,21 +5,16 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
     IFeatureProcessorOperator,
 )
 from modules.dataset_generator.interfaces.factory_interface import IFactory
-from typing import List
+from typing import List, Any
 
 
-class FeatureProcessorFactory(IFactory):
+class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
     """
     Factory for creating feature processors based on the type specified.
     """
 
     @staticmethod
-    def create(
-        processing_type: str,
-        top_n_players: int,
-        sorting_criteria: str,
-        player_stats_columns: List[str],
-    ) -> IFeatureProcessorOperator:
+    def create(type_name: str, *args: Any, **kwargs: Any) -> IFeatureProcessorOperator:
         """
         Creates a feature processor instance based on the provided processing type.
 
@@ -35,12 +30,12 @@ class FeatureProcessorFactory(IFactory):
         Raises:
             ValueError: If the provided processing type is not supported.
         """
-        if processing_type == "top_n_players":
+        if type_name == "top_n_players":
             feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessor(
-                top_n_players=top_n_players,
-                sorting_criteria=sorting_criteria,
-                player_stats_columns=player_stats_columns,
+                top_n_players=kwargs.get("top_n_players"),
+                sorting_criteria=kwargs.get("sorting_criteria"),
+                player_stats_columns=kwargs.get("player_stats_columns"),
             )
             return feature_processor
         else:
-            raise ValueError(f"Unsupported feature processing type: {processing_type}")
+            raise ValueError(f"Unsupported feature processing type: {type_name}")
