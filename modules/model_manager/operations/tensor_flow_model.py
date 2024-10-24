@@ -4,7 +4,7 @@ from ..interfaces.model_interface import IModel
 
 class TensorFlowModel(IModel):
     """
-    A TensorFlow model wrapper that implements the ModelInterface.
+    A TensorFlow model wrapper that implements the IModel interface.
     
     Attributes:
         model (tf.keras.Model): The TensorFlow model instance.
@@ -38,6 +38,18 @@ class TensorFlowModel(IModel):
             metrics=architecture_config.get("metrics", ["accuracy"])
         )
         return model
+
+    def forward(self, x):
+        """
+        Defines the forward pass of the model.
+        
+        Args:
+            x: Input tensor.
+        
+        Returns:
+            Output after passing through the model's layers.
+        """
+        return self.model(x)
 
     def train(self, features: pd.DataFrame, labels: pd.DataFrame, epochs: int = 10, batch_size: int = 32):
         """
