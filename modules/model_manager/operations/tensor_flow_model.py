@@ -1,8 +1,8 @@
 import tensorflow as tf
 import pandas as pd
-from ..interfaces.model_interface import ModelInterface
+from ..interfaces.model_interface import IModel
 
-class TensorFlowModel(ModelInterface):
+class TensorFlowModel(IModel):
     """
     A TensorFlow model wrapper that implements the ModelInterface.
     
