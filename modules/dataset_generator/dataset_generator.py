@@ -13,9 +13,10 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 from modules.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.processed_dataset import ProcessedDataset
+from ..interfaces.dataset_generator_interface import IDatasetGenerator
 
 
-class DatasetGeneration:
+class DatasetGeneration(IDatasetGenerator):
     """
     Main orchestrator for dataset generation.
     """
