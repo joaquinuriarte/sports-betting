@@ -16,7 +16,7 @@ from modules.data_structures.processed_dataset import ProcessedDataset
 from ..interfaces.dataset_generator_interface import IDatasetGenerator
 
 
-class DatasetGeneration(IDatasetGenerator):
+class DatasetGenerator(IDatasetGenerator):
     """
     Main orchestrator for dataset generation.
     """
