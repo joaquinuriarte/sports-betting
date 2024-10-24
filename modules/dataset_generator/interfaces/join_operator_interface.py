@@ -14,7 +14,7 @@ class IJoinOperator(ABC):
         left: pd.DataFrame,
         right: pd.DataFrame,
         keys: List[str],
-        suffixes: Optional[Tuple[str, str]] = ("_x", "_y"),
+        suffixes: Tuple[Optional[str], Optional[str]] = ("_x", "_y"),
     ) -> pd.DataFrame:
         """
         Performs a join on two DataFrames using the given keys.

@@ -81,7 +81,9 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         The feature vector will be:
         [30, 15, 5, 0.45, 28, 18, 7, 0.50]
         """
-        return np.ravel(top_players.values).tolist()
+        # Flatten the values and ensure all elements are cast to float
+        vector = [float(value) for value in np.ravel(top_players.values)]
+        return vector
 
     def process_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """

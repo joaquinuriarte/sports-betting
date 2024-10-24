@@ -13,7 +13,7 @@ class LeftJoinOperation(IJoinOperator):
         left: pd.DataFrame,
         right: pd.DataFrame,
         keys: List[str],
-        suffixes: Optional[Tuple[str, str]] = ("_x", "_y"),
+        suffixes: Tuple[Optional[str], Optional[str]] = ("_x", "_y"),
     ) -> pd.DataFrame:
         return left.merge(right, how="left", on=keys, suffixes=suffixes)
 
@@ -28,7 +28,7 @@ class RightJoinOperation(IJoinOperator):
         left: pd.DataFrame,
         right: pd.DataFrame,
         keys: List[str],
-        suffixes: Optional[Tuple[str, str]] = ("_x", "_y"),
+        suffixes: Tuple[Optional[str], Optional[str]] = ("_x", "_y"),
     ) -> pd.DataFrame:
         return left.merge(right, how="right", on=keys, suffixes=suffixes)
 
@@ -43,6 +43,6 @@ class InnerJoinOperation(IJoinOperator):
         left: pd.DataFrame,
         right: pd.DataFrame,
         keys: List[str],
-        suffixes: Optional[Tuple[str, str]] = ("_x", "_y"),
+        suffixes: Tuple[Optional[str], Optional[str]] = ("_x", "_y"),
     ) -> pd.DataFrame:
         return left.merge(right, how="inner", on=keys, suffixes=suffixes)
