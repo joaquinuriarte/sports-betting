@@ -1,4 +1,5 @@
 import tensorflow as tf
+import pandas as pd
 from ..interfaces.model_interface import ModelInterface
 
 class TensorFlowModel(ModelInterface):
