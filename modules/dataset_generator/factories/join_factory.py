@@ -9,7 +9,7 @@ from typing import Any
 
 
 class JoinFactory(IFactory[IJoinOperator]):
-    """
+    """s
     Factory for creating join operations based on the type specified.
     """
 
