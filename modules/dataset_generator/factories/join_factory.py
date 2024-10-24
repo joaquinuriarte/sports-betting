@@ -4,7 +4,7 @@ from modules.dataset_generator.operations.join_operations import (
     RightJoinOperation,
 )
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from modules.dataset_generator.interfaces.factory_interface import IFactory
+from ...interfaces.factory_interface import IFactory
 from typing import Any
 
 

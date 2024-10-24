@@ -1,6 +1,6 @@
 from modules.dataset_generator.operations.data_readers import CsvIO, TxtIO, XmlIO
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from modules.dataset_generator.interfaces.factory_interface import IFactory
+from ...interfaces.factory_interface import IFactory
 from typing import Any
 
 

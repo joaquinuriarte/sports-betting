@@ -4,7 +4,7 @@ from modules.dataset_generator.operations.feature_processing_operations import (
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from modules.dataset_generator.interfaces.factory_interface import IFactory
+from ...interfaces.factory_interface import IFactory
 from typing import List, Any
 
 

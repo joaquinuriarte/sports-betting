@@ -5,7 +5,7 @@ from modules.dataset_generator.dataset_strategy_creator import DatasetStrategyCr
 from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )
-from modules.dataset_generator.interfaces.factory_interface import IFactory
+from ..interfaces.factory_interface import IFactory
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
