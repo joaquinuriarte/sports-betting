@@ -6,6 +6,9 @@ from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )
 from modules.dataset_generator.interfaces.factory_interface import IFactory
+from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.data_io_interface import DataIO
 from modules.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.processed_dataset import ProcessedDataset
 
@@ -18,10 +21,10 @@ class DatasetGeneration:
     def __init__(
         self,
         config_path: str,
-        data_io_factory: IFactory,
-        feature_processor_factory: IFactory,
-        join_factory: IFactory,
-        strategy_factory: IFactory,
+        data_io_factory: IFactory[DataIO],
+        feature_processor_factory: IFactory[IFeatureProcessorOperator],
+        join_factory: IFactory[IJoinOperator],
+        strategy_factory: IFactory[IDatasetGeneratorStrategy],
     ):
         # Step 1: Load configuration using ConfigurationLoader
         config_loader = ConfigurationLoader(config_path)
