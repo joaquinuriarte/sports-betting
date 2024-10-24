@@ -67,9 +67,9 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
 
         return top_n_players
 
-    def create_feature_vector(self, top_players: pd.DataFrame) -> List[float]:
+    def create_feature_vector(self, top_players: pd.DataFrame) -> pd.DataFrame:
         """
-        Creates a feature vector from the top players' statistics.
+        Creates a feature vector from the top players' statistics, retaining the feature names.
 
         Example:
         Given the following 'top_players' DataFrame:
@@ -78,12 +78,21 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         | 1         | 30  | 15  | 5   | 0.45   |
         | 2         | 28  | 18  | 7   | 0.50   |
 
-        The feature vector will be:
-        [30, 15, 5, 0.45, 28, 18, 7, 0.50]
+        The resulting feature vector will be a DataFrame with columns:
+        | home_player_1_MIN | home_player_1_PTS | home_player_1_AST | ... | home_player_2_FG_PCT |
+        | 30                | 15                | 5                 | ... | 0.50                 |
         """
-        # Flatten the values and ensure all elements are cast to float
-        vector = [float(value) for value in np.ravel(top_players.values)]
-        return vector
+        # Rename columns to include player-specific prefixes for feature distinction
+        renamed_columns = {
+            col: f"home_player_{index + 1}_{col}" for index, col in enumerate(top_players.columns)
+        }
+        top_players_renamed = top_players.rename(columns=renamed_columns)
+        
+        # Flatten the DataFrame to a single row DataFrame
+        top_players_renamed.reset_index(drop=True, inplace=True)
+        feature_vector_df = pd.DataFrame([top_players_renamed.values.flatten()], columns=top_players_renamed.columns)
+
+        return feature_vector_df
 
     def process_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """
@@ -137,31 +146,18 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
                     f"Missing score detected for game {game_id}. Skipping this game."
                 )
                 continue
+            
+            feature_vector_A = self.create_feature_vector(top_n_A)
+            feature_vector_B = self.create_feature_vector(top_n_B)
+            
+            feature_vector = pd.concat([feature_vector_A, feature_vector_B], axis=1)
+            feature_vector["GAME_ID"] = game_id
+            feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
+            feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
+            
+            feature_vectors.append(feature_vector)
 
-            feature_vector = (
-                self.create_feature_vector(top_n_A)
-                + self.create_feature_vector(top_n_B)
-                + [game_data.iloc[0]["PTS_home"], game_data.iloc[0]["PTS_away"]]
-            )
-
-            feature_vectors.append([game_id] + feature_vector)
-
-        columns = (
-            ["GAME_ID"]
-            + [
-                f"home_player_{i}_{stat}"
-                for i in range(1, 9)
-                for stat in self.player_stats_columns
-            ]
-            + [
-                f"visitor_player_{i}_{stat}"
-                for i in range(1, 9)
-                for stat in self.player_stats_columns
-            ]
-            + ["final_score_A", "final_score_B"]
-        )
-
-        return pd.DataFrame(feature_vectors, columns=columns)
+        return pd.concat(feature_vectors, ignore_index=True)
 
     def extract_labels(self, df: pd.DataFrame) -> pd.DataFrame:
         """
