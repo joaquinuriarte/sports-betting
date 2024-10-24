@@ -1,5 +1,5 @@
 from ..interfaces.dataset_generator_interface import IDatasetGenerator
-from model_manager.model_manager import ModelManager  # TODO This should be an interface
+from ..interfaces.model_manager_interface import IModelManager
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
@@ -18,7 +18,7 @@ class Processor:
     def __init__(
         self,
         config_path: str,
-        model_manager: ModelManager,  # TODO This should be an interface
+        model_manager: IModelManager,
         data_io_factory: IFactory[DataIO],
         feature_processor_factory: IFactory[IFeatureProcessorOperator],
         join_factory: IFactory[IJoinOperator],
@@ -32,8 +32,9 @@ class Processor:
             join_factory=join_factory,
             strategy_factory=strategy_factory,
         )
-
-        self.model_manager = model_manager  # TODO This should be an interface
+        
+        self.config_path = config_path
+        self.model_manager: IModelManager = model_manager # TODO we need to construct instance here. What parameters does it accept? Overlap with step 2 below
 
     def train_model(self):
         """
@@ -42,10 +43,14 @@ class Processor:
         # Step 1: Generate dataset
         processed_dataset: ProcessedDataset = self.dataset_generator.generate()
 
-        # Step 2: Train model using ModelManager
-        self.model_manager.train(processed_dataset)  # TODO Build this
+        # Step 2: Set up the model
+        self.model_manager.setup_model(self.config_path) # TODO we need to build this. This should create datastructures, tensors, ect?
+
+        # Step 3: Train model using ModelManager
+        self.model_manager.train(processed_dataset.features, processed_dataset.labels)
 
         # TODO Should processor deal with saving weights?
+        # Step 4: Save model? Or is that done directly by train?
 
     def run_inference(
         self, new_data: pd.DataFrame

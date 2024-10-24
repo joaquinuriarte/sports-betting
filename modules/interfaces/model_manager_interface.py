@@ -1,9 +1,9 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 
-class ModelManager(ABC):
+class IModelManager(ABC):
     @abstractmethod
-    def setup_model(self, config: dict):
+    def setup_model(self, config: str):
         """Loads model into self.model using the given configuration."""
         pass
 
