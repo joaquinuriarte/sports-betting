@@ -6,16 +6,19 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
     IFeatureProcessorOperator,
 )
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.interfaces.strategy_interface import (
+    IDatasetGeneratorStrategy,
+)
 from modules.dataset_generator.dataset_generator import DatasetGenerator
 from modules.data_structures.processed_dataset import ProcessedDataset
 import pandas as pd
+
 
 class Processor:
     def __init__(
         self,
         config_path: str,
-        model_manager: ModelManager,  #TODO This should be an interface
+        model_manager: ModelManager,  # TODO This should be an interface
         data_io_factory: IFactory[DataIO],
         feature_processor_factory: IFactory[IFeatureProcessorOperator],
         join_factory: IFactory[IJoinOperator],
@@ -30,7 +33,7 @@ class Processor:
             strategy_factory=strategy_factory,
         )
 
-        self.model_manager = model_manager # TODO This should be an interface
+        self.model_manager = model_manager  # TODO This should be an interface
 
     def train_model(self):
         """
@@ -40,11 +43,13 @@ class Processor:
         processed_dataset: ProcessedDataset = self.dataset_generator.generate()
 
         # Step 2: Train model using ModelManager
-        self.model_manager.train(processed_dataset) # TODO Build this
+        self.model_manager.train(processed_dataset)  # TODO Build this
 
         # TODO Should processor deal with saving weights?
 
-    def run_inference(self, new_data: pd.DataFrame): # TODO we could wrap this argument in a class. What logic creates it?
+    def run_inference(
+        self, new_data: pd.DataFrame
+    ):  # TODO we could wrap this argument in a class. What logic creates it?
         """
         Use the trained model to make predictions on new data.
 
@@ -55,5 +60,5 @@ class Processor:
             Predictions from the model.
         """
         # Use the trained model to make predictions
-        predictions = self.model_manager.predict(new_data) # TODO Build this
+        predictions = self.model_manager.predict(new_data)  # TODO Build this
         return predictions
