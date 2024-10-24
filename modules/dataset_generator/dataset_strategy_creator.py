@@ -5,8 +5,9 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
     IFeatureProcessorOperator,
 )
 from modules.dataset_generator.interfaces.factory_interface import IFactory
+from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.data_structures.dataset_config import DatasetConfig
-
+from typing import List, Dict, Any
 
 class DatasetStrategyCreator:
     """
@@ -16,9 +17,9 @@ class DatasetStrategyCreator:
     def __init__(
         self,
         config: DatasetConfig,
-        feature_processor_factory: IFactory,
-        join_factory: IFactory,
-        strategy_factory: IFactory,
+        feature_processor_factory: IFactory[IFeatureProcessorOperator],
+        join_factory: IFactory[IJoinOperator],
+        strategy_factory: IFactory[IDatasetGeneratorStrategy],
     ):
         """
         Initializes the strategy creator with the provided configuration and factories.
@@ -52,8 +53,11 @@ class DatasetStrategyCreator:
         )
 
         # Create join operations with keys
-        join_operations = [
-            {"operator": self.join_factory.create(join), "keys": join["keys"]}
+        join_operations: List[Dict[str, Any]] = [
+            {
+                "operator": self.join_factory.create(join["type"]),
+                "keys": join["keys"]
+            }
             for join in self.config.joins
         ]
 

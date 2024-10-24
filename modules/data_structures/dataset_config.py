@@ -1,9 +1,7 @@
 from .source import Source
 from dataclasses import dataclass
-from typing import List, Optional
-from typing import TypedDict
+from typing import List, TypedDict, Dict, Any
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-
 
 @dataclass
 class DatasetConfig:
@@ -20,7 +18,7 @@ class DatasetConfig:
     """
 
     sources: List[Source]
-    joins: List[str]
+    joins: List[Dict[str, Any]]
     strategy: str
     feature_processor_type: str
     top_n_players: int

@@ -30,11 +30,12 @@ class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
         Raises:
             ValueError: If the provided processing type is not supported.
         """
+        # Default values should indicate error with yaml
         if type_name == "top_n_players":
             feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessor(
-                top_n_players=kwargs.get("top_n_players"),
-                sorting_criteria=kwargs.get("sorting_criteria"),
-                player_stats_columns=kwargs.get("player_stats_columns"),
+                top_n_players=kwargs.get("top_n_players", 8),
+                sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
+                player_stats_columns=kwargs.get("player_stats_columns", ["MIN"]),
             )
             return feature_processor
         else:

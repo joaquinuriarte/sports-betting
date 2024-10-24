@@ -26,5 +26,6 @@ sympy==1.13.2
 tomli==2.0.1
 torch==2.2.2
 types-pytz==2024.2.0.20241003
+types-PyYAML==6.0.12.20240917
 typing_extensions==4.11.0
 tzdata==2024.1

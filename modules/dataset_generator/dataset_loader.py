@@ -1,7 +1,7 @@
 from typing import List
 import pandas as pd
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from modules.data_structures.dataset_config import Source
+from modules.data_structures.source import Source
 
 
 class DatasetLoader:
