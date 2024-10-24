@@ -5,13 +5,10 @@ from modules.dataset_generator.operations.dataset_generation_strategies import (
 from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
-    IFeatureProcessorOperator,
-)
-from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.data_structures.dataset_config import JoinOperation
-from typing import List, Any
+from typing import Any, List, cast
 
 
 class StrategyFactory(IFactory[IDatasetGeneratorStrategy]):
@@ -32,15 +29,16 @@ class StrategyFactory(IFactory[IDatasetGeneratorStrategy]):
         Returns:
             IDatasetGeneratorStrategy: An instance of the appropriate dataset generation strategy.
         """
+        feature_processor = cast(IFeatureProcessorOperator, kwargs.get("feature_processor"))
+        join_operations = cast(List[JoinOperation], kwargs.get("join_operations", []))
+
         if type_name == "join_based":
-            dataset_generation_strategy: IDatasetGeneratorStrategy = JoinBasedGenerator(
-                join_operations= kwargs.get("join_operations"), feature_processor=kwargs.get("feature_processor")
+            return JoinBasedGenerator(
+                join_operations=join_operations, feature_processor=feature_processor
             )
-            return dataset_generation_strategy
         elif type_name == "no_join":
-            dataset_generation_strategy: IDatasetGeneratorStrategy = NoJoinGenerator(
-                feature_processor=kwargs.get("feature_processor")
-            )
-            return dataset_generation_strategy
+            return NoJoinGenerator(
+                feature_processor=feature_processor
+            ) 
         else:
-            raise ValueError(f"Unsupported strategy name: {type_name}")
+            raise ValueError(f"Unsupported strategy name: {type_name}") 

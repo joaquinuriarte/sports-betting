@@ -6,7 +6,7 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
 )
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from modules.data_structures.dataset_config import DatasetConfig
+from modules.data_structures.dataset_config import DatasetConfig, JoinOperation
 from typing import List, Dict, Any
 
 class DatasetStrategyCreator:
@@ -53,11 +53,11 @@ class DatasetStrategyCreator:
         )
 
         # Create join operations with keys
-        join_operations: List[Dict[str, Any]] = [
-            {
-                "operator": self.join_factory.create(join["type"]),
-                "keys": join["keys"]
-            }
+        join_operations: List[JoinOperation] = [
+            JoinOperation(
+                operator=self.join_factory.create(join["type"]),
+                keys=join["keys"],
+            )
             for join in self.config.joins
         ]
 

@@ -5,7 +5,7 @@ from modules.dataset_generator.operations.join_operations import (
 )
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
 from modules.dataset_generator.interfaces.factory_interface import IFactory
-from typing import Dict, Any
+from typing import Any
 
 
 class JoinFactory(IFactory[IJoinOperator]):
