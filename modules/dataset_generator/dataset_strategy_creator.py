@@ -9,6 +9,7 @@ from modules.dataset_generator.interfaces.join_operator_interface import IJoinOp
 from modules.data_structures.dataset_config import DatasetConfig, JoinOperation
 from typing import List, Dict, Any
 
+
 class DatasetStrategyCreator:
     """
     Creates dataset generation strategies based on the configuration.
@@ -48,7 +49,7 @@ class DatasetStrategyCreator:
                 self.config.feature_processor_type,
                 self.config.top_n_players,
                 self.config.sorting_criteria,
-                self.config.player_stats_columns
+                self.config.player_stats_columns,
             )
         )
 

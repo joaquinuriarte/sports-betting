@@ -7,7 +7,9 @@ from modules.dataset_generator.interfaces.strategy_interface import (
 )
 from modules.dataset_generator.interfaces.factory_interface import IFactory
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+    IFeatureProcessorOperator,
+)
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 from modules.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.processed_dataset import ProcessedDataset

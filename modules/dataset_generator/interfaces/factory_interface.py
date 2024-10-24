@@ -3,6 +3,7 @@ from typing import TypeVar, Generic, Any
 
 T = TypeVar("T")
 
+
 class IFactory(ABC, Generic[T]):
     """
     Interface for all factories.

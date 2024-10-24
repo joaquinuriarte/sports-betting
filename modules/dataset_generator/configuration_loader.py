@@ -2,6 +2,7 @@ import yaml
 from modules.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.source import Source
 
+
 class ConfigurationLoader:
     """
     Reads and parses YAML configurations to provide necessary setup information for dataset generation.
