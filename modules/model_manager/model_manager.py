@@ -3,7 +3,7 @@ from ..interfaces.model_manager_interface import IModelManager
 from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
 from .configuration_loader import ConfigurationLoader
-from ..data_structures.processed_dataset import ProcessedDataset
+from ..data_structures.model_dataset import ModelDataset
 import pandas as pd
 
 
@@ -27,15 +27,15 @@ class ModelManager(IModelManager):
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
     
-    def train(self, processed_dataset: ProcessedDataset):
+    def train(self, model_dataset: ModelDataset):
         """
         Trains the model using the provided processed dataset.
-        
+
         Args:
-            processed_dataset (ProcessedDataset): Dataset to train the model with.
+            model_dataset (ModelDataset): Dataset to train the model with.
         """
         trainer = Trainer()
-        trainer.train(self.model, processed_dataset.features, processed_dataset.labels)
+        trainer.train(self.model, model_dataset)
 
     def save_model(self, path: str):
         """
