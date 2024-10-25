@@ -13,6 +13,8 @@ from modules.dataset_generator.dataset_generator import DatasetGenerator
 from modules.data_structures.processed_dataset import ProcessedDataset
 import pandas as pd
 
+# TODO Processor tiene que crear ModelDataset from ProcessedDataset. Using info on yaml, create tensors or any other datatype required for the model. This way we decouple this from model manager and we can train many model configurations on the same dataset without having to redundantly repeat the processedDataset->Modeldataset conversion 
+
 
 class Processor:
     def __init__(

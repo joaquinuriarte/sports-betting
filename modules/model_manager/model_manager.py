@@ -3,6 +3,7 @@ from ..interfaces.model_manager_interface import IModelManager
 from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
 from .configuration_loader import ConfigurationLoader
+from ..data_structures.processed_dataset import ProcessedDataset
 import pandas as pd
 
 
@@ -16,7 +17,6 @@ class ModelManager(IModelManager):
         self.config_loader = ConfigurationLoader(config_path)
         self.model_config: ModelConfig = self.config_loader.load_config()
 
-        # Step 2: Instantiate Model using ModelFactory
         # Step 2: Instantiate Model using ModelFactory
         self.model: IModel = model_factory.create(
             self.model_config.type_name, 
