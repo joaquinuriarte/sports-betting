@@ -11,7 +11,12 @@ class TensorFlowModel(IModel):
         model (tf.keras.Model): The TensorFlow model instance.
     """
     def __init__(self, architecture_config: dict):
+        # Initialize the model architecture and compile it
         self.model = self._initialize_model(architecture_config)
+
+        # Set initial training parameters from the configuration
+        self.epochs = architecture_config.get("epochs", 10)  # Default to 10 if not provided
+        self.batch_size = architecture_config.get("batch_size", 32)  # Default to 32 if not provided
 
     def _initialize_model(self, architecture_config: dict):
         """
@@ -99,3 +104,15 @@ class TensorFlowModel(IModel):
             path (str): Path from which to load the model weights.
         """
         self.model.load_weights(path)
+
+    def get_training_config(self) -> return an object with config or dictionary?:
+        """
+        Sets the training configuration for the model.
+        
+        Args:
+            epochs (int): Number of epochs for training.
+            batch_size (int): Batch size for training.
+        """
+
+        return epich and batch and others?
+        change interface and trainer to use this
