@@ -1,6 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 from ..interfaces.model_interface import IModel
+from ...data_structures.processed_dataset import ProcessedDataset
 
 class TensorFlowModel(IModel):
     """
@@ -39,7 +40,7 @@ class TensorFlowModel(IModel):
         )
         return model
 
-    def forward(self, x):
+    def forward(self, x: tf.Tensor) -> tf.Tensor:
         """
         Defines the forward pass of the model.
         
@@ -51,7 +52,10 @@ class TensorFlowModel(IModel):
         """
         return self.model(x)
 
-    def train(self, features: pd.DataFrame, labels: pd.DataFrame, epochs: int = 10, batch_size: int = 32):
+    def train(self, processed_dataset: ProcessedDataset):
+        epochs = self.model_config.training_epochs
+        batch_size = self.model_config.batch_size
+        self.model.fit(processed_dataset.features, processed_dataset.labels, epochs=epochs, batch_size=batch_size)
         """
         Trains the model using the provided features and labels.
         
@@ -73,8 +77,10 @@ class TensorFlowModel(IModel):
         Returns:
             pd.DataFrame: Predictions for the input data.
         """
-        predictions = self.model.predict(new_data)
-        return pd.DataFrame(predictions)
+        # Convert new_data DataFrame to a tensor before making predictions
+        input_tensor = tf.convert_to_tensor(new_data.values, dtype=tf.float32)
+        predictions = self.forward(input_tensor)
+        return pd.DataFrame(predictions.numpy()) 
 
     def save(self, path: str):
         """
