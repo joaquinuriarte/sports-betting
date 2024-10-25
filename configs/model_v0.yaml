@@ -57,19 +57,20 @@ model:
   # Model's architecture configuration
   architecture:
     input_size: 178 # Each team has an input for their final score and 8 input vectors holding averaged stats for their top 8 players. Each of these vectors contains 11 stats. So the final number of inputs is 2*(1+8*11) = 178
-    output_size: 1 # TODO I need to re-red the paper to figure this one out
-    layers: # TODO We can play around with this later on
-      - type: Linear
+    output_size: 1 # TODO: Need to revisit the research paper to determine the appropriate output size.
+    layers:
+      - type: Dense
         in_features: 10
-        out_features: 128
-      - type: ReLU
-      - type: Linear
+        units: 128
+        activation: ReLU
+      - type: Dense
         in_features: 128
-        out_features: 64
-      - type: ReLU
-      - type: Linear
+        units: 64
+        activation: ReLU
+      - type: linear
         in_features: 64
-        out_features: 1
+        units: 1
+        activation: None
 
   # Training configuration
   training:
