@@ -56,6 +56,7 @@ model:
 
   # Model's architecture configuration
   architecture:
+    types: 'tensorflow'
     input_size: 178 # Each team has an input for their final score and 8 input vectors holding averaged stats for their top 8 players. Each of these vectors contains 11 stats. So the final number of inputs is 2*(1+8*11) = 178
     output_size: 1 # TODO: Need to revisit the research paper to determine the appropriate output size.
     layers:

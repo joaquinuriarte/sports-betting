@@ -12,23 +12,23 @@ class ConfigurationLoader:
 
     def load_config(self) -> ModelConfig:
         """
-        Loads the model configuration from the YAML file.
+        Loads the configuration from the YAML file and returns a ModelConfig instance.
         
         Returns:
-            ModelConfig: A dataclass representing the configuration for the model.
+            ModelConfig: The configuration for the model.
         """
         with open(self.config_path, 'r') as file:
             config_data = yaml.safe_load(file)
-        
-        model_architecture = config_data["model"]["architecture"]
-        training_config = config_data["model"]["training"]
-        save_path = config_data["model"]["save_path"]
 
+        model_data = config_data['model']
+        type_name = model_data['architecture']['type']
+        architecture = model_data['architecture']
+        training = model_data['training']
+        model_path = model_data.get('save_path', None)
+        
         return ModelConfig(
-            model_path=save_path,
-            architecture_config=model_architecture,
-            training_epochs=training_config.get("epochs"),
-            learning_rate=training_config.get("learning_rate"),
-            optimizer=training_config.get("optimizer"),
-            loss_function=training_config.get("loss_function")
+            type_name=type_name,
+            architecture=architecture,
+            training=training,
+            model_path=model_path
         )
