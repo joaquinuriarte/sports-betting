@@ -1,6 +1,6 @@
 from ...interfaces.factory_interface import IFactory
 from ..interfaces.model_interface import IModel
-from ..operations.tensor_flow_model import TensorFlowModel
+from ..operations.tensorflow_model import TensorFlowModel
 from ...data_structures.model_config import ModelConfig
 from typing import Any, Dict
 

@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Any, Dict
 from ...data_structures.model_dataset import Attribute
 
 class IModel(ABC):
@@ -50,11 +50,11 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def set_training_config(self, epochs: int, batch_size: int):
+    def get_training_config(self) -> Dict[str, Any]:
         """
-        Sets the training configuration for the model.
-        Args:
-            epochs (int): Number of epochs for training.
-            batch_size (int): Batch size for training.
+        Gets the current training configuration for the model.
+
+        Returns:
+            dict: Dictionary containing the full model configuration.
         """
         pass
