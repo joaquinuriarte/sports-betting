@@ -15,7 +15,8 @@ class ModelManager(IModelManager):
 
     def __init__(self, config_path: str, model_factory: IFactory[IModel]):
         # Step 1: Load model configuration
-        self.config_loader = ConfigurationLoader(config_path)
+        self.config_path = config_path
+        self.config_loader = ConfigurationLoader(self.config_path)
         self.model_config: ModelConfig = self.config_loader.load_config()
 
         # Step 2: Instantiate Model using ModelFactory
@@ -31,7 +32,7 @@ class ModelManager(IModelManager):
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
     
-    def train(self, model_dataset: ModelDataset):
+    def train(self, model_dataset: ModelDataset, auto_save: bool = False):
         """
         Trains the model using the provided processed dataset.
 
@@ -40,6 +41,10 @@ class ModelManager(IModelManager):
         """
         trainer = Trainer()
         trainer.train(self.model, model_dataset)
+
+        # TODO Decide if this is the right approach. Not sure if it reduces flexibility, or increases safety
+        if auto_save:
+            self.save_model()
 
     def save_model(self):
         """
@@ -52,10 +57,13 @@ class ModelManager(IModelManager):
         model_weights_path = os.path.join(model_directory, f"model_weights_{self.model_signature}.pth")
         self.model.save(model_weights_path)
 
-        # Save the model configuration alongside the model weights
+        # Use ConfigurationLoader to update the model configuration with signature and path
+        self.config_loader.update_config(self.config_path, "model.save_path", model_weights_path)
+
+        # Save the updated YAML configuration alongside the model weights
         config_save_path = os.path.join(model_directory, f"model_config_{self.model_signature}.yaml")
         with open(config_save_path, "w") as config_file:
-            with open(self.model_config, "r") as original_config:
+            with open(self.config_path, "r") as original_config:
                 config_file.write(original_config.read())
 
         print(f"Model saved successfully in directory: {model_directory}")
