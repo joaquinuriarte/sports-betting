@@ -1,4 +1,7 @@
 model:
+  # Placeholder for the generated signature, will be updated dynamically
+  model_signature: ''
+
   # Model's training data
   dataset:
     sources:

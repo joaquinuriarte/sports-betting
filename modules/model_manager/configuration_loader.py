@@ -1,4 +1,4 @@
-import yaml
+import yaml, hashlib
 from modules.data_structures.model_config import ModelConfig
 
 
@@ -19,7 +19,19 @@ class ConfigurationLoader:
         """
         with open(self.config_path, 'r') as file:
             config_data = yaml.safe_load(file)
+        
+        # Generate a signature by hashing the entire YAML configuration
+        config_str = yaml.dump(config_data)
+        signature = hashlib.md5(config_str.encode()).hexdigest()
 
+        # Add the generated signature to the configuration
+        config_data['model_signature'] = signature
+
+        # Save the updated configuration back to the YAML file
+        with open(self.config_path, 'w') as file:
+            yaml.dump(config_data, file)
+
+        # Parse the updated configuration into a ModelConfig object
         model_data = config_data['model']
         type_name = model_data['architecture']['type']
         architecture = model_data['architecture']
@@ -30,5 +42,6 @@ class ConfigurationLoader:
             type_name=type_name,
             architecture=architecture,
             training=training,
-            model_path=model_path
+            model_path=model_path,
+            model_signature=signature
         )

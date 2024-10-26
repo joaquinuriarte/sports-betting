@@ -4,8 +4,9 @@ from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
 from .configuration_loader import ConfigurationLoader
 from ..data_structures.model_dataset import ModelDataset
+from .trainer.trainer import Trainer
 import pandas as pd
-
+import os
 
 class ModelManager(IModelManager):
     """
@@ -23,6 +24,9 @@ class ModelManager(IModelManager):
             self.model_config.architecture
         )
 
+        # Store model signature
+        self.model_signature = self.model_config.model_signature
+
         # Step 3: Load existing model weights if specified in the config
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
@@ -37,14 +41,24 @@ class ModelManager(IModelManager):
         trainer = Trainer()
         trainer.train(self.model, model_dataset)
 
-    def save_model(self, path: str):
+    def save_model(self):
         """
-        Saves the model weights to the specified path.
-        
-        Args:
-            path (str): Path to save the model weights.
+        Saves the model weights and configuration using the model signature.
         """
-        self.model.save(path)
+        model_directory = os.path.join("models", self.model_signature)
+        os.makedirs(model_directory, exist_ok=True)
+
+        # Save model weights
+        model_weights_path = os.path.join(model_directory, f"model_weights_{self.model_signature}.pth")
+        self.model.save(model_weights_path)
+
+        # Save the model configuration alongside the model weights
+        config_save_path = os.path.join(model_directory, f"model_config_{self.model_signature}.yaml")
+        with open(config_save_path, "w") as config_file:
+            with open(self.model_config, "r") as original_config:
+                config_file.write(original_config.read())
+
+        print(f"Model saved successfully in directory: {model_directory}")
 
     def load_model(self, path: str):
         """

@@ -10,4 +10,5 @@ class ModelConfig:
     architecture: Dict[str, Any]
     training: Dict[str, Any]
     model_path: Optional[str] = None
-    
+    model_signature: Optional[str] = None
+
