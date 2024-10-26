@@ -20,7 +20,7 @@ class Trainer:
         """
         self.checkpoint_dir = checkpoint_dir
 
-    def train(self, model: IModel, model_dataset: ModelDataset): # TODO who checks if ModelDataset compatible with Model?
+    def train(self, model: IModel, model_dataset: ModelDataset):
         """
         Trains the model using the provided dataset.
 
@@ -50,4 +50,9 @@ class Trainer:
                 logging.info(f"Saving checkpoint to {checkpoint_path}")
                 model.save(checkpoint_path)
 
+            # TODO ########
+                # Add methods to graph learning curves ect 
+                # 
+            ###############
+            
         logging.info("Training completed.")

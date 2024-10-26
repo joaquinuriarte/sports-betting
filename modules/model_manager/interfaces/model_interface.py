@@ -1,6 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict
-from ...data_structures.model_dataset import Attribute
+from ...data_structures.model_dataset import ModelDataset, Attribute
 
 class IModel(ABC):
     """
@@ -38,7 +38,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, features: List[List[Attribute]], labels: List[Attribute], epochs: int, batch_size: int):
+    def train(self, model_dataset: ModelDataset, epochs: int, batch_size: int):
         """
         Trains the model using the provided features and labels.
         Args:

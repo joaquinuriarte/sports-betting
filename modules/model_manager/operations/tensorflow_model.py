@@ -56,7 +56,7 @@ class TensorFlowModel(IModel):
         """
         return self.model(x)
 
-    def train(self, processed_dataset: ProcessedDataset):
+    def train(self, model_dataset: ModelDataset, epochs: int, batch_size: int): # TODO mega fix, handle single epoch training, confirm modelDataset compatible with model type
         epochs = self.model_config.training_epochs
         batch_size = self.model_config.batch_size
         self.model.fit(processed_dataset.features, processed_dataset.labels, epochs=epochs, batch_size=batch_size)
