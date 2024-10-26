@@ -35,10 +35,10 @@ class Trainer:
             features.append([feature for feature in example.features])
             labels.append(example.label)
         
-        # TODO not under contract
         # Get training parameters from model (assuming model is initialized with ModelConfig containing these)
-        epochs = model.config.training.get("epochs", 10)  # Default to 10 if not specified
-        batch_size = model.config.training.get("batch_size", 32)  # Default to 32 if not specified
+        training_config = model.get_training_config()
+        epochs = training_config["epochs"]
+        batch_size = training_config["batch_size"]
 
         # Log training information
         logging.info(f"Training the model for {model.model_config.epochs} epochs with batch size {model.model_config.batch_size}.")
