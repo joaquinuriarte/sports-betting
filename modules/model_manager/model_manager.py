@@ -32,7 +32,7 @@ class ModelManager(IModelManager):
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
     
-    def train(self, model_dataset: ModelDataset, auto_save: bool = False):
+    def train(self, model_dataset: ModelDataset, auto_save: bool = True):
         """
         Trains the model using the provided processed dataset.
 
