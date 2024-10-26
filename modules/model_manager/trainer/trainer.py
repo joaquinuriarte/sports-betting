@@ -20,7 +20,7 @@ class Trainer:
         """
         self.checkpoint_dir = checkpoint_dir
 
-    def train(self, model: IModel, model_dataset: ModelDataset):
+    def train(self, model: IModel, model_dataset: ModelDataset): # TODO who checks if ModelDataset compatible with Model?
         """
         Trains the model using the provided dataset.
 
