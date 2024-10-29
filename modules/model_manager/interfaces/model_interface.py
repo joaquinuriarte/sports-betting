@@ -50,6 +50,17 @@ class IModel(ABC):
         pass
 
     @abstractmethod
+    def predict(self, x: List[List[Attribute]]) -> List[Attribute]:
+        """
+        Generates predictions for the provided input data.
+        Args:
+            x (List[List[Attribute]]): The input feature set for prediction.
+        Returns:
+            List[Attribute]: The predicted output.
+        """
+        pass
+
+    @abstractmethod
     def get_training_config(self) -> Dict[str, Any]:
         """
         Gets the current training configuration for the model.

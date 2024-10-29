@@ -4,7 +4,9 @@ from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
 from .configuration_loader import ConfigurationLoader
 from ..data_structures.model_dataset import ModelDataset
+from ..data_structures.prediction_input import PredictionInput
 from .trainer.trainer import Trainer
+from .predictor.predictor import Predictor
 import pandas as pd
 import os
 
@@ -77,16 +79,16 @@ class ModelManager(IModelManager):
         """
         self.model.load(path)
 
-    def predict(self, new_data: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, prediction_input: PredictionInput) -> pd.DataFrame:
         """
         Uses the model to make predictions on new input data.
-        
+
         Args:
-            new_data (pd.DataFrame): New input data for inference.
+            prediction_input (PredictionInput): New input data for inference.
         
         Returns:
             pd.DataFrame: Predictions for the input data.
         """
         predictor = Predictor()
-        predictions = predictor.predict(self.model, new_data)
+        predictions = predictor.predict(self.model, prediction_input)
         return predictions

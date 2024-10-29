@@ -71,7 +71,7 @@ class TensorFlowModel(IModel):
         """
         self.model.fit(features, labels, epochs=epochs, batch_size=batch_size)
 
-    def predict(self, new_data: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, new_data: pd.DataFrame) -> pd.DataFrame: #-> FIX
         """
         Runs inference on the new data and returns predictions.
         
@@ -82,7 +82,7 @@ class TensorFlowModel(IModel):
             pd.DataFrame: Predictions for the input data.
         """
         # Convert new_data DataFrame to a tensor before making predictions
-        input_tensor = tf.convert_to_tensor(new_data.values, dtype=tf.float32)
+        # input_tensor = tf.convert_to_tensor(new_data.values, dtype=tf.float32) done by the processor. fix 
         predictions = self.forward(input_tensor)
         return pd.DataFrame(predictions.numpy()) 
 

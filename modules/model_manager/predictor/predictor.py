@@ -1,0 +1,32 @@
+import logging
+from ..interfaces.model_interface import IModel
+from modules.data_structures.prediction_input import PredictionInput
+
+logging.basicConfig(level=logging.INFO)
+
+class Predictor:
+    """
+    Handles the prediction process for models.
+    """
+
+    def predict(self, model: IModel, prediction_input: PredictionInput):
+        """
+        Makes predictions using the provided model and input data.
+
+        Args:
+            model (IModel): The model to be used for inference.
+            prediction_input (PredictionInput): The input data for making predictions.
+
+        Returns:
+            Any: The prediction output, which could be tensors, lists, or DataFrames, depending on the model type.
+        """
+        logging.info("Starting prediction.")
+
+        # Extract features from PredictionInput
+        features = [example for example in prediction_input.features]
+        
+        # Run prediction through the model
+        predictions = model.predict(features)
+
+        logging.info("Prediction completed.")
+        return predictions
