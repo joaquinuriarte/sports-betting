@@ -57,7 +57,7 @@ class ModelManager(IModelManager):
         model_weights_path = os.path.join(model_directory, f"model_weights_{self.model_signature}.pth")
         self.model.save(model_weights_path)
 
-        # Use ConfigurationLoader to update the model configuration with signature and path
+        # Use ConfigurationLoader to update the model configuration with path
         self.config_loader.update_config(self.config_path, "model.save_path", model_weights_path)
 
         # Save the updated YAML configuration alongside the model weights
