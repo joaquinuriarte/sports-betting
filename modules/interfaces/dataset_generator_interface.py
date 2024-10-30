@@ -1,8 +1,5 @@
 from abc import ABC, abstractmethod
 from ..data_structures.processed_dataset import ProcessedDataset
-from typing import List
-import pandas as pd
-
 
 class IDatasetGenerator(ABC):
     """

@@ -17,4 +17,8 @@ class IModelManager(ABC):
         """Runs inference on the new data and returns predictions."""
         pass
 
+    @abstractmethod
+    def load_model(self, path: str): 
+        """Loads the model weights to the model."""
+        pass
     
