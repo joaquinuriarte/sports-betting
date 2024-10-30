@@ -1,10 +1,12 @@
 import logging
 from ..interfaces.model_interface import IModel
 from modules.data_structures.prediction_input import PredictionInput
+from ..interfaces.predictor_interface import IPredictor
+
 
 logging.basicConfig(level=logging.INFO)
 
-class Predictor:
+class Predictor(IPredictor):
     """
     Handles the prediction process for models.
     """
