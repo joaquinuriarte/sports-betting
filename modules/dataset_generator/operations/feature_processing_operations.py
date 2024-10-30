@@ -1,5 +1,4 @@
 import pandas as pd
-import numpy as np
 from typing import Optional, List
 import logging
 from modules.data_structures.processed_dataset import ProcessedDataset

@@ -1,4 +1,4 @@
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from typing import List
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
 

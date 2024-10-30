@@ -5,7 +5,7 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
     IFeatureProcessorOperator,
 )
 from ...interfaces.factory_interface import IFactory
-from typing import List, Any
+from typing import Any
 
 
 class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
