@@ -5,8 +5,8 @@ from .interfaces.model_interface import IModel
 from .configuration_loader import ConfigurationLoader
 from ..data_structures.model_dataset import ModelDataset
 from ..data_structures.prediction_input import PredictionInput
-from .trainer.trainer import Trainer
-from .predictor.predictor import Predictor
+from .interfaces.trainer_interface import ITrainer
+from .interfaces.predictor_interface import IPredictor
 import pandas as pd
 import os
 
@@ -15,13 +15,17 @@ class ModelManager(IModelManager):
     Orchestrates model setup, training, saving, and inference.
     """
 
-    def __init__(self, config_path: str, model_factory: IFactory[IModel]):
+    def __init__(self, config_path: str, model_factory: IFactory[IModel], predictor: IPredictor, trainer: ITrainer):
         # Step 1: Load model configuration
         self.config_path = config_path
         self.config_loader = ConfigurationLoader(self.config_path)
         self.model_config: ModelConfig = self.config_loader.load_config()
 
-        # Step 2: Instantiate Model using ModelFactory
+        # Step 2: Instantiate the predictor and trainer
+        self.predictor = predictor
+        self.trainer = trainer
+
+        # Step 3: Instantiate Model using ModelFactory
         self.model: IModel = model_factory.create(
             self.model_config.type_name, 
             self.model_config.architecture
@@ -30,7 +34,7 @@ class ModelManager(IModelManager):
         # Store model signature
         self.model_signature = self.model_config.model_signature
 
-        # Step 3: Load existing model weights if specified in the config
+        # Step 4: Load existing model weights if specified in the config
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
     
@@ -41,8 +45,7 @@ class ModelManager(IModelManager):
         Args:
             model_dataset (ModelDataset): Dataset to train the model with.
         """
-        trainer = Trainer()
-        trainer.train(self.model, model_dataset)
+        self.trainer.train(self.model, model_dataset)
 
         # TODO Decide if this is the right approach. Not sure if it reduces flexibility, or increases safety
         if auto_save:
@@ -89,6 +92,5 @@ class ModelManager(IModelManager):
         Returns:
             pd.DataFrame: Predictions for the input data.
         """
-        predictor = Predictor()
-        predictions = predictor.predict(self.model, prediction_input)
+        predictions = self.predictor.predict(self.model, prediction_input)
         return predictions

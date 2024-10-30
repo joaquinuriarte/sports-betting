@@ -2,11 +2,13 @@ import os
 from typing import Optional
 from modules.data_structures.model_dataset import ModelDataset
 from ..interfaces.model_interface import IModel
+from ..interfaces.trainer_interface import ITrainer
+
 import logging
 
 logging.basicConfig(level=logging.INFO)
 
-class Trainer:
+class Trainer(ITrainer):
     """
     Handles the training process for models.
     """
