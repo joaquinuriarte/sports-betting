@@ -1,7 +1,6 @@
 import tensorflow as tf
 import pandas as pd
 from ..interfaces.model_interface import IModel
-from ...data_structures.processed_dataset import ProcessedDataset
 
 class TensorFlowModel(IModel):
     """
@@ -56,35 +55,30 @@ class TensorFlowModel(IModel):
         """
         return self.model(x)
 
-    def train(self, model_dataset: ModelDataset, epochs: int, batch_size: int): # TODO mega fix, handle single epoch training, confirm modelDataset compatible with model type
-        epochs = self.model_config.training_epochs
-        batch_size = self.model_config.batch_size
-        self.model.fit(processed_dataset.features, processed_dataset.labels, epochs=epochs, batch_size=batch_size)
+    def train(self, features: tf.Tensor, labels: tf.Tensor, epochs: int, batch_size: int):
         """
         Trains the model using the provided features and labels.
         
         Args:
-            features (pd.DataFrame): The input features for training.
-            labels (pd.DataFrame): The target labels for training.
+            features (tf.Tensor): The input features for training.
+            labels (tf.Tensor): The target labels for training.
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
         self.model.fit(features, labels, epochs=epochs, batch_size=batch_size)
 
-    def predict(self, new_data: pd.DataFrame) -> pd.DataFrame: #-> FIX
+    def predict(self, input_tensor: tf.Tensor) -> pd.DataFrame:
         """
-        Runs inference on the new data and returns predictions.
+        Runs inference on the input tensor and returns predictions.
         
         Args:
-            new_data (pd.DataFrame): New input data for inference.
+            input_tensor (tf.Tensor): New input data for inference.
         
         Returns:
             pd.DataFrame: Predictions for the input data.
         """
-        # Convert new_data DataFrame to a tensor before making predictions
-        # input_tensor = tf.convert_to_tensor(new_data.values, dtype=tf.float32) done by the processor. fix 
         predictions = self.forward(input_tensor)
-        return pd.DataFrame(predictions.numpy()) 
+        return pd.DataFrame(predictions.numpy())
 
     def save(self, path: str):
         """

@@ -30,6 +30,14 @@ class Trainer(ITrainer):
             model (IModel): The model to be trained.
             model_dataset (ModelDataset): The dataset containing features and labels.
         """
+        # Extract features and labels from model_dataset
+        features, labels = [], []
+        for example in model_dataset.examples:
+            # Collect features and labels from each Example object
+            feature_values = [list(attr.values())[0] for attr in example.features]  # Extract values from Attribute dictionaries
+            features.append(feature_values)
+            labels.append(list(example.label.values())[0])  # Extract label value
+
         # Get training parameters from model
         training_config = model.get_training_config()
         epochs = training_config["epochs"]
@@ -43,7 +51,7 @@ class Trainer(ITrainer):
             logging.info(f"Starting epoch {epoch + 1}/{epochs}.")
        
             # Run training for this epoch (assuming model.train handles batching internally)
-            model.train(model_dataset, epochs=1, batch_size=batch_size)
+            model.train(features, labels, epochs=1, batch_size=batch_size)
 
             # Save a checkpoint after each epoch if a checkpoint directory is specified
             if self.checkpoint_dir:
