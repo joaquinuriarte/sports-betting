@@ -1,7 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 from ..interfaces.model_interface import IModel
-from typing import Any
+from typing import Any, Dict
 
 class TensorFlowModel(IModel):
     """
@@ -10,14 +10,14 @@ class TensorFlowModel(IModel):
     Attributes:
         model (tf.keras.Model): The TensorFlow model instance.
     """
-    def __init__(self, architecture_config: dict):
+    def __init__(self, architecture_config: Dict[str, Any]) -> None:
         # Store the model configuration
-        self.model_config = architecture_config
+        self.model_config: Dict[str, Any] = architecture_config
 
         # Initialize the model using the architecture configuration
         self.model = self._initialize_model(self.model_config)
 
-    def _initialize_model(self, architecture_config: dict):
+    def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
         """
         Initializes the model based on the architecture configuration.
         
@@ -58,7 +58,7 @@ class TensorFlowModel(IModel):
         input_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
         return self.model(input_tensor)
 
-    def train(self, features: Any, labels: Any, epochs: int, batch_size: int):
+    def train(self, features: Any, labels: Any, epochs: int, batch_size: int) -> None:
         """
         Trains the model using the provided features and labels.
         
@@ -90,7 +90,7 @@ class TensorFlowModel(IModel):
         predictions = self.forward(input_tensor)
         return pd.DataFrame(predictions.numpy())
 
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         """
         Saves the model weights to the specified path.
         
@@ -99,7 +99,7 @@ class TensorFlowModel(IModel):
         """
         self.model.save_weights(path)
 
-    def load(self, path: str):
+    def load(self, path: str) -> None:
         """
         Loads the model weights from the specified path.
         
@@ -108,7 +108,7 @@ class TensorFlowModel(IModel):
         """
         self.model.load_weights(path)
 
-    def get_training_config(self) -> dict:
+    def get_training_config(self) -> Dict[str, Any]:
         """
         Gets the current training configuration for the model.
         

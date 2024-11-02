@@ -20,7 +20,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def save(self, path: str):
+    def save(self, path: str) -> None:
         """
         Saves the model weights to the specified path.
         Args:
@@ -29,7 +29,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def load(self, path: str):
+    def load(self, path: str) -> None:
         """
         Loads the model weights from the specified path.
         Args:
@@ -38,7 +38,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, features: Any, labels: Any, epochs: int, batch_size: int):
+    def train(self, features: Any, labels: Any, epochs: int, batch_size: int) -> None:
         """
         Trains the model using the provided features and labels.
         Args:
