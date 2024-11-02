@@ -75,16 +75,18 @@ class TensorFlowModel(IModel):
         # Train the model
         self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
 
-    def predict(self, x: tf.Tensor) -> pd.DataFrame:
+    def predict(self, x: Any) -> pd.DataFrame:
         """
-        Runs inference on the input tensor and returns predictions.
+        Generates predictions for the provided input data.
         
         Args:
-            input_tensor (tf.Tensor): New input data for inference.
+            x (Any): Input data, typically a list of lists or similar Python structure.
         
         Returns:
-            pd.DataFrame: Predictions for the input data.
+            pd.DataFrame: The predicted output.
         """
+        # Convert the input to a TensorFlow tensor
+        input_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
         predictions = self.forward(input_tensor)
         return pd.DataFrame(predictions.numpy())
 
