@@ -83,13 +83,16 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         """
         # Rename columns to include player-specific prefixes for feature distinction
         renamed_columns = {
-            col: f"home_player_{index + 1}_{col}" for index, col in enumerate(top_players.columns)
+            col: f"home_player_{index + 1}_{col}"
+            for index, col in enumerate(top_players.columns)
         }
         top_players_renamed = top_players.rename(columns=renamed_columns)
-        
+
         # Flatten the DataFrame to a single row DataFrame
         top_players_renamed.reset_index(drop=True, inplace=True)
-        feature_vector_df = pd.DataFrame([top_players_renamed.values.flatten()], columns=top_players_renamed.columns)
+        feature_vector_df = pd.DataFrame(
+            [top_players_renamed.values.flatten()], columns=top_players_renamed.columns
+        )
 
         return feature_vector_df
 
@@ -145,15 +148,15 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
                     f"Missing score detected for game {game_id}. Skipping this game."
                 )
                 continue
-            
+
             feature_vector_A = self.create_feature_vector(top_n_A)
             feature_vector_B = self.create_feature_vector(top_n_B)
-            
+
             feature_vector = pd.concat([feature_vector_A, feature_vector_B], axis=1)
             feature_vector["GAME_ID"] = game_id
             feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
             feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
-            
+
             feature_vectors.append(feature_vector)
 
         return pd.concat(feature_vectors, ignore_index=True)

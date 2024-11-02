@@ -2,6 +2,7 @@ from abc import ABC, abstractmethod
 from typing import List, Any, Dict
 import pandas as pd
 
+
 class IModel(ABC):
     """
     Interface for any model implementation.

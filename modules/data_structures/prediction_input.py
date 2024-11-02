@@ -7,6 +7,7 @@ PredictionFeatureName = str
 # Represents individual prediction feature data.
 PredictionFeature = Dict[PredictionFeatureName, Any]
 
+
 @dataclass
 class PredictionInput:
     """
@@ -15,4 +16,5 @@ class PredictionInput:
     Attributes:
         features (List[PredictionFeature]): A list of features for each input sample.
     """
+
     features: List[PredictionFeature]

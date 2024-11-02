@@ -6,6 +6,7 @@ from ..interfaces.predictor_interface import IPredictor
 
 logging.basicConfig(level=logging.INFO)
 
+
 class Predictor(IPredictor):
     """
     Handles the prediction process for models.
@@ -26,7 +27,7 @@ class Predictor(IPredictor):
 
         # Extract features from PredictionInput
         features = [list(feature.values())[0] for feature in prediction_input.features]
-        
+
         # Run prediction through the model
         predictions = model.predict(features)
 

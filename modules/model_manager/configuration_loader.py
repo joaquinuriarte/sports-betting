@@ -1,24 +1,25 @@
 import yaml, hashlib
 from modules.data_structures.model_config import ModelConfig
 
+
 class ConfigurationLoader:
     """
     Loads and parses the configuration file for the model.
     """
-    
+
     def __init__(self, config_path: str):
         self.config_path = config_path
 
     def load_config(self) -> ModelConfig:
         """
         Loads the configuration from the YAML file and returns a ModelConfig instance.
-        
+
         Returns:
             ModelConfig: The configuration for the model.
         """
-        with open(self.config_path, 'r') as file:
+        with open(self.config_path, "r") as file:
             config_data = yaml.safe_load(file)
-        
+
         # Generate a signature by hashing the entire YAML configuration
         config_str = yaml.dump(config_data)
         signature = hashlib.md5(config_str.encode()).hexdigest()
@@ -27,18 +28,18 @@ class ConfigurationLoader:
         self.update_config(self.config_path, "model.model_signature", signature)
 
         # Parse the updated configuration into a ModelConfig object
-        model_data = config_data['model']
-        type_name = model_data['architecture']['type']
-        architecture = model_data['architecture']
-        training = model_data['training']
-        model_path = model_data.get('save_path', None)
-        
+        model_data = config_data["model"]
+        type_name = model_data["architecture"]["type"]
+        architecture = model_data["architecture"]
+        training = model_data["training"]
+        model_path = model_data.get("save_path", None)
+
         return ModelConfig(
             type_name=type_name,
             architecture=architecture,
             training=training,
             model_path=model_path,
-            model_signature=signature
+            model_signature=signature,
         )
 
     def update_config(self, yaml_file_path: str, field_name: str, new_value):
@@ -58,7 +59,7 @@ class ConfigurationLoader:
         config_part = config_data
         for key in keys[:-1]:
             config_part = config_part.setdefault(key, {})
-        
+
         # Update the final field
         config_part[keys[-1]] = new_value
 

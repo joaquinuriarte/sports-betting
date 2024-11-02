@@ -3,6 +3,7 @@ import pandas as pd
 from ..data_structures.model_dataset import ModelDataset
 from ..data_structures.prediction_input import PredictionInput
 
+
 class IModelManager(ABC):
     @abstractmethod
     def train(self, model_dataset: ModelDataset, auto_save: bool):
@@ -20,7 +21,6 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
-    def load_model(self, path: str): 
+    def load_model(self, path: str):
         """Loads the model weights to the model."""
         pass
-    

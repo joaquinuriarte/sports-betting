@@ -3,6 +3,7 @@ from typing import Any
 from modules.data_structures.prediction_input import PredictionInput
 from .model_interface import IModel
 
+
 class IPredictor(ABC):
     """
     Interface for a Predictor implementation.

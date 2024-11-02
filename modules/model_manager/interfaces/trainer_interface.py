@@ -3,6 +3,7 @@ from typing import Optional
 from modules.data_structures.model_dataset import ModelDataset
 from .model_interface import IModel
 
+
 class ITrainer(ABC):
     """
     Interface for a Trainer implementation.

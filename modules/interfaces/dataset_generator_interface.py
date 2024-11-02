@@ -1,6 +1,7 @@
 from abc import ABC, abstractmethod
 from ..data_structures.processed_dataset import ProcessedDataset
 
+
 class IDatasetGenerator(ABC):
     """
     Interface for dataset generators.

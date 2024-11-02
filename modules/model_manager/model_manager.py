@@ -10,12 +10,19 @@ from .interfaces.predictor_interface import IPredictor
 import pandas as pd
 import os
 
+
 class ModelManager(IModelManager):
     """
     Orchestrates model setup, training, saving, and inference.
     """
 
-    def __init__(self, config_path: str, model_factory: IFactory[IModel], predictor: IPredictor, trainer: ITrainer):
+    def __init__(
+        self,
+        config_path: str,
+        model_factory: IFactory[IModel],
+        predictor: IPredictor,
+        trainer: ITrainer,
+    ):
         # Step 1: Load model configuration
         self.config_path = config_path
         self.config_loader = ConfigurationLoader(self.config_path)
@@ -27,8 +34,7 @@ class ModelManager(IModelManager):
 
         # Step 3: Instantiate Model using ModelFactory
         self.model: IModel = model_factory.create(
-            self.model_config.type_name, 
-            self.model_config.architecture
+            self.model_config.type_name, self.model_config.architecture
         )
 
         # Store model signature
@@ -37,7 +43,7 @@ class ModelManager(IModelManager):
         # Step 4: Load existing model weights if specified in the config
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
-    
+
     def train(self, model_dataset: ModelDataset, auto_save: bool = True):
         """
         Trains the model using the provided processed dataset.
@@ -59,14 +65,20 @@ class ModelManager(IModelManager):
         os.makedirs(model_directory, exist_ok=True)
 
         # Save model weights
-        model_weights_path = os.path.join(model_directory, f"model_weights_{self.model_signature}.pth")
+        model_weights_path = os.path.join(
+            model_directory, f"model_weights_{self.model_signature}.pth"
+        )
         self.model.save(model_weights_path)
 
         # Use ConfigurationLoader to update the model configuration with path
-        self.config_loader.update_config(self.config_path, "model.save_path", model_weights_path)
+        self.config_loader.update_config(
+            self.config_path, "model.save_path", model_weights_path
+        )
 
         # Save the updated YAML configuration alongside the model weights
-        config_save_path = os.path.join(model_directory, f"model_config_{self.model_signature}.yaml")
+        config_save_path = os.path.join(
+            model_directory, f"model_config_{self.model_signature}.yaml"
+        )
         with open(config_save_path, "w") as config_file:
             with open(self.config_path, "r") as original_config:
                 config_file.write(original_config.read())
@@ -76,7 +88,7 @@ class ModelManager(IModelManager):
     def load_model(self, path: str):
         """
         Loads the model weights from the specified path.
-        
+
         Args:
             path (str): Path from which to load the model weights.
         """
@@ -88,7 +100,7 @@ class ModelManager(IModelManager):
 
         Args:
             prediction_input (PredictionInput): New input data for inference.
-        
+
         Returns:
             pd.DataFrame: Predictions for the input data.
         """

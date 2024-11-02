@@ -13,7 +13,7 @@ from modules.dataset_generator.dataset_generator import DatasetGenerator
 from modules.data_structures.processed_dataset import ProcessedDataset
 import pandas as pd
 
-# TODO Processor tiene que crear ModelDataset from ProcessedDataset. Using info on yaml, create tensors or any other datatype required for the model. This way we decouple this from model manager and we can train many model configurations on the same dataset without having to redundantly repeat the processedDataset->Modeldataset conversion 
+# TODO Processor tiene que crear ModelDataset from ProcessedDataset. Using info on yaml, create tensors or any other datatype required for the model. This way we decouple this from model manager and we can train many model configurations on the same dataset without having to redundantly repeat the processedDataset->Modeldataset conversion
 
 
 class Processor:
@@ -34,9 +34,11 @@ class Processor:
             join_factory=join_factory,
             strategy_factory=strategy_factory,
         )
-        
+
         self.config_path = config_path
-        self.model_manager: IModelManager = model_manager # TODO we need to construct instance here. What parameters does it accept? Overlap with step 2 below
+        self.model_manager: IModelManager = (
+            model_manager  # TODO we need to construct instance here. What parameters does it accept? Overlap with step 2 below
+        )
 
     def train_model(self):
         """
@@ -46,7 +48,9 @@ class Processor:
         processed_dataset: ProcessedDataset = self.dataset_generator.generate()
 
         # Step 2: Set up the model
-        self.model_manager.setup_model(self.config_path) # TODO we need to build this. This should create datastructures, tensors, ect?
+        self.model_manager.setup_model(
+            self.config_path
+        )  # TODO we need to build this. This should create datastructures, tensors, ect?
 
         # Step 3: Train model using ModelManager
         self.model_manager.train(processed_dataset.features, processed_dataset.labels)
