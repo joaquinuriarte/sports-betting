@@ -42,7 +42,9 @@ class ConfigurationLoader:
             model_signature=signature,
         )
 
-    def update_config(self, yaml_file_path: str, field_name: str, new_value: str) -> None:
+    def update_config(
+        self, yaml_file_path: str, field_name: str, new_value: str
+    ) -> None:
         """
         Updates a specific field in the YAML configuration.
 
