@@ -25,7 +25,7 @@ class Predictor(IPredictor):
         logging.info("Starting prediction.")
 
         # Extract features from PredictionInput
-        features = [example for example in prediction_input.features]
+        features = [list(feature.values())[0] for feature in prediction_input.features]
         
         # Run prediction through the model
         predictions = model.predict(features)

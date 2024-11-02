@@ -1,7 +1,6 @@
 from abc import ABC, abstractmethod
 from typing import List, Any, Dict
 import pandas as pd
-from ...data_structures.model_dataset import ModelDataset, Attribute
 
 class IModel(ABC):
     """
@@ -10,13 +9,13 @@ class IModel(ABC):
     """
 
     @abstractmethod
-    def forward(self, x: List[List[Attribute]]) -> List[Attribute]:
+    def forward(self, x: Any) -> Any:
         """
         Defines the forward pass of the model. Should be implemented in the subclass.
         Args:
-            x (List[List[Attribute]]): The input feature set to be processed by the model.
+            x (List[Any]): The input feature set to be processed by the model.
         Returns:
-            List[Attribute]: The output after passing through the model's layers.
+            List[Any]: The output after passing through the model's layers.
         """
         pass
 
@@ -39,7 +38,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, features: List[List[Attribute]], labels: List[List[Attribute]], epochs: int, batch_size: int):
+    def train(self, features: Any, labels: Any, epochs: int, batch_size: int):
         """
         Trains the model using the provided features and labels.
         Args:
@@ -51,7 +50,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, x: List[Attribute]) -> pd.DataFrame:
+    def predict(self, x: Any) -> pd.DataFrame:
         """
         Generates predictions for the provided input data.
         Args:

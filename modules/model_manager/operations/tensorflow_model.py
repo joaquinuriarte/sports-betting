@@ -1,6 +1,7 @@
 import tensorflow as tf
 import pandas as pd
 from ..interfaces.model_interface import IModel
+from typing import Any
 
 class TensorFlowModel(IModel):
     """
@@ -43,31 +44,38 @@ class TensorFlowModel(IModel):
         )
         return model
 
-    def forward(self, x: tf.Tensor) -> tf.Tensor:
+    def forward(self, x: Any) -> Any:
         """
         Defines the forward pass of the model.
         
         Args:
-            x: Input tensor.
+            x (Any): Input data, typically a list of lists or similar Python structure.
         
         Returns:
-            Output after passing through the model's layers.
+            tf.Tensor: Output after passing through the model's layers.
         """
-        return self.model(x)
+        # Convert the input to a TensorFlow tensor
+        input_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
+        return self.model(input_tensor)
 
-    def train(self, features: tf.Tensor, labels: tf.Tensor, epochs: int, batch_size: int):
+    def train(self, features: Any, labels: Any, epochs: int, batch_size: int):
         """
         Trains the model using the provided features and labels.
         
         Args:
-            features (tf.Tensor): The input features for training.
-            labels (tf.Tensor): The target labels for training.
+            features (Any): Input features, typically a list of lists or similar Python structure.
+            labels (Any): Target labels, typically a list or similar Python structure.
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        self.model.fit(features, labels, epochs=epochs, batch_size=batch_size)
+        # Convert features and labels to TensorFlow tensors
+        features_tensor = tf.convert_to_tensor(features, dtype=tf.float32)
+        labels_tensor = tf.convert_to_tensor(labels, dtype=tf.float32)
 
-    def predict(self, input_tensor: tf.Tensor) -> pd.DataFrame:
+        # Train the model
+        self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
+
+    def predict(self, x: tf.Tensor) -> pd.DataFrame:
         """
         Runs inference on the input tensor and returns predictions.
         
