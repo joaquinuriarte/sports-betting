@@ -51,7 +51,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, x: List[List[Attribute]]) -> pd.DataFrame:
+    def predict(self, x: List[Attribute]) -> pd.DataFrame:
         """
         Generates predictions for the provided input data.
         Args:

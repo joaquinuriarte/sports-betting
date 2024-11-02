@@ -1,9 +1,11 @@
 from abc import ABC, abstractmethod
 import pandas as pd
+from ..data_structures.model_dataset import ModelDataset
+from ..data_structures.prediction_input import PredictionInput
 
 class IModelManager(ABC):
     @abstractmethod
-    def train(self, features: pd.DataFrame, labels: pd.DataFrame):
+    def train(self, model_dataset: ModelDataset, auto_save: bool):
         """Trains the model using features and labels."""
         pass
 
@@ -13,7 +15,7 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
-    def predict(self, new_data: pd.DataFrame) -> pd.DataFrame:
+    def predict(self, prediction_input: PredictionInput) -> pd.DataFrame:
         """Runs inference on the new data and returns predictions."""
         pass
 
