@@ -9,5 +9,5 @@ class ModelConfig:
     type_name: str
     architecture: Dict[str, Any]
     training: Dict[str, Any]
-    model_path: Optional[str] = None
-    model_signature: Optional[str] = None
+    model_path: str
+    model_signature: str

@@ -2,6 +2,7 @@ import logging
 from ..interfaces.model_interface import IModel
 from modules.data_structures.prediction_input import PredictionInput
 from ..interfaces.predictor_interface import IPredictor
+import pandas as pd
 
 
 logging.basicConfig(level=logging.INFO)
@@ -12,7 +13,7 @@ class Predictor(IPredictor):
     Handles the prediction process for models.
     """
 
-    def predict(self, model: IModel, prediction_input: PredictionInput):
+    def predict(self, model: IModel, prediction_input: PredictionInput) -> pd.DataFrame:
         """
         Makes predictions using the provided model and input data.
 

@@ -44,7 +44,7 @@ class ModelManager(IModelManager):
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
 
-    def train(self, model_dataset: ModelDataset, auto_save: bool = True):
+    def train(self, model_dataset: ModelDataset, auto_save: bool = True) -> None:
         """
         Trains the model using the provided processed dataset.
 
@@ -57,7 +57,7 @@ class ModelManager(IModelManager):
         if auto_save:
             self.save_model()
 
-    def save_model(self):
+    def save_model(self) -> None:
         """
         Saves the model weights and configuration using the model signature.
         """
@@ -85,7 +85,7 @@ class ModelManager(IModelManager):
 
         print(f"Model saved successfully in directory: {model_directory}")
 
-    def load_model(self, path: str):
+    def load_model(self, path: str) -> None:
         """
         Loads the model weights from the specified path.
 

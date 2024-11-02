@@ -14,7 +14,7 @@ class Trainer(ITrainer):
     Handles the training process for models.
     """
 
-    def __init__(self, checkpoint_dir: Optional[str] = None):
+    def __init__(self, checkpoint_dir: Optional[str] = None) -> None:
         """
         Initializes the Trainer with optional checkpointing.
 
@@ -23,7 +23,7 @@ class Trainer(ITrainer):
         """
         self.checkpoint_dir = checkpoint_dir
 
-    def train(self, model: IModel, model_dataset: ModelDataset):
+    def train(self, model: IModel, model_dataset: ModelDataset) -> None:
         """
         Trains the model using the provided dataset.
 

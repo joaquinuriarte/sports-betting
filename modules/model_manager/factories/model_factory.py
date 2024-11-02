@@ -1,7 +1,7 @@
 from ...interfaces.factory_interface import IFactory
 from ..interfaces.model_interface import IModel
 from ..operations.tensorflow_model import TensorFlowModel
-from typing import Any, Dict
+from typing import Any, Dict, cast
 
 
 class ModelFactory(IFactory[IModel]):
@@ -21,7 +21,7 @@ class ModelFactory(IFactory[IModel]):
             IModel: An instance of the model.
         """
         if type_name == "tensorflow":
-            architecture: Dict[str, Any] = kwargs.get("architecture")
+            architecture = cast(Dict[str, Any], kwargs.get("architecture"))
             return TensorFlowModel(architecture)
         else:
             raise ValueError(f"Unsupported model type: {type_name}")

@@ -11,7 +11,7 @@ class ITrainer(ABC):
     """
 
     @abstractmethod
-    def __init__(self, checkpoint_dir: Optional[str] = None):
+    def __init__(self, checkpoint_dir: Optional[str] = None) -> None:
         """
         Initializes the Trainer with optional checkpointing.
 
@@ -21,7 +21,7 @@ class ITrainer(ABC):
         pass
 
     @abstractmethod
-    def train(self, model: IModel, model_dataset: ModelDataset):
+    def train(self, model: IModel, model_dataset: ModelDataset) -> None:
         """
         Trains the model using the provided dataset.
 

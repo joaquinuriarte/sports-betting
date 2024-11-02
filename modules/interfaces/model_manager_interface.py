@@ -6,12 +6,12 @@ from ..data_structures.prediction_input import PredictionInput
 
 class IModelManager(ABC):
     @abstractmethod
-    def train(self, model_dataset: ModelDataset, auto_save: bool):
+    def train(self, model_dataset: ModelDataset, auto_save: bool) -> None:
         """Trains the model using features and labels."""
         pass
 
     @abstractmethod
-    def save_model(self, path: str):
+    def save_model(self) -> None:
         """Saves the model weights to the specified path."""
         pass
 
@@ -21,6 +21,6 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
-    def load_model(self, path: str):
+    def load_model(self, path: str) -> None:
         """Loads the model weights to the model."""
         pass

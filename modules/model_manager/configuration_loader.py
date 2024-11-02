@@ -7,7 +7,7 @@ class ConfigurationLoader:
     Loads and parses the configuration file for the model.
     """
 
-    def __init__(self, config_path: str):
+    def __init__(self, config_path: str) -> None:
         self.config_path = config_path
 
     def load_config(self) -> ModelConfig:
@@ -42,7 +42,7 @@ class ConfigurationLoader:
             model_signature=signature,
         )
 
-    def update_config(self, yaml_file_path: str, field_name: str, new_value):
+    def update_config(self, yaml_file_path: str, field_name: str, new_value: str) -> None:
         """
         Updates a specific field in the YAML configuration.
 
