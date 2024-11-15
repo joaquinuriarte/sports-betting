@@ -8,7 +8,7 @@ import pandas as pd
 
 class DatasetGeneratorTest(TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up the common dependencies and mock objects required for the tests.
         """
@@ -24,7 +24,7 @@ class DatasetGeneratorTest(TestCase):
             'colA': ['A', 'B', 'C'],
             'colB': [10, 20, 30],
         })
-        
+
         # Configure the mock loader to return these dataframes
         self.mock_loader.load_data.return_value = [df1, df2]
 
@@ -41,7 +41,7 @@ class DatasetGeneratorTest(TestCase):
             dataset_strategy=self.mock_strategy,
         )
 
-    def test_generate(self):
+    def test_generate(self) -> None:
         """
         Test the generate method of DatasetGenerator.
         """
