@@ -11,8 +11,8 @@ class DatasetGenerator(IDatasetGenerator):
 
     def __init__(
         self,
-        dataset_loader: IDatasetLoader, 
-        dataset_strategy: IDatasetGeneratorStrategy, 
+        dataset_loader: IDatasetLoader,
+        dataset_strategy: IDatasetGeneratorStrategy,
     ):
         self.dataset_loader = dataset_loader
         self.dataset_strategy = dataset_strategy

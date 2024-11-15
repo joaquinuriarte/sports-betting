@@ -14,23 +14,27 @@ class DatasetGeneratorTest(TestCase):
         """
         # Mock the IDatasetLoader
         self.mock_loader = Mock()
-        
+
         # Create mock DataFrames to simulate loaded data
-        df1 = pd.DataFrame({
-            'col1': [1, 2, 3],
-            'col2': [4, 5, 6],
-        })
-        df2 = pd.DataFrame({
-            'colA': ['A', 'B', 'C'],
-            'colB': [10, 20, 30],
-        })
+        df1 = pd.DataFrame(
+            {
+                "col1": [1, 2, 3],
+                "col2": [4, 5, 6],
+            }
+        )
+        df2 = pd.DataFrame(
+            {
+                "colA": ["A", "B", "C"],
+                "colB": [10, 20, 30],
+            }
+        )
 
         # Configure the mock loader to return these dataframes
         self.mock_loader.load_data.return_value = [df1, df2]
 
         # Mock the IDatasetGeneratorStrategy
         self.mock_strategy = Mock()
-        
+
         # Create a mock ProcessedDataset that the strategy will return
         processed_dataset = ProcessedDataset(features=df1, labels=df2)
         self.mock_strategy.generate.return_value = processed_dataset
@@ -50,12 +54,17 @@ class DatasetGeneratorTest(TestCase):
 
         # Assertions
         self.mock_loader.load_data.assert_called_once()  # Ensure load_data was called
-        self.mock_strategy.generate.assert_called_once_with([self.mock_loader.load_data.return_value[0], self.mock_loader.load_data.return_value[1]])  # Ensure generate was called with the correct dataframes
+        self.mock_strategy.generate.assert_called_once_with(
+            [
+                self.mock_loader.load_data.return_value[0],
+                self.mock_loader.load_data.return_value[1],
+            ]
+        )  # Ensure generate was called with the correct dataframes
 
         # Check that the result is as expected
         expected_dataset = ProcessedDataset(
             features=self.mock_loader.load_data.return_value[0],
-            labels=self.mock_loader.load_data.return_value[1]
+            labels=self.mock_loader.load_data.return_value[1],
         )
         self.assertEqual(result, expected_dataset)
 
