@@ -1,6 +1,6 @@
 from typing import List
 import pandas as pd
-from modules.dataset_generator.interfaces.data_io_interface import DataIO
+from main.interfaces.data_io_interface import DataIO
 
 
 class CsvIO(DataIO):

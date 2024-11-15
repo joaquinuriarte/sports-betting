@@ -4,7 +4,7 @@ from modules.data_structures.processed_dataset import ProcessedDataset
 from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+from ..interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
 from modules.data_structures.dataset_config import JoinOperation

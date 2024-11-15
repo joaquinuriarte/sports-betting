@@ -1,5 +1,5 @@
 from ..implementations.data_readers import CsvIO, TxtIO, XmlIO
-from main.interfaces.data_io_interface import DataIO
+from ..interfaces.data_io_interface import DataIO
 from ...modules.interfaces.factory_interface import IFactory
 from typing import Any
 

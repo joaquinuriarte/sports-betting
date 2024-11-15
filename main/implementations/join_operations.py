@@ -1,6 +1,6 @@
 import pandas as pd
 from typing import List, Optional, Tuple
-from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
+from ..interfaces.join_operator_interface import IJoinOperator
 
 
 class LeftJoinOperation(IJoinOperator):

@@ -1,10 +1,10 @@
-from modules.dataset_generator.operations.join_operations import (
+from ..implementations.join_operations import (
     InnerJoinOperation,
     LeftJoinOperation,
     RightJoinOperation,
 )
-from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from ...interfaces.factory_interface import IFactory
+from ..interfaces.join_operator_interface import IJoinOperator
+from ...modules.interfaces.factory_interface import IFactory
 from typing import Any
 
 

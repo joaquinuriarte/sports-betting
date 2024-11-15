@@ -1,11 +1,11 @@
 from ..interfaces.dataset_generator_interface import IDatasetGenerator
 from ..interfaces.model_manager_interface import IModelManager
 from modules.interfaces.factory_interface import IFactory
-from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+from main.interfaces.join_operator_interface import IJoinOperator
+from main.interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from modules.dataset_generator.interfaces.data_io_interface import DataIO
+from main.interfaces.data_io_interface import DataIO
 from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )

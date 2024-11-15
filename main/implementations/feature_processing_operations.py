@@ -2,7 +2,7 @@ import pandas as pd
 from typing import Optional, List
 import logging
 from modules.data_structures.processed_dataset import ProcessedDataset
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+from ..interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
 
