@@ -6,7 +6,7 @@ from ..interfaces.feature_processor_operator_interface import (
 )
 from ...modules.interfaces.factory_interface import IFactory
 from ..interfaces.join_operator_interface import IJoinOperator
-from modules.data_structures.dataset_config import DatasetConfig, JoinOperation
+from main.data_structures.dataset_config import DatasetConfig, JoinOperation
 from typing import List
 
 class DatasetStrategyCreator:

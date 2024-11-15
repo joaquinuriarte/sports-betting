@@ -1,7 +1,7 @@
 from ..implementations.dataset_loader import DatasetLoader
 from ..interfaces.data_io_interface import DataIO
 from ...modules.interfaces.factory_interface import IFactory
-from ...modules.data_structures.dataset_config import DatasetConfig
+from ..data_structures.dataset_config import DatasetConfig
 
 
 class DatasetLoaderCreator:

@@ -1,5 +1,5 @@
 import yaml
-from modules.data_structures.dataset_config import DatasetConfig
+from main.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.source import Source
 
 
