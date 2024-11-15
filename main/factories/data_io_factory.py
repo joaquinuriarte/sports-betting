@@ -1,8 +1,7 @@
-from modules.dataset_generator.operations.data_readers import CsvIO, TxtIO, XmlIO
-from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from ...interfaces.factory_interface import IFactory
+from ..implementations.data_readers import CsvIO, TxtIO, XmlIO
+from main.interfaces.data_io_interface import DataIO
+from ...modules.interfaces.factory_interface import IFactory
 from typing import Any
-
 
 class DataIOFactory(IFactory[DataIO]):
     """

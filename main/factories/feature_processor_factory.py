@@ -1,12 +1,11 @@
-from modules.dataset_generator.operations.feature_processing_operations import (
+from ..implementations.feature_processing_operations import (
     TopNPlayersFeatureProcessor,
 )
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+from ..interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from ...interfaces.factory_interface import IFactory
+from ...modules.interfaces.factory_interface import IFactory
 from typing import Any
-
 
 class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
     """

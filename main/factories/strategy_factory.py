@@ -1,14 +1,14 @@
-from modules.dataset_generator.operations.dataset_generation_strategies import (
+from ..implementations.dataset_generation_strategies import (
     JoinBasedGenerator,
     NoJoinGenerator,
 )
 from modules.dataset_generator.interfaces.strategy_interface import (
     IDatasetGeneratorStrategy,
 )
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+from ..interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from ...interfaces.factory_interface import IFactory
+from ...modules.interfaces.factory_interface import IFactory
 from modules.data_structures.dataset_config import JoinOperation
 from typing import Any, List, cast
 
