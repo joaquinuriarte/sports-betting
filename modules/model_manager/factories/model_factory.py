@@ -1,6 +1,6 @@
 from ...interfaces.factory_interface import IFactory
 from ..interfaces.model_interface import IModel
-from ..operations.tensorflow_model import TensorFlowModel
+from ..implementations.tensorflow_model import TensorFlowModel
 from typing import Any, Dict, cast
 
 
