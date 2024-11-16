@@ -1,7 +1,8 @@
 from abc import ABC, abstractmethod
 import pandas as pd
-from modules.data_structures.prediction_input import PredictionInput
+from modules.data_structures.model_dataset import Example
 from .model_interface import IModel
+from typing import List
 
 
 class IPredictor(ABC):
@@ -11,7 +12,7 @@ class IPredictor(ABC):
     """
 
     @abstractmethod
-    def predict(self, model: IModel, prediction_input: PredictionInput) -> pd.DataFrame:
+    def predict(self, model: IModel, prediction_input: List[Example]) -> pd.DataFrame:
         """
         Makes predictions using the provided model and input data.
 

@@ -59,7 +59,8 @@ class Trainer(ITrainer):
             # Optionally evaluate the model on validation data
             if val_data:
                 val_predictions = model.predict(val_features)
-                # Additional code to calculate metrics for validation can be added here.
+                
+                # TODO: Additional code to calculate metrics for validation & learning curves
 
             # Save a checkpoint after each epoch if a checkpoint directory is specified
             if self.checkpoint_dir:

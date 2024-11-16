@@ -1,8 +1,7 @@
 from abc import ABC, abstractmethod
 import pandas as pd
-from ..data_structures.model_dataset import ModelDataset
-from ..data_structures.prediction_input import PredictionInput
-
+from ..data_structures.model_dataset import ModelDataset, Example
+from typing import List
 
 class IModelManager(ABC):
     @abstractmethod
@@ -16,7 +15,7 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
-    def predict(self, prediction_input: PredictionInput) -> pd.DataFrame:
+    def predict(self, prediction_input: List[Example]) -> pd.DataFrame:
         """Runs inference on the new data and returns predictions."""
         pass
 
