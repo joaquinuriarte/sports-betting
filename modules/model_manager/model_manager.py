@@ -1,4 +1,3 @@
-from ..interfaces.factory_interface import IFactory
 from ..interfaces.model_manager_interface import IModelManager
 from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
@@ -18,32 +17,33 @@ class ModelManager(IModelManager):
 
     def __init__(
         self,
-        config_path: str,
-        model_factory: IFactory[IModel],
-        predictor: IPredictor,
-        trainer: ITrainer,
+        config_path: List[str],
+        model: List[IModel],
+        predictor: List[IPredictor],
+        trainer: List[ITrainer],
     ):
-        # Step 1: Load model configuration
+        # Step 1: Load model configuration 
+        # TODO List capability
         self.config_path = config_path
         self.config_loader = ConfigurationLoader(self.config_path)
         self.model_config: ModelConfig = self.config_loader.load_config()
 
-        # Step 2: Instantiate the predictor and trainer
+        #Step 2: Load trainers, predictors, models
+        #TODO Add list capability
+        self.model = model
         self.predictor = predictor
         self.trainer = trainer
 
-        # Step 3: Instantiate Model using ModelFactory
-        self.model: IModel = model_factory.create(
-            self.model_config.type_name, self.model_config.architecture
-        )
-
         # Store model signature
+        # TODO Assess
         self.model_signature = self.model_config.model_signature
 
         # Step 4: Load existing model weights if specified in the config
+        #  TODO Assess
         if self.model_config.model_path:
             self.load_model(self.model_config.model_path)
 
+    # This is supposed to just dispatch Trainer jobs with model and train dataset for each 
     def train(self, model_dataset: ModelDataset, auto_save: bool = True) -> None:
         """
         Trains the model using the provided processed dataset.
