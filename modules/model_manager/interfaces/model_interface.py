@@ -21,18 +21,6 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def compute_loss(self, output: Any, labels: Any) -> Any:
-        """
-        Computes the loss function given model output and true labels.
-        Args:
-            output (Any): The predicted output from the forward pass.
-            labels (Any): The true labels for comparison.
-        Returns:
-            Any: The computed loss value.
-        """
-        pass
-
-    @abstractmethod
     def save(self, path: str) -> None:
         """Saves the model weights to the specified path."""
         pass

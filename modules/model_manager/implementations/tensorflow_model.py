@@ -1,8 +1,9 @@
 import tensorflow as tf
+import numpy as np
 import pandas as pd
+from typing import Any, Dict, List
 from ..interfaces.model_interface import IModel
-from typing import Any, Dict
-
+from modules.data_structures.model_dataset import Example
 
 class TensorFlowModel(IModel):
     """
@@ -14,10 +15,14 @@ class TensorFlowModel(IModel):
 
     def __init__(self, architecture_config: Dict[str, Any]) -> None:
         # Store the model configuration
-        self.model_config: Dict[str, Any] = architecture_config
+        self.model_config = architecture_config
 
         # Initialize the model using the architecture configuration
         self.model = self._initialize_model(self.model_config)
+
+        # Store Model variables
+        self.input_features: List[str] = self.model_config["input_features"] #TODO: Make sure this exists in YAML and arch_config creation logic
+        self.output_feature: str = self.model_config["output_feature"] #TODO: Make sure this exists in YAML and arch_config logic
 
     def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
         """
@@ -46,53 +51,56 @@ class TensorFlowModel(IModel):
         )
         return model
 
-    def forward(self, x: Any) -> Any:
+    def forward(self, examples: List[Example]) -> tf.Tensor:
         """
         Defines the forward pass of the model.
 
         Args:
-            x (Any): Input data, typically a list of lists or similar Python structure.
+            examples (List[Example]): A list of `Example` instances.
 
         Returns:
             tf.Tensor: Output after passing through the model's layers.
         """
-        # Convert the input to a TensorFlow tensor
-        input_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
-        return self.model(input_tensor)
+        # Convert examples to TensorFlow tensor
+        feature_array = np.array([[example.features[input_feature] for input_feature in self.input_features] for example in examples], dtype=np.float32)
+        features_tensor = tf.convert_to_tensor(feature_array)
 
-    def train(self, features: Any, labels: Any, epochs: int, batch_size: int) -> None:
+        return self.model(features_tensor)
+
+    def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
         """
-        Trains the model using the provided features and labels.
+        Trains the model using the provided examples.
 
         Args:
-            features (Any): Input features, typically a list of lists or similar Python structure.
-            labels (Any): Target labels, typically a list or similar Python structure.
+            examples (List[Example]): A list of `Example` instances containing features and labels.
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        # Convert features and labels to TensorFlow tensors
-        features_tensor = tf.convert_to_tensor(features, dtype=tf.float32)
-        labels_tensor = tf.convert_to_tensor(labels, dtype=tf.float32)
+        feature_array = np.array([[example.features[input_feature] for input_feature in self.input_features] for example in examples], dtype=np.float32)
+        label_array = np.array([example.features[self.output_feature] for example in examples], dtype=np.float32)
+
+        # Convert arrays to tensors
+        features_tensor = tf.convert_to_tensor(feature_array)
+        labels_tensor = tf.convert_to_tensor(label_array)
 
         # Train the model
-        self.model.fit(
-            features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
-        )
+        # TODO: We could use a more explicit training method, like defining a compute_loss function, but we would lose the ability to seamlessly switch loss functions from the YAML.
+        self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
 
-    def predict(self, x: Any) -> pd.DataFrame:
+    def predict(self, examples: List[Example]) -> pd.DataFrame:
         """
-        Generates predictions for the provided input data.
+        Generates predictions for the provided examples.
 
         Args:
-            x (Any): Input data, typically a list of lists or similar Python structure.
+            examples (List[Example]): A list of `Example` instances.
 
         Returns:
             pd.DataFrame: The predicted output.
         """
-        # Convert the input to a TensorFlow tensor
-        input_tensor = tf.convert_to_tensor(x, dtype=tf.float32)
-        predictions = self.forward(input_tensor)
-        return pd.DataFrame(predictions.numpy())
+        output_tensor = self.forward(examples)
+        predictions = output_tensor.numpy()
+        prediction_df = pd.DataFrame(predictions, columns=[f'output_{i}' for i in range(predictions.shape[1])])
+        return prediction_df
 
     def save(self, path: str) -> None:
         """
