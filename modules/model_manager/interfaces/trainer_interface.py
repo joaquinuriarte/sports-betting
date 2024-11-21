@@ -21,12 +21,18 @@ class ITrainer(ABC):
         pass
 
     @abstractmethod
-    def train(self, model: IModel, model_dataset: ModelDataset) -> None:
+    def train(
+        self,
+        models: List[IModel],
+        train_datasets: List[ModelDataset],
+        val_datasets: Optional[List[ModelDataset]] = None
+    ) -> None:
         """
-        Trains the model using the provided dataset.
+        Trains the models using the provided datasets.
 
         Args:
-            model (IModel): The model to be trained.
-            model_dataset (ModelDataset): The dataset containing features and labels.
+            models (List[IModel]): A list of models to be trained.
+            train_datasets (List[ModelDataset]): A list of training datasets for each model.
+            val_datasets (Optional[List[ModelDataset]]): A list of validation datasets for each model. If None, no validation is performed.
         """
         pass
