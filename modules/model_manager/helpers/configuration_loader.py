@@ -7,25 +7,24 @@ class ConfigurationLoader:
     Loads and parses the configuration file for the model.
     """
 
-    def __init__(self, config_path: str) -> None:
-        self.config_path = config_path
-
-    def load_config(self) -> ModelConfig:
+    def load_config(self, config_path: str) -> ModelConfig:
         """
         Loads the configuration from the YAML file and returns a ModelConfig instance.
 
         Returns:
             ModelConfig: The configuration for the model.
         """
-        with open(self.config_path, "r") as file:
+        with open(config_path, "r") as file:
             config_data = yaml.safe_load(file)
 
-        # Generate a signature by hashing the entire YAML configuration
-        config_str = yaml.dump(config_data)
-        signature = hashlib.md5(config_str.encode()).hexdigest()
+        # Add model signature to YAML if it doesn't exist 
+        if not config_data["model_signature"]:
+            # Generate a signature by hashing the entire YAML configuration
+            config_str = yaml.dump(config_data)
+            signature = hashlib.md5(config_str.encode()).hexdigest()
 
-        # Add the generated signature to the configuration
-        self.update_config(self.config_path, "model.model_signature", signature)
+            # Add the generated signature to the configuration
+            self.update_config(self.config_path, "model.model_signature", signature)
 
         # Parse the updated configuration into a ModelConfig object
         model_data = config_data["model"]
