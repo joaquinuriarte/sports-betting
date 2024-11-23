@@ -1,7 +1,7 @@
 from ..interfaces.model_manager_interface import IModelManager
 from ..data_structures.model_config import ModelConfig
 from .interfaces.model_interface import IModel
-from .configuration_loader import ConfigurationLoader
+from .helpers.configuration_loader import ConfigurationLoader
 from ..data_structures.model_dataset import ModelDataset, Example
 from .interfaces.trainer_interface import ITrainer
 from .interfaces.predictor_interface import IPredictor
