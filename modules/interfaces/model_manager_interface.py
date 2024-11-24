@@ -1,25 +1,54 @@
 from abc import ABC, abstractmethod
 import pandas as pd
 from ..data_structures.model_dataset import ModelDataset, Example
-from typing import List
+from ..model_manager.interfaces.model_interface import IModel
+from ..data_structures.model_config import ModelConfig
+from typing import List, Tuple, Optional
 
 class IModelManager(ABC):
     @abstractmethod
-    def train(self, model_dataset: ModelDataset, auto_save: bool) -> None:
-        """Trains the model using features and labels."""
+    def create_models(
+        self,
+        yaml_path: List[str],
+    ) -> List[Tuple(IModel, ModelConfig)]:
+        """Instantiates models from a yaml path and returns models with their configuration object."""
         pass
 
     @abstractmethod
-    def save_model(self) -> None:
-        """Saves the model weights to the specified path."""
+    def train(
+        self,
+        models: List[IModel],
+        train_val_datasets: List[Tuple(ModelDataset, ModelDataset)],
+        save_after_training: Optional[bool] = True,
+    ) -> None:
+        """Trains the models using their provided ModelDataset."""
         pass
 
     @abstractmethod
-    def predict(self, prediction_input: List[Example]) -> pd.DataFrame:
-        """Runs inference on the new data and returns predictions."""
+    def predict(
+        self,
+        models: List[IModel],
+        input_data: List[List[Example]],
+    ) -> List[pd.DataFrame]:
+        """Runs inference on the provided Example List."""
         pass
 
     @abstractmethod
-    def load_model(self, path: str) -> None:
+    def save(
+        self,
+        model: IModel,
+        save_path: Optional[str] = None
+    ) -> None:
+        """
+        Saves the model using the model signature.
+        """
+        pass
+
+    @abstractmethod
+    def load_models(
+        self, 
+        yaml_paths: List[str], 
+        weights_paths: List[str],
+    ) -> List[Tuple(IModel, ModelConfig)]:
         """Loads the model weights to the model."""
         pass

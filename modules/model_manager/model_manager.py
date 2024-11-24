@@ -1,14 +1,14 @@
 from ..interfaces.model_manager_interface import IModelManager
-from ..data_structures.model_config import ModelConfig
-from .interfaces.model_interface import IModel
-from .helpers.configuration_loader import ConfigurationLoader
-from ..data_structures.model_dataset import ModelDataset, Example
 from .interfaces.trainer_interface import ITrainer
 from .interfaces.predictor_interface import IPredictor
-from typing import List
+from .helpers.configuration_loader import ConfigurationLoader
+from .factories.model_factory import ModelFactory
+from .interfaces.model_interface import IModel
+from ..data_structures.model_config import ModelConfig
+from ..data_structures.model_dataset import ModelDataset, Example
+from typing import List, Optional, Tuple
 import pandas as pd
 import os
-
 
 class ModelManager(IModelManager):
     """
@@ -17,92 +17,127 @@ class ModelManager(IModelManager):
 
     def __init__(
         self,
-        config_path: List[str],
-        model: List[IModel],
-        predictor: List[IPredictor],
-        trainer: List[ITrainer],
-    ):
-        # Step 1: Load model configuration 
-        # TODO List capability
-        self.config_path = config_path
-        self.config_loader = ConfigurationLoader(self.config_path)
-        self.model_config: ModelConfig = self.config_loader.load_config()
-
-        #Step 2: Load trainers, predictors, models
-        #TODO Add list capability
-        self.model = model
-        self.predictor = predictor
+        trainer: ITrainer,
+        predictor: IPredictor,
+        model_factory: ModelFactory,
+        config_loader: ConfigurationLoader,
+    ) -> None:
+        # Instantiate dependencies
         self.trainer = trainer
+        self.predictor = predictor
+        self.model_factory = model_factory
+        self.config_loader = config_loader
+    
+    def create_models(
+        self,
+        yaml_path: List[str],
+    ) -> List[Tuple(IModel, ModelConfig)]:
+        # Initiate final returned list
+        models_and_config = []
 
-        # Store model signature
-        # TODO Assess
-        self.model_signature = self.model_config.model_signature
+        # Create Models and Model configs
+        for yaml in yaml_path:
+            model_config: ModelConfig = self.config_loader.load_config(yaml)
+            model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
 
-        # Step 4: Load existing model weights if specified in the config
-        #  TODO Assess
-        if self.model_config.model_path:
-            self.load_model(self.model_config.model_path)
+            # Append to final list
+            models_and_config.append((model, model_config))
+        
+        return models_and_config
+    
+    def train(
+        self,
+        models: List[IModel],
+        train_val_datasets: List[Tuple(ModelDataset, ModelDataset)],
+        save_after_training: Optional[bool] = True,
+    ) -> None:
+        # Verify correct input dimensions
+        if len(models) != len(train_val_datasets):
+            raise ValueError("Number of models and train_val_datasets provided must be equal.")
 
-    # This is supposed to just dispatch Trainer jobs with model and train dataset for each 
-    def train(self, model_dataset: ModelDataset, auto_save: bool = True) -> None:
-        """
-        Trains the model using the provided processed dataset.
+        # Train models
+        for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
+            # Train models
+            self.trainer.train(model, train_dataset, val_dataset)
 
-        Args:
-            model_dataset (ModelDataset): Dataset to train the model with.
-        """
-        self.trainer.train(self.model, model_dataset)
+            # Save model
+            if save_after_training:
+                self.save(model)
 
-        # TODO Decide if this is the right approach. Not sure if it reduces flexibility, or increases safety
-        if auto_save:
-            self.save_model()
+    def predict(
+        self,
+        models: List[IModel],
+        input_data: List[List[Example]],
+    ) -> List[pd.DataFrame]:
+        # Verify correct input dimensions
+        if len(models) != len(input_data):
+            raise ValueError("Number of models and input_data provided must be equal.")
+        
+        # Extract and predict
+        output_data = []
+        for model, examples in zip(models, input_data): 
+            output_data.append(self.predict(model, examples))
+        
+        # Return predicitons
+        return output_data
 
-    def save_model(self) -> None:
+    def save(
+        self,
+        model: IModel,
+        save_path: Optional[str] = None
+    ) -> None:
         """
         Saves the model weights and configuration using the model signature.
         """
-        model_directory = os.path.join("models", self.model_signature)
-        os.makedirs(model_directory, exist_ok=True)
+        if not save_path: 
+            # Get model signature
+            model_signature = model.get_training_config().get("model_signature")
+
+            # Create directory path
+            model_directory = os.path.join("models", model_signature)
+            os.makedirs(model_directory, exist_ok=True)
+
+            # Create model weights path
+            save_path = os.path.join(
+                model_directory, f"model_weights_{model_signature}.pth"
+            )
 
         # Save model weights
-        model_weights_path = os.path.join(
-            model_directory, f"model_weights_{self.model_signature}.pth"
-        )
-        self.model.save(model_weights_path)
-
-        # Use ConfigurationLoader to update the model configuration with path
-        self.config_loader.update_config(
-            self.config_path, "model.save_path", model_weights_path
-        )
-
-        # Save the updated YAML configuration alongside the model weights
-        config_save_path = os.path.join(
-            model_directory, f"model_config_{self.model_signature}.yaml"
-        )
-        with open(config_save_path, "w") as config_file:
-            with open(self.config_path, "r") as original_config:
-                config_file.write(original_config.read())
+        model.save(save_path)
 
         print(f"Model saved successfully in directory: {model_directory}")
 
-    def load_model(self, path: str) -> None:
+    def load_models(
+        self, 
+        yaml_paths: List[str], 
+        weights_paths: List[str],
+    ) -> List[Tuple(IModel, ModelConfig)]:
         """
-        Loads the model weights from the specified path.
-
-        Args:
-            path (str): Path from which to load the model weights.
+        Loads a model from yaml path with weights and configuration.
         """
-        self.model.load(path)
+        # Verify correct input dimensions
+        if len(yaml_paths) != len(weights_paths):
+            raise ValueError("Number of yaml_paths and weights_paths provided must be equal.")
+        
+        # Create empty return object
+        models_and_configs = []
 
-    def predict(self, prediction_input: List[Example]) -> pd.DataFrame:
-        """
-        Uses the model to make predictions on new input data.
+        # Loop over yaml and weights and instantiate model and load its weights 
+        for yaml, weights_path in zip(yaml_paths, weights_paths): 
+            model_config: ModelConfig = self.config_loader.load_config(yaml)
+            model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
+            model.load(weights_path)
 
-        Args:
-            prediction_input (PredictionInput): New input data for inference.
+            models_and_configs.append((model, model_config))
+        
+        # Return final list
+        return models_and_configs
 
-        Returns:
-            pd.DataFrame: Predictions for the input data.
-        """
-        predictions = self.predictor.predict(self.model, prediction_input)
-        return predictions
+
+    # TODO
+        #1. Ver si update interface
+            # YA
+        #2. Ver si code correct
+        #3. add comments y method descriptions
+        #4. Signatures link yaml y weights, pichea save path. Quita de yaml, ModelConfig, and configLoader
+            # YA

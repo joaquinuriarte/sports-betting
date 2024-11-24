@@ -31,13 +31,11 @@ class ConfigurationLoader:
         type_name = model_data["architecture"]["type"]
         architecture = model_data["architecture"]
         training = model_data["training"]
-        model_path = model_data.get("save_path", None)
 
         return ModelConfig(
             type_name=type_name,
             architecture=architecture,
             training=training,
-            model_path=model_path,
             model_signature=signature,
         )
 

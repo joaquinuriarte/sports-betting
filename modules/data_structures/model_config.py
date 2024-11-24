@@ -9,5 +9,4 @@ class ModelConfig:
     type_name: str
     architecture: Dict[str, Any]
     training: Dict[str, Any]
-    model_path: str
     model_signature: str
