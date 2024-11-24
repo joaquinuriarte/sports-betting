@@ -141,3 +141,8 @@ class ModelManager(IModelManager):
         #3. add comments y method descriptions
         #4. Signatures link yaml y weights, pichea save path. Quita de yaml, ModelConfig, and configLoader
             # YA
+
+    # Model manager test cases and all sub components
+    # black and mypy for all
+    # dataset gen ver si bring back factories and config
+    # Main meterle 
