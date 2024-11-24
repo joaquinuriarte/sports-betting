@@ -9,6 +9,7 @@ from ..data_structures.model_config import ModelConfig
 from ..data_structures.model_dataset import ModelDataset, Example
 from typing import List, Optional
 import pandas as pd
+import os
 import logging
 
 logging.basicConfig(level=logging.INFO)
@@ -63,6 +64,9 @@ class ModelManager(IModelManager):
             # Train models
             self.trainer.train(model, train_dataset[0], train_dataset[1])
 
+            # Save model
+            self.save(model)
+
     def predict(
         self,
         models: List[IModel],
@@ -80,11 +84,56 @@ class ModelManager(IModelManager):
         # Return predicitons
         return output_data
 
-    # def save() -> called automatically after train, ver logic previous save method
+    def save(
+        self,
+        model: IModel,
+    ) -> None:
+        """
+        Saves the model weights and configuration using the model signature.
+        """
+        # Get model signature
+        model_signature = model.get_training_config().get("model_signature")
 
-    # def load(yaml path, weight path) -> tuple(LoadedModel, ModelConfig)
+        # Create directory path
+        model_directory = os.path.join("models", model_signature)
+        os.makedirs(model_directory, exist_ok=True)
+
+        # Create model weights path
+        model_weights_path = os.path.join(
+            model_directory, f"model_weights_{model_signature}.pth"
+        )
+
+        # Save model weights
+        model.save(model_weights_path)
+
+        print(f"Model saved successfully in directory: {model_directory}")
+
+    def load_model(
+        self, 
+        yaml_paths: List[str], 
+        weights_paths: List[str],
+    ) -> List[tuple(IModel, ModelConfig)]:
+        # Verify correct input dimensions
+        if len(yaml_paths) != len(weights_paths):
+            raise ValueError("Number of yaml_paths and weights_paths provided must be equal.")
+        
+        # Create empty return object
+        models_and_configs = []
+
+        # Loop over yaml and weights and instantiate model and load its weights 
+        for (yaml, weights_path) in enumerate(zip(yaml_paths, weights_paths)): 
+            model_config: ModelConfig = self.config_loader.load_config(yaml)
+            model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
+            model.save(weights_path)
+
+            models_and_configs.append(tuple(model, model_config))
+        
+        # Return final list
+        return models_and_configs
+
 
     # TODO
         #1. Ver si update interface
         #2. Ver si code correct
-        #3. 
+        #3. add comments y method descriptions
+        #4. Signatures link yaml y weights, pichea save path. Quita de yaml, ModelConfig, and configLoader
