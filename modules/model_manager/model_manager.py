@@ -22,6 +22,9 @@ class ModelManager(IModelManager):
         model_factory: ModelFactory,
         config_loader: ConfigurationLoader,
     ) -> None:
+        """
+        Initializes the ModelManager with necessary dependencies including trainer, predictor, model factory, and config loader.
+        """
         # Instantiate dependencies
         self.trainer = trainer
         self.predictor = predictor
@@ -31,8 +34,16 @@ class ModelManager(IModelManager):
     def create_models(
         self,
         yaml_path: List[str],
-    ) -> List[Tuple(IModel, ModelConfig)]:
-        # Initiate final returned list
+    ) -> List[Tuple[IModel, ModelConfig]]:
+        """
+        Creates models from a list of YAML configuration paths.
+
+        Args:
+            yaml_paths (List[str]): A list of paths to YAML configuration files.
+
+        Returns:
+            List[Tuple[IModel, ModelConfig]]: A list of tuples containing model instances and their configurations.
+        """
         models_and_config = []
 
         # Create Models and Model configs
@@ -40,7 +51,6 @@ class ModelManager(IModelManager):
             model_config: ModelConfig = self.config_loader.load_config(yaml)
             model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
 
-            # Append to final list
             models_and_config.append((model, model_config))
         
         return models_and_config
@@ -48,16 +58,23 @@ class ModelManager(IModelManager):
     def train(
         self,
         models: List[IModel],
-        train_val_datasets: List[Tuple(ModelDataset, ModelDataset)],
+        train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
         save_after_training: Optional[bool] = True,
     ) -> None:
-        # Verify correct input dimensions
+        """
+        Trains the provided models using corresponding training and validation datasets.
+
+        Args:
+            models (List[IModel]): The models to be trained.
+            train_val_datasets (List[Tuple[ModelDataset, ModelDataset]]): A list of tuples containing training and validation datasets for each model.
+            save_after_training (Optional[bool]): Flag to indicate if the model should be saved after training. Default is True.
+        """
+        # Verify correct input dimensions        
         if len(models) != len(train_val_datasets):
             raise ValueError("Number of models and train_val_datasets provided must be equal.")
 
         # Train models
         for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
-            # Train models
             self.trainer.train(model, train_dataset, val_dataset)
 
             # Save model
@@ -69,6 +86,16 @@ class ModelManager(IModelManager):
         models: List[IModel],
         input_data: List[List[Example]],
     ) -> List[pd.DataFrame]:
+        """
+        Makes predictions using the provided models and input data.
+
+        Args:
+            models (List[IModel]): A list of models to be used for prediction.
+            input_data (List[List[Example]]): A list of input data examples for each model.
+
+        Returns:
+            List[pd.DataFrame]: A list of predictions for each model.
+        """
         # Verify correct input dimensions
         if len(models) != len(input_data):
             raise ValueError("Number of models and input_data provided must be equal.")
@@ -76,9 +103,8 @@ class ModelManager(IModelManager):
         # Extract and predict
         output_data = []
         for model, examples in zip(models, input_data): 
-            output_data.append(self.predict(model, examples))
+            output_data.append(self.predictor.predict(model, examples))
         
-        # Return predicitons
         return output_data
 
     def save(
@@ -88,6 +114,10 @@ class ModelManager(IModelManager):
     ) -> None:
         """
         Saves the model weights and configuration using the model signature.
+
+        Args:
+            model (IModel): The model instance to be saved.
+            save_path (Optional[str]): The path to save the model weights. If not provided, default directory is used.
         """
         if not save_path: 
             # Get model signature
@@ -101,25 +131,33 @@ class ModelManager(IModelManager):
             save_path = os.path.join(
                 model_directory, f"model_weights_{model_signature}.pth"
             )
+        else:
+            if not os.path.exists(os.path.dirname(save_path)):
+                os.makedirs(os.path.dirname(save_path), exist_ok=True)
 
         # Save model weights
         model.save(save_path)
-
-        print(f"Model saved successfully in directory: {model_directory}")
+        print(f"Model saved successfully at: {save_path}")
 
     def load_models(
         self, 
         yaml_paths: List[str], 
         weights_paths: List[str],
-    ) -> List[Tuple(IModel, ModelConfig)]:
+    ) -> List[Tuple[IModel, ModelConfig]]:
         """
-        Loads a model from yaml path with weights and configuration.
+        Loads models from provided YAML paths and weight paths.
+
+        Args:
+            yaml_paths (List[str]): A list of paths to YAML configuration files.
+            weights_paths (List[str]): A list of paths to saved model weights.
+
+        Returns:
+            List[Tuple[IModel, ModelConfig]]: A list of tuples containing the loaded model instances and their configurations.
         """
         # Verify correct input dimensions
         if len(yaml_paths) != len(weights_paths):
             raise ValueError("Number of yaml_paths and weights_paths provided must be equal.")
         
-        # Create empty return object
         models_and_configs = []
 
         # Loop over yaml and weights and instantiate model and load its weights 
@@ -130,7 +168,6 @@ class ModelManager(IModelManager):
 
             models_and_configs.append((model, model_config))
         
-        # Return final list
         return models_and_configs
 
 
