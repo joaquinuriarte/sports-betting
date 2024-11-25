@@ -22,7 +22,7 @@ class TensorFlowModel(IModel):
 
         # Store Model variables
         self.input_features: List[str] = self.model_config["input_features"] #TODO: Make sure this exists in YAML and arch_config creation logic
-        self.output_feature: str = self.model_config["output_feature"] #TODO: Make sure this exists in YAML and arch_config logic
+        self.output_features: str = self.model_config["output_features"] #TODO: Make sure this exists in YAML and arch_config logic
 
     def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
         """
@@ -77,7 +77,7 @@ class TensorFlowModel(IModel):
             batch_size (int): Batch size to use during training.
         """
         feature_array = np.array([[example.features[input_feature] for input_feature in self.input_features] for example in examples], dtype=np.float32)
-        label_array = np.array([example.features[self.output_feature] for example in examples], dtype=np.float32)
+        label_array = np.array([example.features[self.output_features] for example in examples], dtype=np.float32)
 
         # Convert arrays to tensors
         features_tensor = tf.convert_to_tensor(feature_array)

@@ -171,15 +171,9 @@ class ModelManager(IModelManager):
         return models_and_configs
 
 
-    # TODO
-        #1. Ver si update interface
-            # YA
-        #2. Ver si code correct
-        #3. add comments y method descriptions
-        #4. Signatures link yaml y weights, pichea save path. Quita de yaml, ModelConfig, and configLoader
-            # YA
-
     # Model manager test cases and all sub components
+    # TODO en tensorFlow implementation
+    # TODO mueve logic back to datasetGen con un method para create_generators como create models
     # black and mypy for all
     # dataset gen ver si bring back factories and config
     # Main meterle 

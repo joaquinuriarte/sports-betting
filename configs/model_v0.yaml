@@ -75,6 +75,19 @@ model:
         in_features: 64
         units: 1
         activation: None
+    input_features:
+      - 'MIN'
+      - 'PTS'
+      - 'AST'
+      - 'TO'
+      - 'PLUS_MINUS'
+      - 'OREB'
+      - 'DREB'
+      - 'PF'
+      - 'FG3_PCT'
+      - 'FG_PCT'
+      - 'FT_PCT'
+    output_features: PTS
 
   # Training configuration
   training:
