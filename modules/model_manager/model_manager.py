@@ -172,8 +172,10 @@ class ModelManager(IModelManager):
 
 
     # Model manager test cases and all sub components
-    # TODO en tensorFlow implementation
+        # vamos en config loader
+        # Pause y TODO en tensorFlow implementation
+        # desp tensorFlow implementation unit test
     # TODO mueve logic back to datasetGen con un method para create_generators como create models
+        # All unit test for that
     # black and mypy for all
-    # dataset gen ver si bring back factories and config
     # Main meterle 
