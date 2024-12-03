@@ -62,7 +62,15 @@ class TensorFlowModel(IModel):
             tf.Tensor: Output after passing through the model's layers.
         """
         # Convert examples to TensorFlow tensor
-        feature_array = np.array([[example.features[input_feature] for input_feature in self.input_features] for example in examples], dtype=np.float32)
+        feature_array = np.array([
+            [
+                feature[input_feature] 
+                for input_feature in self.input_features
+                for feature in example.features 
+                if input_feature in feature
+            ]
+            for example in examples
+        ], dtype=np.float32)
         features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
@@ -76,16 +84,27 @@ class TensorFlowModel(IModel):
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        feature_array = np.array([[example.features[input_feature] for input_feature in self.input_features] for example in examples], dtype=np.float32)
-        label_array = np.array([example.features[self.output_features] for example in examples], dtype=np.float32)
+        # Extract features and labels from examples
+        feature_array = np.array([
+            [
+                next(feature[input_feature] for feature in example.features if input_feature in feature)
+                for input_feature in self.input_features
+            ]
+            for example in examples
+        ], dtype=np.float32)
+
+        label_array = np.array([
+            next(feature[self.output_features] for feature in example.features if self.output_features in feature)
+            for example in examples
+        ], dtype=np.float32)
 
         # Convert arrays to tensors
         features_tensor = tf.convert_to_tensor(feature_array)
         labels_tensor = tf.convert_to_tensor(label_array)
 
         # Train the model
-        # TODO: We could use a more explicit training method, like defining a compute_loss function, but we would lose the ability to seamlessly switch loss functions from the YAML without having to create instances of loss functions
         self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
+
 
     def predict(self, examples: List[Example]) -> pd.DataFrame:
         """
