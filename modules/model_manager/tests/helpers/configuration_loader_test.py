@@ -1,11 +1,12 @@
 import unittest
-from unittest.mock import mock_open, patch
+from unittest.mock import mock_open, patch, Mock
 from modules.model_manager.helpers.configuration_loader import ConfigurationLoader
 from modules.data_structures.model_config import ModelConfig
+from typing import Any
 
 class ConfigurationLoaderTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up common dependencies for tests.
         """
@@ -14,7 +15,7 @@ class ConfigurationLoaderTest(unittest.TestCase):
 
     @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n")
     @patch("yaml.safe_load")
-    def test_load_config_without_signature(self, mock_yaml_load, mock_file):
+    def test_load_config_without_signature(self, mock_yaml_load: Mock, mock_file: Any) -> None:
         """
         Test loading a configuration without a model signature and ensure it generates a signature.
         """
@@ -45,7 +46,7 @@ class ConfigurationLoaderTest(unittest.TestCase):
 
     @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n  model_signature: existing_signature\n")
     @patch("yaml.safe_load")
-    def test_load_config_with_signature(self, mock_yaml_load, mock_file):
+    def test_load_config_with_signature(self, mock_yaml_load: Mock, mock_file: Any) -> None:
         """
         Test loading a configuration that already has a model signature.
         """
@@ -70,7 +71,7 @@ class ConfigurationLoaderTest(unittest.TestCase):
     @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n")
     @patch("yaml.safe_load")
     @patch("yaml.dump")
-    def test_update_config(self, mock_yaml_dump, mock_yaml_load, mock_file):
+    def test_update_config(self, mock_yaml_dump: Mock, mock_yaml_load: Mock, mock_file: Any) -> None:
         """
         Test updating a specific field in the configuration YAML.
         """
