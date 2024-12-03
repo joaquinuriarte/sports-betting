@@ -169,13 +169,3 @@ class ModelManager(IModelManager):
             models_and_configs.append((model, model_config))
         
         return models_and_configs
-
-
-    # Model manager test cases and all sub components
-        # vamos en config loader
-        # Pause y TODO en tensorFlow implementation
-        # desp tensorFlow implementation unit test
-    # TODO mueve logic back to datasetGen con un method para create_generators como create models
-        # All unit test for that
-    # black and mypy for all
-    # Main meterle 

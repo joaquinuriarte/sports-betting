@@ -1,5 +1,5 @@
 import yaml
-from main.data_structures.dataset_config import DatasetConfig
+from modules.data_structures.dataset_config import DatasetConfig
 from modules.data_structures.source import Source
 
 
@@ -8,17 +8,14 @@ class ConfigurationLoader:
     Reads and parses YAML configurations to provide necessary setup information for dataset generation.
     """
 
-    def __init__(self, config_path: str):
-        self.config_path = config_path
-
-    def load_config(self) -> DatasetConfig:
+    def load_config(self, config_path: str) -> DatasetConfig:
         """
         Loads the YAML configuration file and creates a DatasetConfig object.
 
         Returns:
             DatasetConfig: Parsed dataset configuration object.
         """
-        with open(self.config_path, "r") as file:
+        with open(config_path, "r") as file:
             config = yaml.safe_load(file)
 
         # Parse the sources

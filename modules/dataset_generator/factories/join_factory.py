@@ -4,7 +4,7 @@ from ..implementations.join_operations import (
     RightJoinOperation,
 )
 from ..interfaces.join_operator_interface import IJoinOperator
-from ...modules.interfaces.factory_interface import IFactory
+from ....modules.interfaces.factory_interface import IFactory
 from typing import Any
 
 

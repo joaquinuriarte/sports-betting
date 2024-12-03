@@ -1,7 +1,7 @@
-from ...modules.data_structures.source import Source
+from .source import Source
 from dataclasses import dataclass
 from typing import List, TypedDict, Dict, Any
-from ..interfaces.join_operator_interface import IJoinOperator
+from ..dataset_generator.interfaces.join_operator_interface import IJoinOperator
 
 
 @dataclass

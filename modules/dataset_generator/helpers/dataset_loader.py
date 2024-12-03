@@ -1,6 +1,6 @@
 from typing import List
 import pandas as pd
-from main.interfaces.data_io_interface import DataIO
+from ..interfaces.data_io_interface import DataIO
 from modules.data_structures.source import Source
 
 
