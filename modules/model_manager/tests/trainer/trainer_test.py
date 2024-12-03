@@ -29,7 +29,7 @@ class TrainerTest(unittest.TestCase):
             "model_signature": "test_model"
         }
 
-    def test_train_with_validation(self):
+    def test_train_with_validation(self) -> None:
         """
         Test training with both training and validation datasets.
         """
@@ -47,7 +47,7 @@ class TrainerTest(unittest.TestCase):
         # Ensure checkpoints were saved for each epoch
         self.assertEqual(self.mock_model.save.call_count, self.mock_model.get_training_config()["epochs"])
 
-    def test_train_without_validation(self):
+    def test_train_without_validation(self) -> None:
         """
         Test training with only the training dataset.
         """

@@ -5,16 +5,17 @@ import numpy as np
 import pandas as pd
 from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
 from modules.data_structures.model_dataset import Example
+from typing import List, Dict, Any
 
 
 class TensorFlowModelTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up common dependencies for tests.
         """
         # Define a sample architecture config
-        self.architecture_config = {
+        self.architecture_config: Dict[str, Any] = {
             "input_size": 4,
             "input_features": ["feature1", "feature2", "feature3", "feature4"],
             "output_features": "label",
@@ -28,10 +29,10 @@ class TensorFlowModelTest(unittest.TestCase):
         }
 
         # Instantiate TensorFlowModel with the sample architecture config
-        self.model = TensorFlowModel(self.architecture_config)
+        self.model: TensorFlowModel = TensorFlowModel(self.architecture_config)
 
         # Create sample examples
-        self.examples = [
+        self.examples: List[Example] = [
             Example(features=[
                 {"feature1": 1.0}, {"feature2": 2.0}, {"feature3": 3.0}, {"feature4": 4.0}, {"label": 5.0}
             ]),
@@ -40,14 +41,13 @@ class TensorFlowModelTest(unittest.TestCase):
             ]),
         ]
 
-
     @patch("tensorflow.keras.Model.fit")
-    def test_train(self, mock_fit):
+    def test_train(self, mock_fit: MagicMock) -> None:
         """
         Test the train method of TensorFlowModel.
         """
-        epochs = 10
-        batch_size = 2
+        epochs: int = 10
+        batch_size: int = 2
 
         # Call the train method
         self.model.train(self.examples, epochs, batch_size)
@@ -57,8 +57,8 @@ class TensorFlowModelTest(unittest.TestCase):
         args, kwargs = mock_fit.call_args
 
         # Extract feature array and label array from args to validate input structure
-        features_tensor = args[0]  # The first positional argument should be features tensor
-        labels_tensor = args[1]    # The second positional argument should be labels tensor
+        features_tensor: tf.Tensor = args[0]  # The first positional argument should be features tensor
+        labels_tensor: tf.Tensor = args[1]    # The second positional argument should be labels tensor
 
         # Expected feature and label values
         expected_features = np.array([
@@ -76,10 +76,8 @@ class TensorFlowModelTest(unittest.TestCase):
         self.assertEqual(kwargs['epochs'], epochs)
         self.assertEqual(kwargs['batch_size'], batch_size)
 
-
-
     @patch.object(tf.keras.Model, '__call__', autospec=True)
-    def test_forward(self, mock_call):
+    def test_forward(self, mock_call: MagicMock) -> None:
         """
         Test the forward method of TensorFlowModel.
         """
@@ -88,51 +86,47 @@ class TensorFlowModelTest(unittest.TestCase):
         mock_call.return_value = expected_output
 
         # Call forward
-        output = self.model.forward(self.examples)
+        output: tf.Tensor = self.model.forward(self.examples)
 
         # Assertions
         np.testing.assert_array_almost_equal(output.numpy(), expected_output.numpy())
 
-
-    def test_predict(self):
+    @patch.object(TensorFlowModel, 'forward', return_value=tf.constant([[0.5], [0.8]], dtype=tf.float32))
+    def test_predict(self, mock_forward: MagicMock) -> None:
         """
         Test the predict method of TensorFlowModel.
         """
-        # Mock forward to return a predefined value
-        expected_output = tf.constant([[0.5], [0.8]], dtype=tf.float32)
-        self.model.forward = MagicMock(return_value=expected_output)
-
         # Call predict
-        predictions = self.model.predict(self.examples)
+        predictions: pd.DataFrame = self.model.predict(self.examples)
 
         # Assertions
         self.assertIsInstance(predictions, pd.DataFrame)
         self.assertEqual(predictions.shape, (2, 1))
-        np.testing.assert_array_almost_equal(predictions.values, expected_output.numpy())
+        np.testing.assert_array_almost_equal(predictions.values, mock_forward.return_value.numpy())
 
     @patch("tensorflow.keras.Model.save_weights")
-    def test_save(self, mock_save_weights):
+    def test_save(self, mock_save_weights: MagicMock) -> None:
         """
         Test the save method of TensorFlowModel.
         """
-        path = "path/to/save/weights"
+        path: str = "path/to/save/weights"
         self.model.save(path)
         mock_save_weights.assert_called_once_with(path)
 
     @patch("tensorflow.keras.Model.load_weights")
-    def test_load(self, mock_load_weights):
+    def test_load(self, mock_load_weights: MagicMock) -> None:
         """
         Test the load method of TensorFlowModel.
         """
-        path = "path/to/load/weights"
+        path: str = "path/to/load/weights"
         self.model.load(path)
         mock_load_weights.assert_called_once_with(path)
 
-    def test_get_training_config(self):
+    def test_get_training_config(self) -> None:
         """
         Test the get_training_config method of TensorFlowModel.
         """
-        config = self.model.get_training_config()
+        config: Dict[str, Any] = self.model.get_training_config()
         self.assertEqual(config, self.architecture_config)
 
 
