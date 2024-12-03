@@ -6,13 +6,13 @@ from ...implementations.tensorflow_model import TensorFlowModel
 
 class ModelFactoryTest(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up a ModelFactory instance for testing.
         """
         self.factory = ModelFactory()
 
-    def test_create_tensorflow_model(self):
+    def test_create_tensorflow_model(self) -> None:
         """
         Test if ModelFactory creates a TensorFlow model when 'tensorflow' type is provided.
         """
@@ -37,7 +37,7 @@ class ModelFactoryTest(unittest.TestCase):
         self.assertIsInstance(model, TensorFlowModel)
         self.assertIsInstance(model, IModel)
 
-    def test_create_unsupported_model_type(self):
+    def test_create_unsupported_model_type(self) -> None:
         """
         Test if ModelFactory raises a ValueError for an unsupported model type.
         """

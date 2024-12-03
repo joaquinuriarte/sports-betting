@@ -49,7 +49,7 @@ class ModelManager(IModelManager):
         # Create Models and Model configs
         for yaml in yaml_path:
             model_config: ModelConfig = self.config_loader.load_config(yaml)
-            model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
+            model: IModel = self.model_factory.create(model_config.type_name, model_config)
 
             models_and_config.append((model, model_config))
         
@@ -123,6 +123,9 @@ class ModelManager(IModelManager):
             # Get model signature
             model_signature = model.get_training_config().get("model_signature")
 
+            if model_signature is None:
+                raise ValueError("Model signature cannot be None")
+
             # Create directory path
             model_directory = os.path.join("models", model_signature)
             os.makedirs(model_directory, exist_ok=True)
@@ -163,7 +166,7 @@ class ModelManager(IModelManager):
         # Loop over yaml and weights and instantiate model and load its weights 
         for yaml, weights_path in zip(yaml_paths, weights_paths): 
             model_config: ModelConfig = self.config_loader.load_config(yaml)
-            model: IModel = self.model_factory.create(model_config.get("type_name"), model_config)
+            model: IModel = self.model_factory.create(model_config.type_name, model_config)
             model.load(weights_path)
 
             models_and_configs.append((model, model_config))
