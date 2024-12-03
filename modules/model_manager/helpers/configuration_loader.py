@@ -1,6 +1,6 @@
-import yaml, hashlib
+import yaml
+import hashlib
 from modules.data_structures.model_config import ModelConfig
-
 
 class ConfigurationLoader:
     """
@@ -11,20 +11,26 @@ class ConfigurationLoader:
         """
         Loads the configuration from the YAML file and returns a ModelConfig instance.
 
+        Args:
+            config_path (str): Path to the YAML configuration file.
+
         Returns:
             ModelConfig: The configuration for the model.
         """
         with open(config_path, "r") as file:
             config_data = yaml.safe_load(file)
 
-        # Add model signature to YAML if it doesn't exist 
-        if not config_data["model_signature"]:
+        # Check if model signature exists
+        signature = config_data.get("model", {}).get("model_signature")
+        if not signature:
             # Generate a signature by hashing the entire YAML configuration
             config_str = yaml.dump(config_data)
             signature = hashlib.md5(config_str.encode()).hexdigest()
 
             # Add the generated signature to the configuration
-            self.update_config(self.config_path, "model.model_signature", signature)
+            config_data["model"]["model_signature"] = signature
+            self.update_config(config_path, "model.model_signature", signature)
+
 
         # Parse the updated configuration into a ModelConfig object
         model_data = config_data["model"]
