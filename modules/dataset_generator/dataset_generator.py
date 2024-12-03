@@ -7,7 +7,7 @@ from .helpers.configuration_loader import ConfigurationLoader
 from .interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from ...modules.interfaces.factory_interface import IFactory
+from modules.interfaces.factory_interface import IFactory
 from .interfaces.join_operator_interface import IJoinOperator
 from ..data_structures.dataset_config import JoinOperation
 from .interfaces.data_io_interface import DataIO
@@ -30,7 +30,7 @@ class DatasetGenerator(IDatasetGenerator):
         # Instantiate dependencies 
         self.configuration_loader = configuration_loader
         self.data_factory = data_factory
-        self.join_factory: join_factory
+        self.join_factory = join_factory
         self.feature_processor_factory = feature_processor_factory
         self.strategy_factory = strategy_factory
 
