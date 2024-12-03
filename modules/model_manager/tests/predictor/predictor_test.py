@@ -7,7 +7,7 @@ import pandas as pd
 
 
 class PredictorTest(unittest.TestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up common dependencies and mock objects for tests.
         """
@@ -26,7 +26,7 @@ class PredictorTest(unittest.TestCase):
         self.mock_predictions = pd.DataFrame({"output": [0.5, 0.8]})
         self.mock_model.predict.return_value = self.mock_predictions
 
-    def test_predict(self):
+    def test_predict(self) -> None:
         """
         Test the predict method of Predictor.
         """
