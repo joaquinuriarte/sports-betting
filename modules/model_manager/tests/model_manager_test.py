@@ -4,7 +4,7 @@ from ..model_manager import ModelManager
 from ..interfaces.trainer_interface import ITrainer
 from ..interfaces.predictor_interface import IPredictor
 from ..factories.model_factory import ModelFactory
-from ..helpers.configuration_loader_test import ConfigurationLoader
+from ..helpers.configuration_loader import ConfigurationLoader
 from ..interfaces.model_interface import IModel
 from ...data_structures.model_dataset import ModelDataset
 

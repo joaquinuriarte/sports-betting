@@ -1,6 +1,6 @@
 import unittest
 from unittest.mock import patch, mock_open, call
-from ...helpers.configuration_loader_test import ConfigurationLoader
+from ...helpers.configuration_loader import ConfigurationLoader
 from modules.data_structures.model_config import ModelConfig
 import yaml
 import hashlib
