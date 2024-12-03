@@ -21,8 +21,8 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model(self.model_config)
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config["input_features"] #TODO: Make sure this exists in YAML and arch_config creation logic
-        self.output_features: str = self.model_config["output_features"] #TODO: Make sure this exists in YAML and arch_config logic
+        self.input_features: List[str] = self.model_config["input_features"] 
+        self.output_features: str = self.model_config["output_features"]
 
     def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
         """
@@ -84,7 +84,7 @@ class TensorFlowModel(IModel):
         labels_tensor = tf.convert_to_tensor(label_array)
 
         # Train the model
-        # TODO: We could use a more explicit training method, like defining a compute_loss function, but we would lose the ability to seamlessly switch loss functions from the YAML.
+        # TODO: We could use a more explicit training method, like defining a compute_loss function, but we would lose the ability to seamlessly switch loss functions from the YAML without having to create instances of loss functions
         self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
 
     def predict(self, examples: List[Example]) -> pd.DataFrame:

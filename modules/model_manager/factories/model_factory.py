@@ -21,7 +21,7 @@ class ModelFactory(IFactory[IModel]):
             IModel: An instance of the model.
         """
         if type_name == "tensorflow":
-            architecture = cast(Dict[str, Any], kwargs.get("architecture"))
-            return TensorFlowModel(architecture)
+            architecture_config = cast(Dict[str, Any], kwargs.get("architecture"))
+            return TensorFlowModel(architecture_config)
         else:
             raise ValueError(f"Unsupported model type: {type_name}")
