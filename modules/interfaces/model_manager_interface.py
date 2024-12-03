@@ -5,6 +5,7 @@ from ..model_manager.interfaces.model_interface import IModel
 from ..data_structures.model_config import ModelConfig
 from typing import List, Tuple, Optional
 
+
 class IModelManager(ABC):
     @abstractmethod
     def create_models(
@@ -34,11 +35,7 @@ class IModelManager(ABC):
         pass
 
     @abstractmethod
-    def save(
-        self,
-        model: IModel,
-        save_path: Optional[str] = None
-    ) -> None:
+    def save(self, model: IModel, save_path: Optional[str] = None) -> None:
         """
         Saves the model using the model signature.
         """
@@ -46,8 +43,8 @@ class IModelManager(ABC):
 
     @abstractmethod
     def load_models(
-        self, 
-        yaml_paths: List[str], 
+        self,
+        yaml_paths: List[str],
         weights_paths: List[str],
     ) -> List[Tuple[IModel, ModelConfig]]:
         """Loads the model weights to the model."""

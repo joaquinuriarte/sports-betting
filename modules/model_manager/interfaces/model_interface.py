@@ -1,7 +1,10 @@
 from abc import ABC, abstractmethod
-from ...data_structures.model_dataset import Example # TODO: Change for rick'y implementation
+from ...data_structures.model_dataset import (
+    Example,
+)  # TODO: Change for rick'y implementation
 from typing import Any, Dict, List
 import pandas as pd
+
 
 class IModel(ABC):
     """

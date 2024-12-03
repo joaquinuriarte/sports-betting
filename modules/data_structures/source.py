@@ -1,6 +1,5 @@
 from dataclasses import dataclass
 from typing import List
-from main.interfaces.data_io_interface import DataIO
 
 
 @dataclass

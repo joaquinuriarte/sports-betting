@@ -10,6 +10,7 @@ from typing import List, Optional, Tuple
 import pandas as pd
 import os
 
+
 class ModelManager(IModelManager):
     """
     Orchestrates model setup, training, saving, and inference.
@@ -30,7 +31,7 @@ class ModelManager(IModelManager):
         self.predictor = predictor
         self.model_factory = model_factory
         self.config_loader = config_loader
-    
+
     def create_models(
         self,
         yaml_path: List[str],
@@ -49,12 +50,14 @@ class ModelManager(IModelManager):
         # Create Models and Model configs
         for yaml in yaml_path:
             model_config: ModelConfig = self.config_loader.load_config(yaml)
-            model: IModel = self.model_factory.create(model_config.type_name, model_config)
+            model: IModel = self.model_factory.create(
+                model_config.type_name, model_config
+            )
 
             models_and_config.append((model, model_config))
-        
+
         return models_and_config
-    
+
     def train(
         self,
         models: List[IModel],
@@ -69,9 +72,11 @@ class ModelManager(IModelManager):
             train_val_datasets (List[Tuple[ModelDataset, ModelDataset]]): A list of tuples containing training and validation datasets for each model.
             save_after_training (Optional[bool]): Flag to indicate if the model should be saved after training. Default is True.
         """
-        # Verify correct input dimensions        
+        # Verify correct input dimensions
         if len(models) != len(train_val_datasets):
-            raise ValueError("Number of models and train_val_datasets provided must be equal.")
+            raise ValueError(
+                "Number of models and train_val_datasets provided must be equal."
+            )
 
         # Train models
         for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
@@ -99,19 +104,15 @@ class ModelManager(IModelManager):
         # Verify correct input dimensions
         if len(models) != len(input_data):
             raise ValueError("Number of models and input_data provided must be equal.")
-        
+
         # Extract and predict
         output_data = []
-        for model, examples in zip(models, input_data): 
+        for model, examples in zip(models, input_data):
             output_data.append(self.predictor.predict(model, examples))
-        
+
         return output_data
 
-    def save(
-        self,
-        model: IModel,
-        save_path: Optional[str] = None
-    ) -> None:
+    def save(self, model: IModel, save_path: Optional[str] = None) -> None:
         """
         Saves the model weights and configuration using the model signature.
 
@@ -119,7 +120,7 @@ class ModelManager(IModelManager):
             model (IModel): The model instance to be saved.
             save_path (Optional[str]): The path to save the model weights. If not provided, default directory is used.
         """
-        if not save_path: 
+        if not save_path:
             # Get model signature
             model_signature = model.get_training_config().get("model_signature")
 
@@ -143,8 +144,8 @@ class ModelManager(IModelManager):
         print(f"Model saved successfully at: {save_path}")
 
     def load_models(
-        self, 
-        yaml_paths: List[str], 
+        self,
+        yaml_paths: List[str],
         weights_paths: List[str],
     ) -> List[Tuple[IModel, ModelConfig]]:
         """
@@ -159,16 +160,20 @@ class ModelManager(IModelManager):
         """
         # Verify correct input dimensions
         if len(yaml_paths) != len(weights_paths):
-            raise ValueError("Number of yaml_paths and weights_paths provided must be equal.")
-        
+            raise ValueError(
+                "Number of yaml_paths and weights_paths provided must be equal."
+            )
+
         models_and_configs = []
 
-        # Loop over yaml and weights and instantiate model and load its weights 
-        for yaml, weights_path in zip(yaml_paths, weights_paths): 
+        # Loop over yaml and weights and instantiate model and load its weights
+        for yaml, weights_path in zip(yaml_paths, weights_paths):
             model_config: ModelConfig = self.config_loader.load_config(yaml)
-            model: IModel = self.model_factory.create(model_config.type_name, model_config)
+            model: IModel = self.model_factory.create(
+                model_config.type_name, model_config
+            )
             model.load(weights_path)
 
             models_and_configs.append((model, model_config))
-        
+
         return models_and_configs

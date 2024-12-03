@@ -25,7 +25,7 @@ class ITrainer(ABC):
         self,
         model: IModel,
         train_dataset: ModelDataset,
-        val_dataset: Optional[ModelDataset] = None
+        val_dataset: Optional[ModelDataset] = None,
     ) -> None:
         """
         Trains the model using the provided dataset.

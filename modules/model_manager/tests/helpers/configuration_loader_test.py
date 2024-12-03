@@ -4,6 +4,7 @@ from modules.model_manager.helpers.configuration_loader import ConfigurationLoad
 from modules.data_structures.model_config import ModelConfig
 from typing import Any
 
+
 class ConfigurationLoaderTest(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -13,9 +14,15 @@ class ConfigurationLoaderTest(unittest.TestCase):
         self.loader = ConfigurationLoader()
         self.config_path = "path/to/config.yaml"
 
-    @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data="model:\n  architecture:\n    type: tensorflow\n",
+    )
     @patch("yaml.safe_load")
-    def test_load_config_without_signature(self, mock_yaml_load: Mock, mock_file: Any) -> None:
+    def test_load_config_without_signature(
+        self, mock_yaml_load: Mock, mock_file: Any
+    ) -> None:
         """
         Test loading a configuration without a model signature and ensure it generates a signature.
         """
@@ -31,9 +38,9 @@ class ConfigurationLoaderTest(unittest.TestCase):
                 "model": {
                     "architecture": {"type": "tensorflow"},
                     "training": {"epochs": 5, "batch_size": 32},
-                    "model_signature": "mocked_signature"
+                    "model_signature": "mocked_signature",
                 }
-            }
+            },
         ]
 
         # Call load_config
@@ -44,9 +51,15 @@ class ConfigurationLoaderTest(unittest.TestCase):
         self.assertTrue(isinstance(result, ModelConfig))
         self.assertIsNotNone(result.model_signature)
 
-    @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n  model_signature: existing_signature\n")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data="model:\n  architecture:\n    type: tensorflow\n  model_signature: existing_signature\n",
+    )
     @patch("yaml.safe_load")
-    def test_load_config_with_signature(self, mock_yaml_load: Mock, mock_file: Any) -> None:
+    def test_load_config_with_signature(
+        self, mock_yaml_load: Mock, mock_file: Any
+    ) -> None:
         """
         Test loading a configuration that already has a model signature.
         """
@@ -55,7 +68,7 @@ class ConfigurationLoaderTest(unittest.TestCase):
             "model": {
                 "architecture": {"type": "tensorflow"},
                 "training": {"epochs": 5, "batch_size": 32},
-                "model_signature": "existing_signature"
+                "model_signature": "existing_signature",
             }
         }
 
@@ -68,22 +81,28 @@ class ConfigurationLoaderTest(unittest.TestCase):
         self.assertTrue(isinstance(result, ModelConfig))
         self.assertEqual(result.model_signature, "existing_signature")
 
-    @patch("builtins.open", new_callable=mock_open, read_data="model:\n  architecture:\n    type: tensorflow\n")
+    @patch(
+        "builtins.open",
+        new_callable=mock_open,
+        read_data="model:\n  architecture:\n    type: tensorflow\n",
+    )
     @patch("yaml.safe_load")
     @patch("yaml.dump")
-    def test_update_config(self, mock_yaml_dump: Mock, mock_yaml_load: Mock, mock_file: Any) -> None:
+    def test_update_config(
+        self, mock_yaml_dump: Mock, mock_yaml_load: Mock, mock_file: Any
+    ) -> None:
         """
         Test updating a specific field in the configuration YAML.
         """
         # Mock yaml.safe_load to return a dict
         mock_yaml_load.return_value = {
-            "model": {
-                "architecture": {"type": "tensorflow"}
-            }
+            "model": {"architecture": {"type": "tensorflow"}}
         }
 
         # Call update_config to update the model_signature
-        self.loader.update_config(self.config_path, "model.model_signature", "new_signature")
+        self.loader.update_config(
+            self.config_path, "model.model_signature", "new_signature"
+        )
 
         # Assertions
         mock_file.assert_any_call(self.config_path, "r")

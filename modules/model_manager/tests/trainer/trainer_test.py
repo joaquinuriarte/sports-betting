@@ -26,7 +26,7 @@ class TrainerTest(unittest.TestCase):
         self.mock_model.get_training_config.return_value = {
             "epochs": 5,
             "batch_size": 32,
-            "model_signature": "test_model"
+            "model_signature": "test_model",
         }
 
     def test_train_with_validation(self) -> None:
@@ -37,7 +37,7 @@ class TrainerTest(unittest.TestCase):
         self.trainer.train(
             model=self.mock_model,
             train_dataset=self.mock_train_dataset,
-            val_dataset=self.mock_val_dataset
+            val_dataset=self.mock_val_dataset,
         )
 
         # Assertions to ensure the train method was called on the model
@@ -45,7 +45,10 @@ class TrainerTest(unittest.TestCase):
         self.mock_model.predict.assert_called()
 
         # Ensure checkpoints were saved for each epoch
-        self.assertEqual(self.mock_model.save.call_count, self.mock_model.get_training_config()["epochs"])
+        self.assertEqual(
+            self.mock_model.save.call_count,
+            self.mock_model.get_training_config()["epochs"],
+        )
 
     def test_train_without_validation(self) -> None:
         """
@@ -55,7 +58,7 @@ class TrainerTest(unittest.TestCase):
         self.trainer.train(
             model=self.mock_model,
             train_dataset=self.mock_train_dataset,
-            val_dataset=None
+            val_dataset=None,
         )
 
         # Assertions to ensure the train method was called on the model
@@ -63,7 +66,10 @@ class TrainerTest(unittest.TestCase):
         self.mock_model.predict.assert_not_called()  # Predict should not be called since there's no validation dataset
 
         # Ensure checkpoints were saved for each epoch
-        self.assertEqual(self.mock_model.save.call_count, self.mock_model.get_training_config()["epochs"])
+        self.assertEqual(
+            self.mock_model.save.call_count,
+            self.mock_model.get_training_config()["epochs"],
+        )
 
 
 if __name__ == "__main__":

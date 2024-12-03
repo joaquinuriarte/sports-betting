@@ -4,6 +4,7 @@ from ...factories.model_factory import ModelFactory
 from ...interfaces.model_interface import IModel
 from ...implementations.tensorflow_model import TensorFlowModel
 
+
 class ModelFactoryTest(unittest.TestCase):
 
     def setUp(self) -> None:
@@ -21,13 +22,17 @@ class ModelFactoryTest(unittest.TestCase):
             "input_size": 10,
             "layers": [
                 {"type": "Dense", "units": 64, "activation": "relu"},
-                {"type": "Dense", "units": 1, "activation": "sigmoid"}
+                {"type": "Dense", "units": 1, "activation": "sigmoid"},
             ],
             "optimizer": "adam",
             "loss": "mse",
             "metrics": ["accuracy"],
-            "input_features": ["feature1", "feature2", "feature3"],  # Mock input features
-            "output_features": "label"  # Mock output feature
+            "input_features": [
+                "feature1",
+                "feature2",
+                "feature3",
+            ],  # Mock input features
+            "output_features": "label",  # Mock output feature
         }
 
         # Create the TensorFlow model using the factory
@@ -45,9 +50,9 @@ class ModelFactoryTest(unittest.TestCase):
             self.factory.create("unsupported_type")
 
         self.assertEqual(
-            str(context.exception),
-            "Unsupported model type: unsupported_type"
+            str(context.exception), "Unsupported model type: unsupported_type"
         )
+
 
 if __name__ == "__main__":
     unittest.main()

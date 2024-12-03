@@ -5,6 +5,7 @@ from typing import Any, Dict, List
 from ..interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 
+
 class TensorFlowModel(IModel):
     """
     A TensorFlow model wrapper that implements the IModel interface.
@@ -21,7 +22,7 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model(self.model_config)
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config["input_features"] 
+        self.input_features: List[str] = self.model_config["input_features"]
         self.output_features: str = self.model_config["output_features"]
 
     def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
@@ -62,15 +63,18 @@ class TensorFlowModel(IModel):
             tf.Tensor: Output after passing through the model's layers.
         """
         # Convert examples to TensorFlow tensor
-        feature_array = np.array([
+        feature_array = np.array(
             [
-                feature[input_feature] 
-                for input_feature in self.input_features
-                for feature in example.features 
-                if input_feature in feature
-            ]
-            for example in examples
-        ], dtype=np.float32)
+                [
+                    feature[input_feature]
+                    for input_feature in self.input_features
+                    for feature in example.features
+                    if input_feature in feature
+                ]
+                for example in examples
+            ],
+            dtype=np.float32,
+        )
         features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
@@ -85,26 +89,41 @@ class TensorFlowModel(IModel):
             batch_size (int): Batch size to use during training.
         """
         # Extract features and labels from examples
-        feature_array = np.array([
+        feature_array = np.array(
             [
-                next(feature[input_feature] for feature in example.features if input_feature in feature)
-                for input_feature in self.input_features
-            ]
-            for example in examples
-        ], dtype=np.float32)
+                [
+                    next(
+                        feature[input_feature]
+                        for feature in example.features
+                        if input_feature in feature
+                    )
+                    for input_feature in self.input_features
+                ]
+                for example in examples
+            ],
+            dtype=np.float32,
+        )
 
-        label_array = np.array([
-            next(feature[self.output_features] for feature in example.features if self.output_features in feature)
-            for example in examples
-        ], dtype=np.float32)
+        label_array = np.array(
+            [
+                next(
+                    feature[self.output_features]
+                    for feature in example.features
+                    if self.output_features in feature
+                )
+                for example in examples
+            ],
+            dtype=np.float32,
+        )
 
         # Convert arrays to tensors
         features_tensor = tf.convert_to_tensor(feature_array)
         labels_tensor = tf.convert_to_tensor(label_array)
 
         # Train the model
-        self.model.fit(features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size)
-
+        self.model.fit(
+            features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
+        )
 
     def predict(self, examples: List[Example]) -> pd.DataFrame:
         """
@@ -118,7 +137,9 @@ class TensorFlowModel(IModel):
         """
         output_tensor = self.forward(examples)
         predictions = output_tensor.numpy()
-        prediction_df = pd.DataFrame(predictions, columns=[f'output_{i}' for i in range(predictions.shape[1])])
+        prediction_df = pd.DataFrame(
+            predictions, columns=[f"output_{i}" for i in range(predictions.shape[1])]
+        )
         return prediction_df
 
     def save(self, path: str) -> None:

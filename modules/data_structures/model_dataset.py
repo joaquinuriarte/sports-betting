@@ -18,6 +18,7 @@ class Example:
         features (List[Attribute]): The features associated with the example.
         label (Attribute): The label or target value associated with the example.
     """
+
     features: List[Attribute]
 
 

@@ -27,7 +27,7 @@ class ModelManagerTest(unittest.TestCase):
             trainer=self.trainer,
             predictor=self.predictor,
             model_factory=self.model_factory,
-            config_loader=self.config_loader
+            config_loader=self.config_loader,
         )
 
     def test_create_models(self) -> None:
@@ -39,7 +39,7 @@ class ModelManagerTest(unittest.TestCase):
             type_name="test_model",
             architecture={"layers": []},
             training={"epochs": 10, "batch_size": 32},
-            model_signature="mock_signature"
+            model_signature="mock_signature",
         )
         mock_model = Mock(spec=IModel)
         self.config_loader.load_config.return_value = mock_model_config
@@ -52,7 +52,9 @@ class ModelManagerTest(unittest.TestCase):
         # Assertions
         self.assertEqual(len(models_and_configs), len(yaml_paths))
         self.config_loader.load_config.assert_any_call(yaml_paths[0])
-        self.model_factory.create.assert_any_call(mock_model_config.type_name, mock_model_config)
+        self.model_factory.create.assert_any_call(
+            mock_model_config.type_name, mock_model_config
+        )
 
     def test_train(self) -> None:
         """
@@ -60,10 +62,12 @@ class ModelManagerTest(unittest.TestCase):
         """
         # Use cast to satisfy mypy type checking
         mock_model = cast(IModel, Mock(spec=IModel))
-        
+
         # Cast mock_model to Mock and configure get_training_config
         mock_model_mock = cast(Mock, mock_model)
-        mock_model_mock.get_training_config.return_value = {"model_signature": "test_model"}
+        mock_model_mock.get_training_config.return_value = {
+            "model_signature": "test_model"
+        }
 
         train_dataset = cast(ModelDataset, Mock(spec=ModelDataset))
         val_dataset = cast(ModelDataset, Mock(spec=ModelDataset))
@@ -75,7 +79,9 @@ class ModelManagerTest(unittest.TestCase):
         self.model_manager.train(models, train_val_datasets)
 
         # Assert train was called
-        self.trainer.train.assert_called_once_with(mock_model, train_dataset, val_dataset)
+        self.trainer.train.assert_called_once_with(
+            mock_model, train_dataset, val_dataset
+        )
 
     def test_load_models(self) -> None:
         """
@@ -86,7 +92,7 @@ class ModelManagerTest(unittest.TestCase):
             type_name="test_model",
             architecture={"layers": []},
             training={"epochs": 10, "batch_size": 32},
-            model_signature="mock_signature"
+            model_signature="mock_signature",
         )
         mock_model = Mock(spec=IModel)
         self.config_loader.load_config.return_value = mock_model_config
@@ -100,7 +106,9 @@ class ModelManagerTest(unittest.TestCase):
         # Assertions
         self.assertEqual(len(result), len(yaml_paths))
         self.config_loader.load_config.assert_any_call(yaml_paths[0])
-        self.model_factory.create.assert_any_call(mock_model_config.type_name, mock_model_config)
+        self.model_factory.create.assert_any_call(
+            mock_model_config.type_name, mock_model_config
+        )
         mock_model.load.assert_called_once_with(weights_paths[0])
 
 

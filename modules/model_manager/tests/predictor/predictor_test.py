@@ -35,9 +35,15 @@ class PredictorTest(unittest.TestCase):
 
         # Assertions
         self.mock_model.predict.assert_called_once()  # Ensure the model's predict method was called
-        self.assertIsInstance(predictions, pd.DataFrame)  # Check that the return type is a DataFrame
-        self.assertEqual(predictions.shape, self.mock_predictions.shape)  # Check that the output shape matches the expected shape
-        pd.testing.assert_frame_equal(predictions, self.mock_predictions)  # Compare the DataFrame content
+        self.assertIsInstance(
+            predictions, pd.DataFrame
+        )  # Check that the return type is a DataFrame
+        self.assertEqual(
+            predictions.shape, self.mock_predictions.shape
+        )  # Check that the output shape matches the expected shape
+        pd.testing.assert_frame_equal(
+            predictions, self.mock_predictions
+        )  # Compare the DataFrame content
 
 
 if __name__ == "__main__":

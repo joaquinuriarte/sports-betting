@@ -2,6 +2,7 @@ import yaml
 import hashlib
 from modules.data_structures.model_config import ModelConfig
 
+
 class ConfigurationLoader:
     """
     Loads and parses the configuration file for the model.
@@ -30,7 +31,6 @@ class ConfigurationLoader:
             # Add the generated signature to the configuration
             config_data["model"]["model_signature"] = signature
             self.update_config(config_path, "model.model_signature", signature)
-
 
         # Parse the updated configuration into a ModelConfig object
         model_data = config_data["model"]

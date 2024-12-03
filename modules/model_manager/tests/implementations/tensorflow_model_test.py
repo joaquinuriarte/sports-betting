@@ -25,7 +25,7 @@ class TensorFlowModelTest(unittest.TestCase):
             ],
             "optimizer": "adam",
             "loss": "mse",
-            "metrics": ["accuracy"]
+            "metrics": ["accuracy"],
         }
 
         # Instantiate TensorFlowModel with the sample architecture config
@@ -33,12 +33,24 @@ class TensorFlowModelTest(unittest.TestCase):
 
         # Create sample examples
         self.examples: List[Example] = [
-            Example(features=[
-                {"feature1": 1.0}, {"feature2": 2.0}, {"feature3": 3.0}, {"feature4": 4.0}, {"label": 5.0}
-            ]),
-            Example(features=[
-                {"feature1": 2.0}, {"feature2": 3.0}, {"feature3": 4.0}, {"feature4": 5.0}, {"label": 6.0}
-            ]),
+            Example(
+                features=[
+                    {"feature1": 1.0},
+                    {"feature2": 2.0},
+                    {"feature3": 3.0},
+                    {"feature4": 4.0},
+                    {"label": 5.0},
+                ]
+            ),
+            Example(
+                features=[
+                    {"feature1": 2.0},
+                    {"feature2": 3.0},
+                    {"feature3": 4.0},
+                    {"feature4": 5.0},
+                    {"label": 6.0},
+                ]
+            ),
         ]
 
     @patch("tensorflow.keras.Model.fit")
@@ -57,14 +69,17 @@ class TensorFlowModelTest(unittest.TestCase):
         args, kwargs = mock_fit.call_args
 
         # Extract feature array and label array from args to validate input structure
-        features_tensor: tf.Tensor = args[0]  # The first positional argument should be features tensor
-        labels_tensor: tf.Tensor = args[1]    # The second positional argument should be labels tensor
+        features_tensor: tf.Tensor = args[
+            0
+        ]  # The first positional argument should be features tensor
+        labels_tensor: tf.Tensor = args[
+            1
+        ]  # The second positional argument should be labels tensor
 
         # Expected feature and label values
-        expected_features = np.array([
-            [1.0, 2.0, 3.0, 4.0],
-            [2.0, 3.0, 4.0, 5.0]
-        ], dtype=np.float32)
+        expected_features = np.array(
+            [[1.0, 2.0, 3.0, 4.0], [2.0, 3.0, 4.0, 5.0]], dtype=np.float32
+        )
 
         expected_labels = np.array([5.0, 6.0], dtype=np.float32)
 
@@ -73,10 +88,10 @@ class TensorFlowModelTest(unittest.TestCase):
         np.testing.assert_array_almost_equal(labels_tensor.numpy(), expected_labels)
 
         # Validate additional arguments such as epochs and batch size
-        self.assertEqual(kwargs['epochs'], epochs)
-        self.assertEqual(kwargs['batch_size'], batch_size)
+        self.assertEqual(kwargs["epochs"], epochs)
+        self.assertEqual(kwargs["batch_size"], batch_size)
 
-    @patch.object(tf.keras.Model, '__call__', autospec=True)
+    @patch.object(tf.keras.Model, "__call__", autospec=True)
     def test_forward(self, mock_call: MagicMock) -> None:
         """
         Test the forward method of TensorFlowModel.
@@ -91,7 +106,11 @@ class TensorFlowModelTest(unittest.TestCase):
         # Assertions
         np.testing.assert_array_almost_equal(output.numpy(), expected_output.numpy())
 
-    @patch.object(TensorFlowModel, 'forward', return_value=tf.constant([[0.5], [0.8]], dtype=tf.float32))
+    @patch.object(
+        TensorFlowModel,
+        "forward",
+        return_value=tf.constant([[0.5], [0.8]], dtype=tf.float32),
+    )
     def test_predict(self, mock_forward: MagicMock) -> None:
         """
         Test the predict method of TensorFlowModel.
@@ -102,7 +121,9 @@ class TensorFlowModelTest(unittest.TestCase):
         # Assertions
         self.assertIsInstance(predictions, pd.DataFrame)
         self.assertEqual(predictions.shape, (2, 1))
-        np.testing.assert_array_almost_equal(predictions.values, mock_forward.return_value.numpy())
+        np.testing.assert_array_almost_equal(
+            predictions.values, mock_forward.return_value.numpy()
+        )
 
     @patch("tensorflow.keras.Model.save_weights")
     def test_save(self, mock_save_weights: MagicMock) -> None:
