@@ -7,6 +7,7 @@ from modules.dataset_generator.interfaces.feature_processor_operator_interface i
 from modules.interfaces.factory_interface import IFactory
 from typing import Any
 
+
 class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
     """
     Factory for creating feature processors based on the type specified.

@@ -8,7 +8,9 @@ from modules.dataset_generator.implementations.dataset_generation_strategies imp
 )
 from modules.data_structures.dataset_config import JoinOperation
 from modules.data_structures.processed_dataset import ProcessedDataset
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+    IFeatureProcessorOperator,
+)
 
 
 class TestDatasetGenerationStrategies(unittest.TestCase):
@@ -19,12 +21,16 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
     def setUp(self) -> None:
         # Mock join operations and feature processor for testing
         self.mock_join_operator = MagicMock()
-        self.mock_join_operator.perform_join.side_effect = lambda left, right, keys, suffixes=None: left.join(
-            right.set_index(keys), on=keys, lsuffix='_left', rsuffix='_right'
+        self.mock_join_operator.perform_join.side_effect = (
+            lambda left, right, keys, suffixes=None: left.join(
+                right.set_index(keys), on=keys, lsuffix="_left", rsuffix="_right"
+            )
         )
 
         self.mock_feature_processor = MagicMock(spec=IFeatureProcessorOperator)
-        self.mock_feature_processor.process.return_value = ProcessedDataset(features=pd.DataFrame(), labels=pd.DataFrame())
+        self.mock_feature_processor.process.return_value = ProcessedDataset(
+            features=pd.DataFrame(), labels=pd.DataFrame()
+        )
 
         # Example join operation configuration
         self.join_operations = [
@@ -36,7 +42,9 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
         self.df2 = pd.DataFrame({"key": [1, 2], "value1": ["c", "d"]})
 
         # Expected joined DataFrame with suffixes
-        self.expected_joined_df = self.df1.join(self.df2.set_index("key"), on="key", lsuffix="_left", rsuffix="_right")
+        self.expected_joined_df = self.df1.join(
+            self.df2.set_index("key"), on="key", lsuffix="_left", rsuffix="_right"
+        )
 
     def test_join_based_generator(self) -> None:
         """

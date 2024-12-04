@@ -18,21 +18,43 @@ class TestDatasetLoader(unittest.TestCase):
         self.mock_xml_loader = MagicMock(spec=DataIO)
 
         # Create mock DataFrames
-        self.mock_csv_loader.read_df_from_path.return_value = pd.DataFrame({"column1": [1, 2], "column2": [3, 4]})
-        self.mock_txt_loader.read_df_from_path.return_value = pd.DataFrame({"column3": [5, 6], "column4": [7, 8]})
-        self.mock_xml_loader.read_df_from_path.return_value = pd.DataFrame({"column5": [9, 10], "column6": [11, 12]})
+        self.mock_csv_loader.read_df_from_path.return_value = pd.DataFrame(
+            {"column1": [1, 2], "column2": [3, 4]}
+        )
+        self.mock_txt_loader.read_df_from_path.return_value = pd.DataFrame(
+            {"column3": [5, 6], "column4": [7, 8]}
+        )
+        self.mock_xml_loader.read_df_from_path.return_value = pd.DataFrame(
+            {"column5": [9, 10], "column6": [11, 12]}
+        )
 
         # Create sources
         self.sources = [
-            Source(path="dummy_csv_path.csv", file_type="csv", columns=["column1", "column2"]),
-            Source(path="dummy_txt_path.txt", file_type="txt", columns=["column3", "column4"]),
-            Source(path="dummy_xml_path.xml", file_type="xml", columns=["column5", "column6"])
+            Source(
+                path="dummy_csv_path.csv",
+                file_type="csv",
+                columns=["column1", "column2"],
+            ),
+            Source(
+                path="dummy_txt_path.txt",
+                file_type="txt",
+                columns=["column3", "column4"],
+            ),
+            Source(
+                path="dummy_xml_path.xml",
+                file_type="xml",
+                columns=["column5", "column6"],
+            ),
         ]
 
         # Instantiate DatasetLoader with mock data loaders and sources
         self.dataset_loader = DatasetLoader(
-            data_loaders=[self.mock_csv_loader, self.mock_txt_loader, self.mock_xml_loader],
-            sources=self.sources
+            data_loaders=[
+                self.mock_csv_loader,
+                self.mock_txt_loader,
+                self.mock_xml_loader,
+            ],
+            sources=self.sources,
         )
 
     def test_load_data(self) -> None:

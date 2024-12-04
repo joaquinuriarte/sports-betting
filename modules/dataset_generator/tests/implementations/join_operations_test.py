@@ -1,6 +1,10 @@
 import unittest
 import pandas as pd
-from modules.dataset_generator.implementations.join_operations import LeftJoinOperation, RightJoinOperation, InnerJoinOperation
+from modules.dataset_generator.implementations.join_operations import (
+    LeftJoinOperation,
+    RightJoinOperation,
+    InnerJoinOperation,
+)
 
 
 class TestJoinOperations(unittest.TestCase):
@@ -10,15 +14,9 @@ class TestJoinOperations(unittest.TestCase):
 
     def setUp(self) -> None:
         # Sample DataFrames for testing
-        self.df1 = pd.DataFrame({
-            "key": [1, 2, 3],
-            "value_left": ["A", "B", "C"]
-        })
+        self.df1 = pd.DataFrame({"key": [1, 2, 3], "value_left": ["A", "B", "C"]})
 
-        self.df2 = pd.DataFrame({
-            "key": [2, 3, 4],
-            "value_right": ["X", "Y", "Z"]
-        })
+        self.df2 = pd.DataFrame({"key": [2, 3, 4], "value_right": ["X", "Y", "Z"]})
 
     def test_left_join(self) -> None:
         """
@@ -27,11 +25,13 @@ class TestJoinOperations(unittest.TestCase):
         left_join = LeftJoinOperation()
         result = left_join.perform_join(self.df1, self.df2, keys=["key"])
 
-        expected_result = pd.DataFrame({
-            "key": [1, 2, 3],
-            "value_left": ["A", "B", "C"],
-            "value_right": [None, "X", "Y"]
-        })
+        expected_result = pd.DataFrame(
+            {
+                "key": [1, 2, 3],
+                "value_left": ["A", "B", "C"],
+                "value_right": [None, "X", "Y"],
+            }
+        )
 
         pd.testing.assert_frame_equal(result, expected_result)
 
@@ -42,11 +42,13 @@ class TestJoinOperations(unittest.TestCase):
         right_join = RightJoinOperation()
         result = right_join.perform_join(self.df1, self.df2, keys=["key"])
 
-        expected_result = pd.DataFrame({
-            "key": [2, 3, 4],
-            "value_left": ["B", "C", None],
-            "value_right": ["X", "Y", "Z"]
-        })
+        expected_result = pd.DataFrame(
+            {
+                "key": [2, 3, 4],
+                "value_left": ["B", "C", None],
+                "value_right": ["X", "Y", "Z"],
+            }
+        )
 
         pd.testing.assert_frame_equal(result, expected_result)
 
@@ -57,11 +59,9 @@ class TestJoinOperations(unittest.TestCase):
         inner_join = InnerJoinOperation()
         result = inner_join.perform_join(self.df1, self.df2, keys=["key"])
 
-        expected_result = pd.DataFrame({
-            "key": [2, 3],
-            "value_left": ["B", "C"],
-            "value_right": ["X", "Y"]
-        })
+        expected_result = pd.DataFrame(
+            {"key": [2, 3], "value_left": ["B", "C"], "value_right": ["X", "Y"]}
+        )
 
         pd.testing.assert_frame_equal(result, expected_result)
 

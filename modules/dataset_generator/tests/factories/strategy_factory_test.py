@@ -54,7 +54,9 @@ class TestStrategyFactory(unittest.TestCase):
                 "unsupported_strategy",
                 feature_processor=self.feature_processor,
             )
-        self.assertEqual(str(context.exception), "Unsupported strategy name: unsupported_strategy")
+        self.assertEqual(
+            str(context.exception), "Unsupported strategy name: unsupported_strategy"
+        )
 
 
 if __name__ == "__main__":

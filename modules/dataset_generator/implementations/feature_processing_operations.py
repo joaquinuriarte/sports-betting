@@ -16,7 +16,11 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     """
 
     def __init__(
-        self, top_n_players: int, sorting_criteria: str, look_back_window: int, player_stats_columns: List[str]
+        self,
+        top_n_players: int,
+        sorting_criteria: str,
+        look_back_window: int,
+        player_stats_columns: List[str],
     ):
         self.top_n_players = top_n_players
         self.sorting_criteria = sorting_criteria
@@ -68,31 +72,31 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         return top_n_players
 
     def create_feature_vector(self, top_players: pd.DataFrame) -> pd.DataFrame:
-            """
-            Creates a feature vector from the top players' statistics, retaining the feature names.
+        """
+        Creates a feature vector from the top players' statistics, retaining the feature names.
 
-            Example:
-            Given the following 'top_players' DataFrame:
-            | PLAYER_ID | MIN | PTS | AST | FG_PCT |
-            |-----------|-----|-----|-----|--------|
-            | 1         | 30  | 15  | 5   | 0.45   |
-            | 2         | 28  | 18  | 7   | 0.50   |
+        Example:
+        Given the following 'top_players' DataFrame:
+        | PLAYER_ID | MIN | PTS | AST | FG_PCT |
+        |-----------|-----|-----|-----|--------|
+        | 1         | 30  | 15  | 5   | 0.45   |
+        | 2         | 28  | 18  | 7   | 0.50   |
 
-            The resulting feature vector will be a DataFrame with columns:
-            | home_player_1_MIN | home_player_1_PTS | home_player_1_AST | ... | home_player_2_FG_PCT |
-            | 30                | 15                | 5                 | ... | 0.50                 |
-            """
-            # Create a dictionary for the feature data with unique column names for each player statistic
-            feature_data = {}
-            for player_index, (_, player_data) in enumerate(top_players.iterrows()):
-                for stat_name, value in player_data.items():
-                    new_column_name = f"home_player_{player_index + 1}_{stat_name}"
-                    feature_data[new_column_name] = value
+        The resulting feature vector will be a DataFrame with columns:
+        | home_player_1_MIN | home_player_1_PTS | home_player_1_AST | ... | home_player_2_FG_PCT |
+        | 30                | 15                | 5                 | ... | 0.50                 |
+        """
+        # Create a dictionary for the feature data with unique column names for each player statistic
+        feature_data = {}
+        for player_index, (_, player_data) in enumerate(top_players.iterrows()):
+            for stat_name, value in player_data.items():
+                new_column_name = f"home_player_{player_index + 1}_{stat_name}"
+                feature_data[new_column_name] = value
 
-            # Create a DataFrame with a single row containing all the top player statistics
-            feature_vector_df = pd.DataFrame([feature_data])
+        # Create a DataFrame with a single row containing all the top player statistics
+        feature_vector_df = pd.DataFrame([feature_data])
 
-            return feature_vector_df
+        return feature_vector_df
 
     def process_features(self, df: pd.DataFrame) -> pd.DataFrame:
         """

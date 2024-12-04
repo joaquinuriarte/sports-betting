@@ -9,9 +9,14 @@ from modules.data_structures.dataset_config import JoinOperation
 from modules.dataset_generator.helpers.dataset_loader import DatasetLoader
 from modules.interfaces.factory_interface import IFactory
 from modules.dataset_generator.interfaces.data_io_interface import DataIO
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
+from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
+    IFeatureProcessorOperator,
+)
 from modules.dataset_generator.interfaces.join_operator_interface import IJoinOperator
-from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
+from modules.dataset_generator.interfaces.strategy_interface import (
+    IDatasetGeneratorStrategy,
+)
+
 
 class DatasetGeneratorTest(unittest.TestCase):
 
@@ -22,7 +27,9 @@ class DatasetGeneratorTest(unittest.TestCase):
         # Mocking configuration loader and configuration
         self.mock_configuration_loader = Mock(spec=ConfigurationLoader)
         self.mock_dataset_config = Mock(spec=DatasetConfig)
-        self.mock_configuration_loader.load_config.return_value = self.mock_dataset_config
+        self.mock_configuration_loader.load_config.return_value = (
+            self.mock_dataset_config
+        )
 
         # Mocking factories
         self.mock_data_factory = Mock(spec=IFactory)
@@ -43,7 +50,7 @@ class DatasetGeneratorTest(unittest.TestCase):
         self.mock_dataset_config.player_stats_columns = ["stat1", "stat2"]
         self.mock_dataset_config.joins = [
             {"type": "inner", "keys": ["key1", "key2"]},
-            {"type": "outer", "keys": ["key3"]}
+            {"type": "outer", "keys": ["key3"]},
         ]
         self.mock_dataset_config.strategy = "strategy_type"
 
@@ -93,7 +100,9 @@ class DatasetGeneratorTest(unittest.TestCase):
         self.mock_data_factory.create.side_effect = [mock_data_io_1, mock_data_io_2]
 
         # Call the create_loader method
-        result_loader = self.dataset_generator.create_loader(self.mock_dataset_config, self.mock_data_factory)
+        result_loader = self.dataset_generator.create_loader(
+            self.mock_dataset_config, self.mock_data_factory
+        )
 
         # Assertions
         self.assertIsInstance(result_loader, DatasetLoader)
@@ -112,7 +121,10 @@ class DatasetGeneratorTest(unittest.TestCase):
 
         # Setup mock return values for the factories
         self.mock_feature_processor_factory.create.return_value = mock_feature_processor
-        self.mock_join_factory.create.side_effect = [mock_join_operator_1, mock_join_operator_2]
+        self.mock_join_factory.create.side_effect = [
+            mock_join_operator_1,
+            mock_join_operator_2,
+        ]
         self.mock_strategy_factory.create.return_value = mock_strategy
 
         # Call the create_strategy method
@@ -120,7 +132,7 @@ class DatasetGeneratorTest(unittest.TestCase):
             self.mock_dataset_config,
             self.mock_feature_processor_factory,
             self.mock_join_factory,
-            self.mock_strategy_factory
+            self.mock_strategy_factory,
         )
 
         # Assertions
@@ -142,16 +154,18 @@ class DatasetGeneratorTest(unittest.TestCase):
         self.mock_join_factory.create.assert_any_call("outer")
 
         # Use assert_has_calls to verify strategy factory calls
-        self.mock_strategy_factory.create.assert_has_calls([
-            call(
-                self.mock_dataset_config.strategy,
-                mock_feature_processor,
-                [
-                    {"operator": mock_join_operator_1, "keys": ["key1", "key2"]},
-                    {"operator": mock_join_operator_2, "keys": ["key3"]}
-                ],
-            )
-        ])
+        self.mock_strategy_factory.create.assert_has_calls(
+            [
+                call(
+                    self.mock_dataset_config.strategy,
+                    mock_feature_processor,
+                    [
+                        {"operator": mock_join_operator_1, "keys": ["key1", "key2"]},
+                        {"operator": mock_join_operator_2, "keys": ["key3"]},
+                    ],
+                )
+            ]
+        )
 
 
 if __name__ == "__main__":

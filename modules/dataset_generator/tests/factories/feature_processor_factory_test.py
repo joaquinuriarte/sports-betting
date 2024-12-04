@@ -1,7 +1,12 @@
 import unittest
 from typing import cast
-from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
-from modules.dataset_generator.implementations.feature_processing_operations import TopNPlayersFeatureProcessor
+from modules.dataset_generator.factories.feature_processor_factory import (
+    FeatureProcessorFactory,
+)
+from modules.dataset_generator.implementations.feature_processing_operations import (
+    TopNPlayersFeatureProcessor,
+)
+
 
 class TestFeatureProcessorFactory(unittest.TestCase):
     """
@@ -16,7 +21,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
             "top_n_players",
             top_n_players=5,
             sorting_criteria="PTS",
-            player_stats_columns=["PTS", "AST"]
+            player_stats_columns=["PTS", "AST"],
         )
         processor = cast(TopNPlayersFeatureProcessor, processor)
         self.assertIsInstance(processor, TopNPlayersFeatureProcessor)
@@ -41,7 +46,9 @@ class TestFeatureProcessorFactory(unittest.TestCase):
         """
         with self.assertRaises(ValueError) as context:
             FeatureProcessorFactory.create("invalid_type")
-        self.assertEqual(str(context.exception), "Unsupported feature processing type: invalid_type")
+        self.assertEqual(
+            str(context.exception), "Unsupported feature processing type: invalid_type"
+        )
 
 
 if __name__ == "__main__":

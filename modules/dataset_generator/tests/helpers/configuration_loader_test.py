@@ -22,7 +22,7 @@ class TestConfigurationLoader(unittest.TestCase):
                         {
                             "path": "/path/to/data.csv",
                             "file_type": "csv",
-                            "columns": ["column1", "column2", "column3"]
+                            "columns": ["column1", "column2", "column3"],
                         }
                     ],
                     "joins": [
@@ -30,9 +30,9 @@ class TestConfigurationLoader(unittest.TestCase):
                             "left": "table1",
                             "right": "table2",
                             "keys": ["key1", "key2"],
-                            "type": "inner"
+                            "type": "inner",
                         }
-                    ]
+                    ],
                 },
                 "strategy": "join_based",
                 "feature_processor": {
@@ -40,13 +40,15 @@ class TestConfigurationLoader(unittest.TestCase):
                     "top_n_players": 5,
                     "sorting_criteria": "MIN",
                     "look_back_window": 10,
-                    "player_stats_columns": ["PTS", "REB", "AST"]
-                }
+                    "player_stats_columns": ["PTS", "REB", "AST"],
+                },
             }
         }
 
         # Use text mode to write the YAML configuration
-        with tempfile.NamedTemporaryFile(delete=False, suffix=".yaml", mode='w') as temp_file:
+        with tempfile.NamedTemporaryFile(
+            delete=False, suffix=".yaml", mode="w"
+        ) as temp_file:
             yaml.dump(self.config_data, temp_file)
             self.temp_file_path = temp_file.name
 
@@ -55,6 +57,7 @@ class TestConfigurationLoader(unittest.TestCase):
         Clean up the temporary file after testing.
         """
         import os
+
         os.unlink(self.temp_file_path)
 
     def test_load_config(self) -> None:

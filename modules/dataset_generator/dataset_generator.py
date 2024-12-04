@@ -13,6 +13,7 @@ from ..data_structures.dataset_config import JoinOperation
 from .interfaces.data_io_interface import DataIO
 from typing import List
 
+
 class DatasetGenerator(IDatasetGenerator):
     """
     Main orchestrator for dataset generation.
@@ -27,7 +28,7 @@ class DatasetGenerator(IDatasetGenerator):
         join_factory: IFactory[IJoinOperator],
         strategy_factory: IFactory[IDatasetGeneratorStrategy],
     ):
-        # Instantiate dependencies 
+        # Instantiate dependencies
         self.configuration_loader = configuration_loader
         self.data_factory = data_factory
         self.join_factory = join_factory
@@ -38,10 +39,17 @@ class DatasetGenerator(IDatasetGenerator):
         dataset_config: DatasetConfig = self.configuration_loader.load_config(yaml_path)
 
         # create loader (list of data readers)
-        self.dataset_loader: DatasetLoader = self.create_loader(dataset_config, self.data_factory)
+        self.dataset_loader: DatasetLoader = self.create_loader(
+            dataset_config, self.data_factory
+        )
 
         # create strategy
-        self.dataset_strategy: IDatasetGeneratorStrategy = self.create_strategy(dataset_config, self.feature_processor_factory, self.join_factory, self.strategy_factory)
+        self.dataset_strategy: IDatasetGeneratorStrategy = self.create_strategy(
+            dataset_config,
+            self.feature_processor_factory,
+            self.join_factory,
+            self.strategy_factory,
+        )
 
     def generate(self) -> ProcessedDataset:
         """
@@ -57,8 +65,10 @@ class DatasetGenerator(IDatasetGenerator):
         processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframes)
 
         return processed_dataset
-    
-    def create_loader(self, config: DatasetConfig, factory: IFactory[DataIO]) -> DatasetLoader:
+
+    def create_loader(
+        self, config: DatasetConfig, factory: IFactory[DataIO]
+    ) -> DatasetLoader:
         """
         Creates a DatasetLoader object with the appropriate data readers.
 
@@ -91,20 +101,18 @@ class DatasetGenerator(IDatasetGenerator):
             IDatasetGeneratorStrategy: An instance of the dataset generation strategy.
         """
         # Step 1: Create feature processor instance
-        feature_processor: IFeatureProcessorOperator = (
-            feature_processor_factory.create(
-                config.feature_processor_type,
-                config.top_n_players,
-                config.sorting_criteria,
-                config.look_back_window,
-                config.player_stats_columns,
-            )
+        feature_processor: IFeatureProcessorOperator = feature_processor_factory.create(
+            config.feature_processor_type,
+            config.top_n_players,
+            config.sorting_criteria,
+            config.look_back_window,
+            config.player_stats_columns,
         )
 
         # Create join operations with keys
         join_operations: List[JoinOperation] = [
             JoinOperation(
-                operator= join_factory.create(join["type"]),
+                operator=join_factory.create(join["type"]),
                 keys=join["keys"],
             )
             for join in config.joins
@@ -112,12 +120,7 @@ class DatasetGenerator(IDatasetGenerator):
 
         # Step 3: Create and return the strategy using the strategy factory
         dataset_generation_strategy: IDatasetGeneratorStrategy = (
-            strategy_factory.create(
-                config.strategy, feature_processor, join_operations
-            )
+            strategy_factory.create(config.strategy, feature_processor, join_operations)
         )
 
         return dataset_generation_strategy
-
-    
-    
