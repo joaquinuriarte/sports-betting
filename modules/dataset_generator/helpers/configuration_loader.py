@@ -50,5 +50,6 @@ class ConfigurationLoader:
             feature_processor_type=feature_processor["type"],
             top_n_players=feature_processor["top_n_players"],
             sorting_criteria=feature_processor["sorting_criteria"],
+            look_back_window=feature_processor["look_back_window"],
             player_stats_columns=feature_processor["player_stats_columns"],
         )

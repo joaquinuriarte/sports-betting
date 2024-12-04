@@ -16,10 +16,11 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     """
 
     def __init__(
-        self, top_n_players: int, sorting_criteria: str, player_stats_columns: List[str]
+        self, top_n_players: int, sorting_criteria: str, look_back_window: int, player_stats_columns: List[str]
     ):
         self.top_n_players = top_n_players
         self.sorting_criteria = sorting_criteria
+        self.look_back_window = look_back_window
         self.player_stats_columns = player_stats_columns
 
     def get_recent_games(
@@ -42,7 +43,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         Gets the top N players' stats for a team within the past 10 games.
         """
         recent_games = self.get_recent_games(df, team_id, game_date)
-        if recent_games.shape[0] < 10:
+        if recent_games.shape[0] < self.look_back_window:
             return None  # Not enough games to generate stats
 
         player_stats = recent_games.groupby("PLAYER_ID")[

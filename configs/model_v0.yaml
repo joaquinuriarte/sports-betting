@@ -43,6 +43,7 @@ model:
     type: 'top_n_players'
     top_n_players: 8
     sorting_criteria: 'MIN'
+    look_back_window: 10
     player_stats_columns:
       - 'MIN'
       - 'PTS'

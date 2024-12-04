@@ -24,6 +24,7 @@ class DatasetConfig:
     feature_processor_type: str
     top_n_players: int
     sorting_criteria: str
+    look_back_window: int
     player_stats_columns: List[str]
 
 

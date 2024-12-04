@@ -34,6 +34,7 @@ class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
             feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessor(
                 top_n_players=kwargs.get("top_n_players", 8),
                 sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
+                look_back_window=kwargs.get("look_back_window", 10),
                 player_stats_columns=kwargs.get("player_stats_columns", ["MIN"]),
             )
             return feature_processor
