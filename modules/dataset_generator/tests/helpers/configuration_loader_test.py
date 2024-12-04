@@ -39,6 +39,7 @@ class TestConfigurationLoader(unittest.TestCase):
                     "type": "top_n_players",
                     "top_n_players": 5,
                     "sorting_criteria": "MIN",
+                    "look_back_window": 10,
                     "player_stats_columns": ["PTS", "REB", "AST"]
                 }
             }
@@ -82,6 +83,7 @@ class TestConfigurationLoader(unittest.TestCase):
         self.assertEqual(config.feature_processor_type, "top_n_players")
         self.assertEqual(config.top_n_players, 5)
         self.assertEqual(config.sorting_criteria, "MIN")
+        self.assertEqual(config.look_back_window, 10)
         self.assertEqual(config.player_stats_columns, ["PTS", "REB", "AST"])
 
 
