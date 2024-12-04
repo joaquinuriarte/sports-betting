@@ -19,6 +19,11 @@
 
 #LEFTTTT
 #####################
-# merge main
-# merge ricky
-# Main meterle 
+# Processor build
+    # all tests
+    # mypy and black
+# correct ModelManager with new ModelDatset implementation
+    # rerun all test, mypy, and black
+# Close branch
+# Open branch for main
+# Create main
