@@ -1,8 +1,6 @@
 import unittest
 from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
 from modules.dataset_generator.implementations.feature_processing_operations import TopNPlayersFeatureProcessor
-from modules.dataset_generator.interfaces.feature_processor_operator_interface import IFeatureProcessorOperator
-
 
 class TestFeatureProcessorFactory(unittest.TestCase):
     """

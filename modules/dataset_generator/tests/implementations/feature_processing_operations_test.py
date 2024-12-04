@@ -35,7 +35,8 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         """
         top_players_stats = self.processor.get_top_players_stats(self.df, team_id=101, game_date=pd.Timestamp('2022-01-05'))
         self.assertIsNotNone(top_players_stats)
-        self.assertEqual(top_players_stats.shape[0], 2)  # Should return top 2 players
+        if top_players_stats is not None:
+            self.assertEqual(top_players_stats.shape[0], 2)
 
     def test_create_feature_vector(self) -> None:
         """
