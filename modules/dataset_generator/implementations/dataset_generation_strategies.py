@@ -38,7 +38,8 @@ class JoinBasedGenerator(IDatasetGeneratorStrategy):
             operator = join_info["operator"]
             keys = join_info["keys"]
             right_df = dataframes[i + 1]
-            result_df = operator.perform_join(result_df, right_df, keys)
+            # Add suffixes to handle overlapping columns
+            result_df = operator.perform_join(result_df, right_df, keys, suffixes=("_left", "_right"))
 
         processed_dataset: ProcessedDataset = self.feature_processor.process(result_df)
         return processed_dataset
