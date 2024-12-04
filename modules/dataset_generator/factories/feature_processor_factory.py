@@ -4,7 +4,7 @@ from ..implementations.feature_processing_operations import (
 from ..interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
 )
-from ...modules.interfaces.factory_interface import IFactory
+from ....modules.interfaces.factory_interface import IFactory
 from typing import Any
 
 class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
