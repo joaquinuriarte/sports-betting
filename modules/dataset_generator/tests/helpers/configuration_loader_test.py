@@ -11,7 +11,7 @@ class TestConfigurationLoader(unittest.TestCase):
     Unit tests for the ConfigurationLoader class.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Set up a temporary YAML file for testing.
         """
@@ -50,14 +50,14 @@ class TestConfigurationLoader(unittest.TestCase):
             yaml.dump(self.config_data, temp_file)
             self.temp_file_path = temp_file.name
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         """
         Clean up the temporary file after testing.
         """
         import os
         os.unlink(self.temp_file_path)
 
-    def test_load_config(self):
+    def test_load_config(self) -> None:
         """
         Test that the ConfigurationLoader correctly loads and parses a YAML configuration file.
         """

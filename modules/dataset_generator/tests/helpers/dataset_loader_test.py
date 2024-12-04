@@ -11,7 +11,7 @@ class TestDatasetLoader(unittest.TestCase):
     Unit tests for the DatasetLoader class.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Mock data for testing
         self.mock_csv_loader = MagicMock(spec=DataIO)
         self.mock_txt_loader = MagicMock(spec=DataIO)
@@ -35,7 +35,7 @@ class TestDatasetLoader(unittest.TestCase):
             sources=self.sources
         )
 
-    def test_load_data(self):
+    def test_load_data(self) -> None:
         """
         Test that the DatasetLoader loads data correctly from all sources.
         """

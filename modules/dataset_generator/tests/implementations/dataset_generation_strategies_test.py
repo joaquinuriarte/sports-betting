@@ -16,7 +16,7 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
     Unit tests for the JoinBasedGenerator and NoJoinGenerator classes.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Mock join operations and feature processor for testing
         self.mock_join_operator = MagicMock()
         self.mock_join_operator.perform_join.side_effect = lambda left, right, keys, suffixes=None: left.join(
@@ -38,7 +38,7 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
         # Expected joined DataFrame with suffixes
         self.expected_joined_df = self.df1.join(self.df2.set_index("key"), on="key", lsuffix="_left", rsuffix="_right")
 
-    def test_join_based_generator(self):
+    def test_join_based_generator(self) -> None:
         """
         Test that JoinBasedGenerator correctly joins the dataframes and processes the result.
         """
@@ -66,7 +66,7 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
         # Assert that the returned processed dataset is an instance of ProcessedDataset
         self.assertIsInstance(processed_dataset, ProcessedDataset)
 
-    def test_no_join_generator(self):
+    def test_no_join_generator(self) -> None:
         """
         Test that NoJoinGenerator processes the first dataframe without performing any join.
         """

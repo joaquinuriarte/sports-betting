@@ -14,7 +14,8 @@ from modules.dataset_generator.interfaces.join_operator_interface import IJoinOp
 from modules.dataset_generator.interfaces.strategy_interface import IDatasetGeneratorStrategy
 
 class DatasetGeneratorTest(unittest.TestCase):
-    def setUp(self):
+
+    def setUp(self) -> None:
         """
         Set up common dependencies and mock objects for tests.
         """
@@ -56,7 +57,7 @@ class DatasetGeneratorTest(unittest.TestCase):
             strategy_factory=self.mock_strategy_factory,
         )
 
-    def test_generate(self):
+    def test_generate(self) -> None:
         """
         Test the generate method of DatasetGenerator.
         """
@@ -82,7 +83,7 @@ class DatasetGeneratorTest(unittest.TestCase):
         mock_strategy.generate.assert_called_once_with(mock_dataframes)
         self.assertEqual(result, mock_processed_dataset)
 
-    def test_create_loader(self):
+    def test_create_loader(self) -> None:
         """
         Test the create_loader method of DatasetGenerator.
         """
@@ -99,7 +100,7 @@ class DatasetGeneratorTest(unittest.TestCase):
         self.mock_data_factory.create.assert_any_call("csv")
         self.mock_data_factory.create.assert_any_call("json")
 
-    def test_create_strategy(self):
+    def test_create_strategy(self) -> None:
         """
         Test the create_strategy method of DatasetGenerator.
         """

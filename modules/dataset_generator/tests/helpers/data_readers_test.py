@@ -10,7 +10,7 @@ class TestDataIO(unittest.TestCase):
     Unit tests for CsvIO, TxtIO, and XmlIO classes.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Create temporary CSV file
         self.csv_file = tempfile.NamedTemporaryFile(delete=False, suffix=".csv", mode='w')
         self.csv_file.write("column1,column2,column3\n1,2,3\n4,5,6\n")
@@ -39,13 +39,13 @@ class TestDataIO(unittest.TestCase):
         """)
         self.xml_file.close()
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         # Remove temporary files
         os.unlink(self.csv_file.name)
         os.unlink(self.txt_file.name)
         os.unlink(self.xml_file.name)
 
-    def test_csv_io(self):
+    def test_csv_io(self) -> None:
         """
         Test CsvIO reads the correct data from a CSV file.
         """
@@ -54,7 +54,7 @@ class TestDataIO(unittest.TestCase):
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
 
-    def test_txt_io(self):
+    def test_txt_io(self) -> None:
         """
         Test TxtIO reads the correct data from a TXT file.
         """
@@ -63,7 +63,7 @@ class TestDataIO(unittest.TestCase):
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
 
-    def test_xml_io(self):
+    def test_xml_io(self) -> None:
         """
         Test XmlIO reads the correct data from an XML file.
         """
@@ -72,7 +72,7 @@ class TestDataIO(unittest.TestCase):
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
 
-    def test_csv_io_exception(self):
+    def test_csv_io_exception(self) -> None:
         """
         Test CsvIO raises an IOError when a non-existing column is requested.
         """
@@ -80,7 +80,7 @@ class TestDataIO(unittest.TestCase):
         with self.assertRaises(IOError):
             csv_io.read_df_from_path(self.csv_file.name, columns=["non_existent_column"])
 
-    def test_txt_io_exception(self):
+    def test_txt_io_exception(self) -> None:
         """
         Test TxtIO raises an IOError when a non-existing column is requested.
         """
@@ -88,7 +88,7 @@ class TestDataIO(unittest.TestCase):
         with self.assertRaises(IOError):
             txt_io.read_df_from_path(self.txt_file.name, columns=["non_existent_column"])
 
-    def test_xml_io_exception(self):
+    def test_xml_io_exception(self) -> None:
         """
         Test XmlIO raises an IOError when a non-existing column is requested.
         """

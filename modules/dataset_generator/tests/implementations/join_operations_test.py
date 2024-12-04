@@ -8,7 +8,7 @@ class TestJoinOperations(unittest.TestCase):
     Unit tests for the join operations (LeftJoinOperation, RightJoinOperation, InnerJoinOperation).
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Sample DataFrames for testing
         self.df1 = pd.DataFrame({
             "key": [1, 2, 3],
@@ -20,7 +20,7 @@ class TestJoinOperations(unittest.TestCase):
             "value_right": ["X", "Y", "Z"]
         })
 
-    def test_left_join(self):
+    def test_left_join(self) -> None:
         """
         Test that LeftJoinOperation correctly performs a left join.
         """
@@ -35,7 +35,7 @@ class TestJoinOperations(unittest.TestCase):
 
         pd.testing.assert_frame_equal(result, expected_result)
 
-    def test_right_join(self):
+    def test_right_join(self) -> None:
         """
         Test that RightJoinOperation correctly performs a right join.
         """
@@ -50,7 +50,7 @@ class TestJoinOperations(unittest.TestCase):
 
         pd.testing.assert_frame_equal(result, expected_result)
 
-    def test_inner_join(self):
+    def test_inner_join(self) -> None:
         """
         Test that InnerJoinOperation correctly performs an inner join.
         """

@@ -9,7 +9,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
     Unit tests for the FeatureProcessorFactory class.
     """
 
-    def test_create_top_n_players_processor(self):
+    def test_create_top_n_players_processor(self) -> None:
         """
         Test that the factory creates a TopNPlayersFeatureProcessor instance when 'top_n_players' type is provided.
         """
@@ -24,7 +24,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.sorting_criteria, "PTS")
         self.assertEqual(processor.player_stats_columns, ["PTS", "AST"])
 
-    def test_create_top_n_players_processor_defaults(self):
+    def test_create_top_n_players_processor_defaults(self) -> None:
         """
         Test that the factory creates a TopNPlayersFeatureProcessor instance with default values if no kwargs are provided.
         """
@@ -34,7 +34,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
         self.assertEqual(processor.sorting_criteria, "MIN")  # Default value
         self.assertEqual(processor.player_stats_columns, ["MIN"])  # Default value
 
-    def test_create_unsupported_type(self):
+    def test_create_unsupported_type(self) -> None:
         """
         Test that the factory raises a ValueError when an unsupported processing type is provided.
         """

@@ -6,7 +6,7 @@ from modules.data_structures.processed_dataset import ProcessedDataset
 
 class TestTopNPlayersFeatureProcessor(unittest.TestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         # Set up the DataFrame to use in the tests
         self.df = pd.DataFrame({
             "GAME_ID": [1, 2, 3, 4, 5, 6, 7, 8, 9],
@@ -29,7 +29,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
             top_n_players=2, sorting_criteria="PTS", look_back_window=2, player_stats_columns=["MIN", "PTS"]
         )
 
-    def test_get_top_players_stats(self):
+    def test_get_top_players_stats(self) -> None:
         """
         Test get_top_players_stats method for fetching top N player statistics.
         """
@@ -37,7 +37,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         self.assertIsNotNone(top_players_stats)
         self.assertEqual(top_players_stats.shape[0], 2)  # Should return top 2 players
 
-    def test_create_feature_vector(self):
+    def test_create_feature_vector(self) -> None:
         """
         Test create_feature_vector method for generating feature vectors.
         """
@@ -50,7 +50,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         self.assertIn('home_player_1_PTS', feature_vector.columns)
         self.assertIn('home_player_2_MIN', feature_vector.columns)
 
-    def test_process_features(self):
+    def test_process_features(self) -> None:
         """
         Test process_features method for creating feature vectors for each game.
         """
@@ -58,7 +58,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         self.assertFalse(processed_features.empty)
         self.assertIn('GAME_ID', processed_features.columns)
 
-    def test_extract_labels(self):
+    def test_extract_labels(self) -> None:
         """
         Test extract_labels method for extracting game labels.
         """
@@ -66,7 +66,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         self.assertFalse(labels.empty)
         self.assertEqual(labels.shape[1], 3)  # GAME_ID, PTS_home, PTS_away
 
-    def test_process(self):
+    def test_process(self) -> None:
         """
         Test process method to generate the final ProcessedDataset.
         """

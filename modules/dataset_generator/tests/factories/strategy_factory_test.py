@@ -16,7 +16,7 @@ class TestStrategyFactory(unittest.TestCase):
     Unit tests for the StrategyFactory class.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         """
         Sets up mocks for dependencies before each test.
         """
@@ -24,7 +24,7 @@ class TestStrategyFactory(unittest.TestCase):
         self.feature_processor = Mock(spec=IFeatureProcessorOperator)
         self.join_operations = [Mock(spec=JoinOperation) for _ in range(2)]
 
-    def test_create_join_based_strategy(self):
+    def test_create_join_based_strategy(self) -> None:
         """
         Test that the factory creates a JoinBasedGenerator instance when 'join_based' type is provided.
         """
@@ -35,7 +35,7 @@ class TestStrategyFactory(unittest.TestCase):
         )
         self.assertIsInstance(strategy, JoinBasedGenerator)
 
-    def test_create_no_join_strategy(self):
+    def test_create_no_join_strategy(self) -> None:
         """
         Test that the factory creates a NoJoinGenerator instance when 'no_join' type is provided.
         """
@@ -45,7 +45,7 @@ class TestStrategyFactory(unittest.TestCase):
         )
         self.assertIsInstance(strategy, NoJoinGenerator)
 
-    def test_create_unsupported_strategy(self):
+    def test_create_unsupported_strategy(self) -> None:
         """
         Test that the factory raises a ValueError when an unsupported strategy type is provided.
         """
