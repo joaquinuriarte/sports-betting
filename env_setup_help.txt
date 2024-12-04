@@ -50,4 +50,4 @@ After writing/modifying a python script or module, run "mypy fileName.py" or "my
 
 Running a test script:  
 ------------------------------------------------
-Navigate to location of test script and run: "pytest test_dataset_generator.py"
+Navigate to location of test script and run: "python -m unittest path.to.file"
