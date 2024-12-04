@@ -19,14 +19,6 @@
 
 #LEFTTTT
 #####################
- # Model manager test cases and all sub components
-        # vamos en config loader
-        # Pause y TODO en tensorFlow implementation
-        # desp tensorFlow implementation unit test
-        # black and mypy
-# datset gen
-    # tests (for everything, replicate all)
-    # black and mypy
 # merge main
 # merge ricky
 # Main meterle 
