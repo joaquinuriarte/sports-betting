@@ -1,23 +1,19 @@
-from dataclasses import dataclass, field
-from typing import List, Literal, Union
-from modules.input_output.data_io import DataIO
+from dataclasses import dataclass
+from typing import List
+
 
 @dataclass
 class Source:
     """
-    Represents a data source specification, encapsulating the details necessary
-    to locate and select specific data from a file.
+    Represents a data source with details necessary to locate and extract data.
 
     Attributes:
-        path (str): The file path or URL where the data source is located.
-        columns (List[str]): The specific columns to be extracted from the data source.
-        primary_key (Union[str, List[str]]): The column name or list of column names
-            that make up the primary key of the data.
-        join_side (Literal['left', 'right']): Specifies whether the data source is to be used
-            as the left or right dataframe in a merge operation.
-        file_reader (DataIO): An instance of a subclass of DataIO that implements the abstract methods.
+        path (str): File path or URL where the data source is located.
+        columns (List[str]): List of columns to extract.
+        file_type (str): The type of file (e.g., 'csv', 'xml', 'txt').
+        file_reader (DataIO): Instance of DataIO for reading the file.
     """
+
     path: str
     columns: List[str]
-    join_side: Literal['left', 'right']
-    file_reader: DataIO = field(default=None) 
+    file_type: str
