@@ -96,6 +96,7 @@ class DatasetGenerator(IDatasetGenerator):
                 config.feature_processor_type,
                 config.top_n_players,
                 config.sorting_criteria,
+                config.look_back_window,
                 config.player_stats_columns,
             )
         )
