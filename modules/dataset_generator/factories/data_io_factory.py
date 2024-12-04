@@ -1,6 +1,6 @@
-from ..helpers.data_readers import CsvIO, TxtIO, XmlIO
-from ..interfaces.data_io_interface import DataIO
-from ....modules.interfaces.factory_interface import IFactory
+from modules.dataset_generator.helpers.data_readers import CsvIO, TxtIO, XmlIO
+from modules.dataset_generator.interfaces.data_io_interface import DataIO
+from modules.interfaces.factory_interface import IFactory
 from typing import Any
 
 class DataIOFactory(IFactory[DataIO]):
