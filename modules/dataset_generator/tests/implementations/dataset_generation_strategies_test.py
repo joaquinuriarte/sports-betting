@@ -24,7 +24,7 @@ class TestDatasetGenerationStrategies(unittest.TestCase):
         )
 
         self.mock_feature_processor = MagicMock(spec=IFeatureProcessorOperator)
-        self.mock_feature_processor.process.return_value = ProcessedDataset(features=pd.DataFrame(), labels=pd.Series())
+        self.mock_feature_processor.process.return_value = ProcessedDataset(features=pd.DataFrame(), labels=pd.DataFrame())
 
         # Example join operation configuration
         self.join_operations = [
