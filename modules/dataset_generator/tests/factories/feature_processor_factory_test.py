@@ -1,4 +1,5 @@
 import unittest
+from typing import cast
 from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
 from modules.dataset_generator.implementations.feature_processing_operations import TopNPlayersFeatureProcessor
 
@@ -17,6 +18,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
             sorting_criteria="PTS",
             player_stats_columns=["PTS", "AST"]
         )
+        processor = cast(TopNPlayersFeatureProcessor, processor)
         self.assertIsInstance(processor, TopNPlayersFeatureProcessor)
         self.assertEqual(processor.top_n_players, 5)
         self.assertEqual(processor.sorting_criteria, "PTS")
@@ -27,6 +29,7 @@ class TestFeatureProcessorFactory(unittest.TestCase):
         Test that the factory creates a TopNPlayersFeatureProcessor instance with default values if no kwargs are provided.
         """
         processor = FeatureProcessorFactory.create("top_n_players")
+        processor = cast(TopNPlayersFeatureProcessor, processor)
         self.assertIsInstance(processor, TopNPlayersFeatureProcessor)
         self.assertEqual(processor.top_n_players, 8)  # Default value
         self.assertEqual(processor.sorting_criteria, "MIN")  # Default value
