@@ -1,4 +1,4 @@
-from modules.dataset_generator.model_dataset import Example, InMemoryModelDataset
+from modules.processor.model_dataset import Example, InMemoryModelDataset
 from unittest import TestCase
 
 import pandas as pd # type: ingore
