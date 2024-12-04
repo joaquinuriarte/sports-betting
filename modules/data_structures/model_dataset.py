@@ -1,34 +1,21 @@
 from dataclasses import dataclass
-from typing import List, Dict, Any
+from typing import List, Dict, Union
 
-# Represents a unique name for a model attribute.
-AttributeName = str
+# Represents a unique name for a model feature.
+FeatureName = str
+FeatueValue = List[Union[float, int, str]]
 
-# Describes an individual attribute, which can be either a feature or a label.
-# Attribute is a mapping from an attribute name to its data. Data can be a tensor or equivalent, depending on the model being used.
-Attribute = Dict[AttributeName, Any]
+# Describes an individual model feature.
+# Feature is a mapping from a feature name to its data.
+Feature = Dict[
+    FeatureName, FeatueValue
+]  # 'ModelData' can be defined according to your specific needs.
 
 
 @dataclass
 class Example:
-    """
-    Represents an individual data example containing features and labels.
-
-    Attributes:
-        features (List[Attribute]): The features associated with the example.
-        label (Attribute): The label or target value associated with the example.
-    """
-
-    features: List[Attribute]
-
+    features: Feature
 
 @dataclass
 class ModelDataset:
-    """
-    Represents a dataset consisting of multiple examples for training.
-
-    Attributes:
-        examples (List[Example]): A list of data examples that contain features and labels.
-    """
-
     examples: List[Example]

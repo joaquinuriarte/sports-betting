@@ -1,25 +1,4 @@
-from abc import ABC, abstractmethod
-from collections import defaultdict
-from dataclasses import dataclass
-from typing import Any, List, Dict, Optional, Union
 
-import pandas as pd # type: ignore
-
-# Represents a unique name for a model feature.
-FeatureName = str
-FeatueValue = list[Union[float, int, str]]
-
-
-# Describes an individual model feature.
-# Feature is a mapping from a feature name to its data.
-Feature = Dict[
-    FeatureName, FeatueValue
-]  # 'ModelData' can be defined according to your specific needs.
-
-
-@dataclass
-class Example:
-    features: Feature
 
 
 def check_list_is_type(input: list[Any], instance: Any) -> bool:
