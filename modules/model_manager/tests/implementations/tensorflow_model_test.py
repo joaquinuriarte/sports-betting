@@ -47,25 +47,25 @@ class TensorFlowModelTest(unittest.TestCase):
         # Instantiate TensorFlowModel with the sample model configuration
         self.model: TensorFlowModel = TensorFlowModel(self.model_config)
 
-        # Create sample examples
         self.examples: List[Example] = [
             Example(
-                features=[
-                    {"feature1": 1.0},
-                    {"feature2": 2.0},
-                    {"feature3": 3.0},
-                    {"label": 1.0},
-                ]
+                features={
+                    "feature1": [1.0],
+                    "feature2": [2.0],
+                    "feature3": [3.0],
+                    "label": [1.0],
+                }
             ),
             Example(
-                features=[
-                    {"feature1": 4.0},
-                    {"feature2": 5.0},
-                    {"feature3": 6.0},
-                    {"label": 0.0},
-                ]
+                features={
+                    "feature1": [4.0],
+                    "feature2": [5.0],
+                    "feature3": [6.0],
+                    "label": [0.0],
+                }
             ),
         ]
+
 
     @patch("tensorflow.keras.Model.fit")
     def test_train(self, mock_fit: MagicMock) -> None:

@@ -67,10 +67,7 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    next(
-                        (feature[input_feature] for feature in example.features if input_feature in feature),
-                        0.0,  # Default to 0.0 if the feature is missing
-                    )
+                    example.features[input_feature][0] if input_feature in example.features else 0.0
                     for input_feature in self.input_features
                 ]
                 for example in examples
@@ -96,10 +93,7 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    next(
-                        (feature[input_feature] for feature in example.features if input_feature in feature),
-                        0.0,  # Default to 0.0 if the feature is missing
-                    )
+                    example.features[input_feature][0] if input_feature in example.features else 0.0
                     for input_feature in self.input_features
                 ]
                 for example in examples
@@ -109,10 +103,7 @@ class TensorFlowModel(IModel):
 
         label_array = np.array(
             [
-                next(
-                    (feature[self.output_features] for feature in example.features if self.output_features in feature),
-                    0.0,  # Default to 0.0 if the label is missing
-                )
+                example.features[self.output_features][0] if self.output_features in example.features else 0.0
                 for example in examples
             ],
             dtype=np.float32,
@@ -126,6 +117,7 @@ class TensorFlowModel(IModel):
         self.model.fit(
             features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
         )
+
 
 
 
