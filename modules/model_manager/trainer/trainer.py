@@ -39,11 +39,11 @@ class Trainer(ITrainer):
         """
         # Get training parameters from model
         model_config = model.get_training_config()
-        epochs = model_config["training"].get("epochs", 10)
-        batch_size = model_config["training"].get("batch_size", 32)
+        epochs = model_config.training.get("epochs", 10)
+        batch_size = model_config.training.get("batch_size", 32)
 
         # Log training information
-        model_signature = model_config["model_signature"]
+        model_signature = model_config.model_signature
         logging.info(
             f"Training model '{model_signature}' for {epochs} epochs with batch size {batch_size}."
         )

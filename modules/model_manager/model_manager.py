@@ -123,7 +123,7 @@ class ModelManager(IModelManager):
         if not save_path:
             # Get model signature
             model_config: ModelConfig = model.get_training_config()
-            model_signature = model_config["model_signature"]
+            model_signature = model_config.model_signature
 
             if model_signature is None:
                 raise ValueError("Model signature cannot be None")

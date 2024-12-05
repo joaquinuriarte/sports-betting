@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import Mock
-from ...trainer.trainer import Trainer
-from ...interfaces.model_interface import IModel
+from modules.model_manager.trainer.trainer import Trainer
+from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import ModelDataset, Example
+from modules.data_structures.model_config import ModelConfig
 
 
 class TrainerTest(unittest.TestCase):
@@ -22,12 +23,30 @@ class TrainerTest(unittest.TestCase):
         self.mock_train_dataset.examples = [mock_example]
         self.mock_val_dataset.examples = [mock_example]
 
+        # Set up a real ModelConfig instance to return from `get_training_config`
+        self.mock_model_config = ModelConfig(
+            model_signature="test_model",
+            type_name="tensorflow",
+            architecture={
+                "input_size": 10,
+                "layers": [
+                    {"type": "Dense", "units": 64, "activation": "relu"},
+                    {"type": "Dense", "units": 1, "activation": "sigmoid"},
+                ],
+                "optimizer": "adam",
+                "loss": "mse",
+                "metrics": ["accuracy"],
+                "input_features": ["feature1", "feature2", "feature3"],
+                "output_features": "label",
+            },
+            training={
+                "epochs": 5,
+                "batch_size": 32,
+            }
+        )
+
         # Setup mock return values for model training config
-        self.mock_model.get_training_config.return_value = {
-            "epochs": 5,
-            "batch_size": 32,
-            "model_signature": "test_model",
-        }
+        self.mock_model.get_training_config.return_value = self.mock_model_config
 
     def test_train_with_validation(self) -> None:
         """
@@ -47,7 +66,7 @@ class TrainerTest(unittest.TestCase):
         # Ensure checkpoints were saved for each epoch
         self.assertEqual(
             self.mock_model.save.call_count,
-            self.mock_model.get_training_config()["epochs"],
+            self.mock_model.get_training_config().training["epochs"],
         )
 
     def test_train_without_validation(self) -> None:
@@ -68,7 +87,7 @@ class TrainerTest(unittest.TestCase):
         # Ensure checkpoints were saved for each epoch
         self.assertEqual(
             self.mock_model.save.call_count,
-            self.mock_model.get_training_config()["epochs"],
+            self.mock_model.get_training_config().training["epochs"],
         )
 
 
