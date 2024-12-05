@@ -19,11 +19,6 @@
 
 #LEFTTTT
 #####################
-# ModelManager
-    # finish mypy
-    # reverify all test
-    # close with Black
-
 # Processor build
     # all tests
     # mypy and black

@@ -41,7 +41,7 @@ class TensorFlowModelTest(unittest.TestCase):
                 "loss_function": "MSELoss",
                 "split_strategy": "random_split",
                 "batch_size": 32,
-            }
+            },
         )
 
         # Instantiate TensorFlowModel with the sample model configuration
@@ -65,7 +65,6 @@ class TensorFlowModelTest(unittest.TestCase):
                 }
             ),
         ]
-
 
     @patch("tensorflow.keras.Model.fit")
     def test_train(self, mock_fit: MagicMock) -> None:
@@ -104,7 +103,6 @@ class TensorFlowModelTest(unittest.TestCase):
         # Validate additional arguments such as epochs and batch size
         self.assertEqual(kwargs["epochs"], epochs)
         self.assertEqual(kwargs["batch_size"], batch_size)
-
 
     @patch.object(tf.keras.Model, "__call__", autospec=True)
     def test_forward(self, mock_call: MagicMock) -> None:

@@ -7,7 +7,6 @@ import pandas as pd
 from modules.data_structures.model_config import ModelConfig
 
 
-
 class IModel(ABC):
     """
     Interface for any model implementation.

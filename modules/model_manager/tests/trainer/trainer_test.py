@@ -42,7 +42,7 @@ class TrainerTest(unittest.TestCase):
             training={
                 "epochs": 5,
                 "batch_size": 32,
-            }
+            },
         )
 
         # Setup mock return values for model training config

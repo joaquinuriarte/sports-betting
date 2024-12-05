@@ -23,7 +23,9 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config.architecture["input_features"]
+        self.input_features: List[str] = self.model_config.architecture[
+            "input_features"
+        ]
         self.output_features: str = self.model_config.architecture["output_features"]
 
     def _initialize_model(self) -> tf.keras.Model:
@@ -67,7 +69,11 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    example.features[input_feature][0] if input_feature in example.features else 0.0
+                    (
+                        example.features[input_feature][0]
+                        if input_feature in example.features
+                        else 0.0
+                    )
                     for input_feature in self.input_features
                 ]
                 for example in examples
@@ -77,8 +83,6 @@ class TensorFlowModel(IModel):
         features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
-
-
 
     def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
         """
@@ -93,7 +97,11 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    example.features[input_feature][0] if input_feature in example.features else 0.0
+                    (
+                        example.features[input_feature][0]
+                        if input_feature in example.features
+                        else 0.0
+                    )
                     for input_feature in self.input_features
                 ]
                 for example in examples
@@ -103,7 +111,11 @@ class TensorFlowModel(IModel):
 
         label_array = np.array(
             [
-                example.features[self.output_features][0] if self.output_features in example.features else 0.0
+                (
+                    example.features[self.output_features][0]
+                    if self.output_features in example.features
+                    else 0.0
+                )
                 for example in examples
             ],
             dtype=np.float32,
@@ -117,9 +129,6 @@ class TensorFlowModel(IModel):
         self.model.fit(
             features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
         )
-
-
-
 
     def predict(self, examples: List[Example]) -> pd.DataFrame:
         """
