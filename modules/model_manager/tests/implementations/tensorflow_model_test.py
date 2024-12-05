@@ -5,31 +5,47 @@ import numpy as np
 import pandas as pd
 from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
 from modules.data_structures.model_dataset import Example
-from typing import List, Dict, Any
+from modules.data_structures.model_config import ModelConfig
+from typing import List
 
 
 class TensorFlowModelTest(unittest.TestCase):
-
     def setUp(self) -> None:
         """
         Set up common dependencies for tests.
         """
-        # Define a sample architecture config
-        self.architecture_config: Dict[str, Any] = {
-            "input_size": 4,
-            "input_features": ["feature1", "feature2", "feature3", "feature4"],
-            "output_features": "label",
-            "layers": [
-                {"type": "Dense", "units": 8, "activation": "relu"},
-                {"type": "Dense", "units": 1, "activation": None},
-            ],
-            "optimizer": "adam",
-            "loss": "mse",
-            "metrics": ["accuracy"],
-        }
+        # Initialize the model configuration
+        self.model_config = ModelConfig(
+            model_signature="",
+            type_name="tensorflow",
+            architecture={
+                "input_size": 3,
+                "layers": [
+                    {"type": "Dense", "units": 64, "activation": "relu"},
+                    {"type": "Dense", "units": 1, "activation": "sigmoid"},
+                ],
+                "optimizer": "adam",
+                "loss": "mse",
+                "metrics": ["accuracy"],
+                "input_features": [
+                    "feature1",
+                    "feature2",
+                    "feature3",
+                ],
+                "output_features": "label",
+            },
+            training={
+                "epochs": 20,
+                "learning_rate": 0.001,
+                "optimizer": "Adam",
+                "loss_function": "MSELoss",
+                "split_strategy": "random_split",
+                "batch_size": 32,
+            }
+        )
 
-        # Instantiate TensorFlowModel with the sample architecture config
-        self.model: TensorFlowModel = TensorFlowModel(self.architecture_config)
+        # Instantiate TensorFlowModel with the sample model configuration
+        self.model: TensorFlowModel = TensorFlowModel(self.model_config)
 
         # Create sample examples
         self.examples: List[Example] = [
@@ -38,17 +54,15 @@ class TensorFlowModelTest(unittest.TestCase):
                     {"feature1": 1.0},
                     {"feature2": 2.0},
                     {"feature3": 3.0},
-                    {"feature4": 4.0},
-                    {"label": 5.0},
+                    {"label": 1.0},
                 ]
             ),
             Example(
                 features=[
-                    {"feature1": 2.0},
-                    {"feature2": 3.0},
-                    {"feature3": 4.0},
-                    {"feature4": 5.0},
-                    {"label": 6.0},
+                    {"feature1": 4.0},
+                    {"feature2": 5.0},
+                    {"feature3": 6.0},
+                    {"label": 0.0},
                 ]
             ),
         ]
@@ -78,10 +92,10 @@ class TensorFlowModelTest(unittest.TestCase):
 
         # Expected feature and label values
         expected_features = np.array(
-            [[1.0, 2.0, 3.0, 4.0], [2.0, 3.0, 4.0, 5.0]], dtype=np.float32
-        )
+            [[1.0, 2.0, 3.0], [4.0, 5.0, 6.0]], dtype=np.float32
+        )  # Adjusted to 3 features
 
-        expected_labels = np.array([5.0, 6.0], dtype=np.float32)
+        expected_labels = np.array([1.0, 0.0], dtype=np.float32)
 
         # Validate feature and label tensors
         np.testing.assert_array_almost_equal(features_tensor.numpy(), expected_features)
@@ -90,6 +104,7 @@ class TensorFlowModelTest(unittest.TestCase):
         # Validate additional arguments such as epochs and batch size
         self.assertEqual(kwargs["epochs"], epochs)
         self.assertEqual(kwargs["batch_size"], batch_size)
+
 
     @patch.object(tf.keras.Model, "__call__", autospec=True)
     def test_forward(self, mock_call: MagicMock) -> None:
@@ -147,8 +162,8 @@ class TensorFlowModelTest(unittest.TestCase):
         """
         Test the get_training_config method of TensorFlowModel.
         """
-        config: Dict[str, Any] = self.model.get_training_config()
-        self.assertEqual(config, self.architecture_config)
+        config = self.model.get_training_config()
+        self.assertEqual(config, self.model_config)
 
 
 if __name__ == "__main__":

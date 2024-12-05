@@ -23,8 +23,8 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config["architecture"]["input_features"]
-        self.output_features: str = self.model_config["architecture"]["output_features"]
+        self.input_features: List[str] = self.model_config.architecture["input_features"]
+        self.output_features: str = self.model_config.architecture["output_features"]
 
     def _initialize_model(self) -> tf.keras.Model:
         """
@@ -36,9 +36,9 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(shape=(self.model_config["architecture"]["input_size"],))
+        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
         x = inputs
-        for layer_config in self.model_config["architecture"]["layers"]:
+        for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
@@ -47,9 +47,9 @@ class TensorFlowModel(IModel):
         outputs = x
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
         model.compile(
-            optimizer=self.model_config["architecture"].get("optimizer", "adam"),
-            loss=self.model_config["architecture"].get("loss", "mse"),
-            metrics=self.model_config["architecture"].get("metrics", ["accuracy"]),
+            optimizer=self.model_config.architecture.get("optimizer", "adam"),
+            loss=self.model_config.architecture.get("loss", "mse"),
+            metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
         )
         return model
 
@@ -67,10 +67,11 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    feature[input_feature]
+                    next(
+                        (feature[input_feature] for feature in example.features if input_feature in feature),
+                        0.0,  # Default to 0.0 if the feature is missing
+                    )
                     for input_feature in self.input_features
-                    for feature in example.features
-                    if input_feature in feature
                 ]
                 for example in examples
             ],
@@ -79,6 +80,8 @@ class TensorFlowModel(IModel):
         features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
+
+
 
     def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
         """
@@ -94,9 +97,8 @@ class TensorFlowModel(IModel):
             [
                 [
                     next(
-                        feature[input_feature]
-                        for feature in example.features
-                        if input_feature in feature
+                        (feature[input_feature] for feature in example.features if input_feature in feature),
+                        0.0,  # Default to 0.0 if the feature is missing
                     )
                     for input_feature in self.input_features
                 ]
@@ -108,9 +110,8 @@ class TensorFlowModel(IModel):
         label_array = np.array(
             [
                 next(
-                    feature[self.output_features]
-                    for feature in example.features
-                    if self.output_features in feature
+                    (feature[self.output_features] for feature in example.features if self.output_features in feature),
+                    0.0,  # Default to 0.0 if the label is missing
                 )
                 for example in examples
             ],
@@ -125,6 +126,8 @@ class TensorFlowModel(IModel):
         self.model.fit(
             features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
         )
+
+
 
     def predict(self, examples: List[Example]) -> pd.DataFrame:
         """
