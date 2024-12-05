@@ -1,8 +1,9 @@
 import unittest
 from unittest.mock import patch, Mock
-from ...factories.model_factory import ModelFactory
-from ...interfaces.model_interface import IModel
-from ...implementations.tensorflow_model import TensorFlowModel
+from modules.model_manager.factories.model_factory import ModelFactory
+from modules.model_manager.interfaces.model_interface import IModel
+from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
+from modules.data_structures.model_config import ModelConfig
 
 
 class ModelFactoryTest(unittest.TestCase):
@@ -13,12 +14,15 @@ class ModelFactoryTest(unittest.TestCase):
         """
         self.factory = ModelFactory()
 
-    def test_create_tensorflow_model(self) -> None:
+    @patch('modules.data_structures.model_config.ModelConfig')
+    def test_create_tensorflow_model(self, MockModelConfig) -> None:
         """
         Test if ModelFactory creates a TensorFlow model when 'tensorflow' type is provided.
         """
-        # Mock architecture configuration
-        mock_architecture_config = {
+        # Mock ModelConfig
+        mock_model_config = MockModelConfig()
+        mock_model_config.type_name = "tensorflow"
+        mock_model_config.architecture = {
             "input_size": 10,
             "layers": [
                 {"type": "Dense", "units": 64, "activation": "relu"},
@@ -31,12 +35,15 @@ class ModelFactoryTest(unittest.TestCase):
                 "feature1",
                 "feature2",
                 "feature3",
-            ],  # Mock input features
-            "output_features": "label",  # Mock output feature
+            ],
+            "output_features": "label",
         }
+        
+        # Set return value for __getitem__ to return the architecture config when ["architecture"] is accessed
+        mock_model_config.__getitem__.side_effect = lambda key: mock_model_config.architecture if key == "architecture" else None
 
-        # Create the TensorFlow model using the factory
-        model = self.factory.create("tensorflow", architecture=mock_architecture_config)
+        # Create the TensorFlow model using the factory with the mocked ModelConfig
+        model = self.factory.create(type_name="tensorflow", model_config=mock_model_config)
 
         # Assertions
         self.assertIsInstance(model, TensorFlowModel)

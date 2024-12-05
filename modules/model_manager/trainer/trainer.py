@@ -38,12 +38,12 @@ class Trainer(ITrainer):
             val_dataset (Optional[ModelDataset]): The validation dataset used for evaluation during training.
         """
         # Get training parameters from model
-        training_config = model.get_training_config()
-        epochs = training_config.get("epochs", 10)
-        batch_size = training_config.get("batch_size", 32)
+        model_config = model.get_training_config()
+        epochs = model_config["training"].get("epochs", 10)
+        batch_size = model_config["training"].get("batch_size", 32)
 
         # Log training information
-        model_signature = training_config.get("model_signature", "default_model")
+        model_signature = model_config["model_signature"]
         logging.info(
             f"Training model '{model_signature}' for {epochs} epochs with batch size {batch_size}."
         )

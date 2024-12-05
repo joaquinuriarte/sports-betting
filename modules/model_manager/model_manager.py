@@ -122,7 +122,8 @@ class ModelManager(IModelManager):
         """
         if not save_path:
             # Get model signature
-            model_signature = model.get_training_config().get("model_signature")
+            model_config: ModelConfig = model.get_training_config()
+            model_signature = model_config["model_signature"]
 
             if model_signature is None:
                 raise ValueError("Model signature cannot be None")
@@ -164,16 +165,11 @@ class ModelManager(IModelManager):
                 "Number of yaml_paths and weights_paths provided must be equal."
             )
 
-        models_and_configs = []
+        # Create models using create_models method
+        models_and_configs = self.create_models(yaml_paths)
 
-        # Loop over yaml and weights and instantiate model and load its weights
-        for yaml, weights_path in zip(yaml_paths, weights_paths):
-            model_config: ModelConfig = self.config_loader.load_config(yaml)
-            model: IModel = self.model_factory.create(
-                model_config.type_name, model_config
-            )
+        # Load model weights
+        for (model, _), weights_path in zip(models_and_configs, weights_paths):
             model.load(weights_path)
-
-            models_and_configs.append((model, model_config))
 
         return models_and_configs
