@@ -26,15 +26,8 @@ class Predictor(IPredictor):
         """
         logging.info("Starting prediction.")
 
-        # Extract features from each Example in the batch
-        features = [
-            list(feature.values())[0]
-            for example in examples
-            for feature in example.features
-        ]
-
         # Run prediction through the model
-        predictions = model.predict(features)
+        predictions = model.predict(examples)
 
         logging.info("Prediction completed.")
         return predictions

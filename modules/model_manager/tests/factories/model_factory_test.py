@@ -1,10 +1,8 @@
 import unittest
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 from modules.model_manager.factories.model_factory import ModelFactory
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
-from modules.data_structures.model_config import ModelConfig
-
 
 class ModelFactoryTest(unittest.TestCase):
 

@@ -1,7 +1,7 @@
-from ...interfaces.factory_interface import IFactory
-from ..interfaces.model_interface import IModel
-from ..implementations.tensorflow_model import TensorFlowModel
-from typing import Any, Dict, cast
+from modules.interfaces.factory_interface import IFactory
+from modules.model_manager.interfaces.model_interface import IModel
+from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
+from typing import Any
 
 
 class ModelFactory(IFactory[IModel]):
