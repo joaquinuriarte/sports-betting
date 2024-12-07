@@ -40,8 +40,7 @@ class Processor(IProcessor):
         if val_dataset_flag:
             train_dataset, validation_dataset = self.split_strategy.split(train_dataset, self.percent_split)
 
-        # Return tuple
-        return Tuple[train_dataset, validation_dataset]
+        return train_dataset, validation_dataset
 
     def build_model_dataset(
         self, processed_dataset: ProcessedDataset
