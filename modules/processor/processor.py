@@ -32,7 +32,8 @@ class Processor(): #TODO Create and add interface for processor
     def generate(self, val_dataset_flag: Optional[bool] = True) -> Tuple[ModelDataset, Optional[ModelDataset]]:
 
         # Create Model Dataset
-        train_dataset = self.load_from_dataframe(self.processed_dataset)
+        train_dataset = self.build_model_dataset(self.processed_dataset)
+        validation_dataset = None
 
         # Split Model Dataset if flag is True
         if val_dataset_flag:
@@ -40,9 +41,44 @@ class Processor(): #TODO Create and add interface for processor
 
         # Return tuple
         return Tuple[train_dataset, validation_dataset]
+
+    def build_model_dataset(
+        self, processed_dataset: ProcessedDataset
+    ) -> ModelDataset:
+        """
+        Converts a ProcessedDataset into a ModelDataset by merging features and labels.
+
+        Args:
+            processed_dataset (ProcessedDataset): The processed dataset containing features and labels.
+
+        Returns:
+            ModelDataset: A dataset with examples containing both features and labels.
+        """
+        examples = []
+
+        # Iterate through the rows of features and labels
+        for game_id, feature_row in processed_dataset.features.iterrows():
+            label_row = processed_dataset.labels.loc[game_id]
+
+            # Create the feature dictionary
+            example_features = {
+                feature_name: [feature_value]
+                for feature_name, feature_value in feature_row.items()
+            }
+
+            # Append labels to the feature dictionary
+            example_features["PTS_home"] = [label_row["PTS_home"]]
+            example_features["PTS_away"] = [label_row["PTS_away"]]
+
+            # Create an Example object and add it to the list
+            examples.append(Example(features=example_features))
+
+        # Return a ModelDataset containing all examples
+        return ModelDataset(examples=examples)
+
     
     def load_from_dataframe(
-        self, df: pd.DataFrame, columns_to_load: Optional[List[str]] = None  #TODO Hay que add functionality to merge feature and labels. Basically take ProcessedDataset and return ModelDataset
+        self, df: pd.DataFrame, columns_to_load: Optional[List[str]] = None 
     ):
         """Loads dataframe content into dataset.
 
@@ -91,8 +127,3 @@ class Processor(): #TODO Create and add interface for processor
 
     def check_list_is_type(input: List[Any], instance: Any) -> bool:
         return all(isinstance(x, instance) for x in input)
-
-
-## Responsabilities
-    # Convert processed dataset (output of dataset generator) into Model Dataset (new DS that ricky created)
-    # Use a factory to create instance of split class and split model dataset into training ds and validation ds
