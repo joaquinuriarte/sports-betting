@@ -1,5 +1,5 @@
 from modules.interfaces.factory_interface import IFactory
-from modules.processor.interfaces.split_strategy_interface import ISplitStrategy #TODO Create this
+from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
 from modules.processor.implementations.random_split_strategy import RandomSplitStrategy # TODO Create this
 from typing import Any
 
