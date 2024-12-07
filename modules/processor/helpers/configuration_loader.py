@@ -21,14 +21,22 @@ class ConfigurationLoader:
         with open(config_path, "r") as file:
             config_data = yaml.safe_load(file)
 
+        if not config_data:
+            raise KeyError("The configuration file is invalid or empty.")
+
         try:
-            # Navigate to split strategy configuration
-            split_strategy_config = config_data["model"]["training"]["split_strategy"]
-            split_strategy = split_strategy_config["strategy"]
-            percent_split = split_strategy_config["percent_split"]
+            # Safely navigate the nested dictionary
+            training_config = config_data.get("model", {}).get("training", {})
+            split_strategy_config = training_config.get("split_strategy", {})
+            split_strategy = split_strategy_config["strategy"]  # Will raise KeyError if missing
+            percent_split = split_strategy_config.get("percent_split")  # Optional
         except KeyError as e:
             raise KeyError(
                 f"Missing expected configuration field: {e}. Ensure 'split_strategy' and its components are defined."
             )
 
         return split_strategy, percent_split
+
+
+
+
