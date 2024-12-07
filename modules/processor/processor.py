@@ -2,7 +2,7 @@ import pandas as pd
 from collections import defaultdict
 from modules.data_structures.processed_dataset import ProcessedDataset
 from modules.interfaces.factory_interface import IFactory
-from modules.processor.interfaces.split_strategy_interface import ISplitStrategy #TODO Create
+from modules.processor.interfaces.split_strategy_interface import ISplitStrategy #TODO Create and add to factory file
 from modules.processor.helpers.configuration_loader import ConfigurationLoader
 from modules.data_structures.model_dataset import ModelDataset, Example
 from typing import Tuple, Optional, List, Any
@@ -16,7 +16,7 @@ class Processor(): #TODO Create and add interface for processor
     def __init__(
         self,
         yaml_path: str,
-        configuration_loader: ConfigurationLoader, #TODO Create
+        configuration_loader: ConfigurationLoader,
         processed_dataset: ProcessedDataset,
         split_strategy_factory: IFactory[ISplitStrategy], #TODO Create and add interface for split strategy
     ) -> None:
