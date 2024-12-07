@@ -1,6 +1,6 @@
 from modules.interfaces.factory_interface import IFactory
 from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
-from modules.processor.implementations.random_split_strategy import RandomSplitStrategy # TODO Create this
+from modules.processor.implementations.random_split_strategy import RandomSplitStrategy
 from typing import Any
 
 
@@ -22,6 +22,6 @@ class SplitStrategyFactory(IFactory[ISplitStrategy]):
             ISplitStrategy: An instance of the appropriate split strategy.
         """
         if type_name == "random_split":
-            return RandomSplitStrategy(*args, **kwargs)
+            return RandomSplitStrategy()
         else:
             raise ValueError(f"Unsupported split strategy type: {type_name}")
