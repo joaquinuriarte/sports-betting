@@ -24,25 +24,43 @@ class TestProcessor(unittest.TestCase):
 
         # Mock ProcessedDataset
         self.mock_processed_dataset = ProcessedDataset(
-            features=pd.DataFrame({
-                "feature1": [1, 2, 3],
-                "feature2": [4, 5, 6]
-            }, index=["game1", "game2", "game3"]),
-            labels=pd.DataFrame({
-                "PTS_home": [10, 20, 30],
-                "PTS_away": [40, 50, 60]
-            }, index=["game1", "game2", "game3"])
+            features=pd.DataFrame(
+                {"feature1": [1, 2, 3], "feature2": [4, 5, 6]},
+                index=["game1", "game2", "game3"],
+            ),
+            labels=pd.DataFrame(
+                {"PTS_home": [10, 20, 30], "PTS_away": [40, 50, 60]},
+                index=["game1", "game2", "game3"],
+            ),
         )
 
         # Mock SplitStrategy
         self.mock_split_strategy = MagicMock(spec=ISplitStrategy)
         self.mock_split_strategy.split.return_value = (
-            ModelDataset(examples=[
-                Example(features={"feature1": [1], "feature2": [4], "PTS_home": [10], "PTS_away": [40]}),
-            ]),
-            ModelDataset(examples=[
-                Example(features={"feature1": [2], "feature2": [5], "PTS_home": [20], "PTS_away": [50]}),
-            ])
+            ModelDataset(
+                examples=[
+                    Example(
+                        features={
+                            "feature1": [1],
+                            "feature2": [4],
+                            "PTS_home": [10],
+                            "PTS_away": [40],
+                        }
+                    ),
+                ]
+            ),
+            ModelDataset(
+                examples=[
+                    Example(
+                        features={
+                            "feature1": [2],
+                            "feature2": [5],
+                            "PTS_home": [20],
+                            "PTS_away": [50],
+                        }
+                    ),
+                ]
+            ),
         )
 
         # Mock SplitStrategy Factory
@@ -54,7 +72,7 @@ class TestProcessor(unittest.TestCase):
             yaml_path="mock_config.yaml",
             configuration_loader=self.mock_config_loader,
             processed_dataset=self.mock_processed_dataset,
-            split_strategy_factory=self.mock_factory
+            split_strategy_factory=self.mock_factory,
         )
 
     def test_build_model_dataset(self):
@@ -67,11 +85,11 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual(len(model_dataset.examples), 3)
         self.assertEqual(
             model_dataset.examples[0].features,
-            {"feature1": [1], "feature2": [4], "PTS_home": [10], "PTS_away": [40]}
+            {"feature1": [1], "feature2": [4], "PTS_home": [10], "PTS_away": [40]},
         )
         self.assertEqual(
             model_dataset.examples[2].features,
-            {"feature1": [3], "feature2": [6], "PTS_home": [30], "PTS_away": [60]}
+            {"feature1": [3], "feature2": [6], "PTS_home": [30], "PTS_away": [60]},
         )
 
     def test_generate_with_validation(self):
@@ -85,11 +103,11 @@ class TestProcessor(unittest.TestCase):
         self.assertEqual(len(val_dataset.examples), 1)
         self.assertEqual(
             train_dataset.examples[0].features,
-            {"feature1": [1], "feature2": [4], "PTS_home": [10], "PTS_away": [40]}
+            {"feature1": [1], "feature2": [4], "PTS_home": [10], "PTS_away": [40]},
         )
         self.assertEqual(
             val_dataset.examples[0].features,
-            {"feature1": [2], "feature2": [5], "PTS_home": [20], "PTS_away": [50]}
+            {"feature1": [2], "feature2": [5], "PTS_home": [20], "PTS_away": [50]},
         )
 
     def test_generate_without_validation(self):
@@ -99,9 +117,10 @@ class TestProcessor(unittest.TestCase):
         train_dataset, val_dataset = self.processor.generate(val_dataset_flag=False)
 
         # Validate that the train dataset contains all examples
-        self.assertEqual(len(train_dataset.examples), 3)  # All examples should be in train
+        self.assertEqual(
+            len(train_dataset.examples), 3
+        )  # All examples should be in train
         self.assertIsNone(val_dataset)  # Validation dataset should be None
-
 
 
 if __name__ == "__main__":

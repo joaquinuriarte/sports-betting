@@ -29,7 +29,7 @@ class TestSplitStrategyFactory(unittest.TestCase):
         """
         with self.assertRaises(ValueError) as context:
             self.factory.create("invalid_strategy")
-        
+
         self.assertEqual(
             str(context.exception), "Unsupported split strategy type: invalid_strategy"
         )

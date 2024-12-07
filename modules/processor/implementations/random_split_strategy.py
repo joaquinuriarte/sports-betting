@@ -9,7 +9,9 @@ class RandomSplitStrategy(ISplitStrategy):
     Implementation of a random split strategy.
     """
 
-    def split(self, dataset: ModelDataset, train_percentage: float) -> Tuple[ModelDataset, ModelDataset]:
+    def split(
+        self, dataset: ModelDataset, train_percentage: float
+    ) -> Tuple[ModelDataset, ModelDataset]:
         """
         Splits the dataset randomly into training and validation datasets.
 

@@ -28,7 +28,9 @@ class ConfigurationLoader:
             # Safely navigate the nested dictionary
             training_config = config_data.get("model", {}).get("training", {})
             split_strategy_config = training_config.get("split_strategy", {})
-            split_strategy = split_strategy_config["strategy"]  # Will raise KeyError if missing
+            split_strategy = split_strategy_config[
+                "strategy"
+            ]  # Will raise KeyError if missing
             percent_split = split_strategy_config.get("percent_split")  # Optional
         except KeyError as e:
             raise KeyError(
@@ -36,7 +38,3 @@ class ConfigurationLoader:
             )
 
         return split_strategy, percent_split
-
-
-
-

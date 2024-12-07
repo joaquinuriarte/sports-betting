@@ -27,7 +27,7 @@ class TestConfigurationLoader(unittest.TestCase):
         """
         with patch("builtins.open", mock_open(read_data=mock_yaml)):
             split_strategy, percent_split = self.loader.load_config("config.yaml")
-        
+
         self.assertEqual(split_strategy, "random_split")
         self.assertEqual(percent_split, 70)
 
@@ -43,7 +43,7 @@ class TestConfigurationLoader(unittest.TestCase):
         """
         with patch("builtins.open", mock_open(read_data=mock_yaml)):
             split_strategy, percent_split = self.loader.load_config("config.yaml")
-            
+
             self.assertEqual(split_strategy, "random_split")
             self.assertIsNone(percent_split)
 
@@ -58,11 +58,11 @@ class TestConfigurationLoader(unittest.TestCase):
         with patch("builtins.open", mock_open(read_data=mock_yaml)):
             with self.assertRaises(KeyError) as context:
                 self.loader.load_config("config.yaml")
-            
+
             self.assertIn(
-                "Missing expected configuration field",
-                str(context.exception)
+                "Missing expected configuration field", str(context.exception)
             )
+
 
 if __name__ == "__main__":
     unittest.main()
