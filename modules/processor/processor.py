@@ -3,7 +3,7 @@ from collections import defaultdict
 from modules.data_structures.processed_dataset import ProcessedDataset
 from modules.interfaces.factory_interface import IFactory
 from modules.processor.interfaces.split_strategy_interface import ISplitStrategy #TODO Create
-from modules.processor.helpers.configuration_loader import ConfigurationLoader #TODO Create
+from modules.processor.helpers.configuration_loader import ConfigurationLoader
 from modules.data_structures.model_dataset import ModelDataset, Example
 from typing import Tuple, Optional, List, Any
 
