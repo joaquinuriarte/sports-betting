@@ -33,14 +33,15 @@ class Processor(): #TODO Create and add interface for processor
 
         # Create Model Dataset
 
+
         # Split Model Dataset if flag is True
-        
+        train_dataset, validation_dataset = self.split_strategy.split(model_dataset, self.percent_split)
 
         # Return tuple
-        pass
+        return Tuple[train_dataset, validation_dataset]
     
     def load_from_dataframe(
-        self, df: pd.DataFrame, columns_to_load: Optional[List[str]] = None  #TODO Hay que add functionality to merge feature and labels
+        self, df: pd.DataFrame, columns_to_load: Optional[List[str]] = None  #TODO Hay que add functionality to merge feature and labels. Basically take ProcessedDataset and return ModelDataset
     ):
         """Loads dataframe content into dataset.
 
