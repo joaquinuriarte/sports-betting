@@ -24,16 +24,17 @@ class Processor(): #TODO Create and add interface for processor
         self.processed_dataset = processed_dataset
 
         # Find split strategy
-        split_strategy_name = configuration_loader.load_config(yaml_path)
+        split_strategy_name, percent_split = configuration_loader.load_config(yaml_path)
 
         # Create split strategy implementation
-        self.split_strategy: ISplitStrategy = split_strategy_factory.create(split_strategy_name)
+        self.split_strategy: ISplitStrategy = split_strategy_factory.create(split_strategy_name, percent_split)
     
     def generate(self, val_dataset_flag: Optional[bool] = True) -> Tuple[ModelDataset, Optional[ModelDataset]]:
 
         # Create Model Dataset
 
         # Split Model Dataset if flag is True
+
 
         # Return tuple
         pass
