@@ -32,10 +32,11 @@ class Processor(): #TODO Create and add interface for processor
     def generate(self, val_dataset_flag: Optional[bool] = True) -> Tuple[ModelDataset, Optional[ModelDataset]]:
 
         # Create Model Dataset
-
+        train_dataset = self.load_from_dataframe(self.processed_dataset)
 
         # Split Model Dataset if flag is True
-        train_dataset, validation_dataset = self.split_strategy.split(model_dataset, self.percent_split)
+        if val_dataset_flag:
+            train_dataset, validation_dataset = self.split_strategy.split(train_dataset, self.percent_split)
 
         # Return tuple
         return Tuple[train_dataset, validation_dataset]
