@@ -48,9 +48,3 @@ for item in models_and_config:
     validation_predictions = model_manager.predict([item[0]], [validation_dataset.examples])
     print(f"Validation_predictions: {validation_predictions}")
     print(f"Validation_dataset: {validation_dataset}")
-
-#LEFTTTT
-#####################
-# close branch
-# open integration_test_branch
-# Run pilot round as integration test (get datasets again)
