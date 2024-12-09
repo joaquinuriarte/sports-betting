@@ -1,12 +1,11 @@
 import logging
-from ..interfaces.model_interface import IModel
+from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
-from ..interfaces.predictor_interface import IPredictor
+from modules.model_manager.interfaces.predictor_interface import IPredictor
 import pandas as pd
 from typing import List
 
 logging.basicConfig(level=logging.INFO)
-
 
 class Predictor(IPredictor):
     """
