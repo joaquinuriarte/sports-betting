@@ -96,3 +96,7 @@ model:
     learning_rate: 0.001
     optimizer: Adam
     loss_function: MSELoss
+    split_strategy:
+      strategy: random_split
+      percent_split: 70 # Optional argument depending if strategy at hands requires it
+    batch_size: 32

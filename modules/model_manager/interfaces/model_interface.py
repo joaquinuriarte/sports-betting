@@ -1,9 +1,10 @@
 from abc import ABC, abstractmethod
-from ...data_structures.model_dataset import (
+from modules.data_structures.model_dataset import (
     Example,
-)  # TODO: Change for rick'y implementation
-from typing import Any, Dict, List
+)
+from typing import Any, List
 import pandas as pd
+from modules.data_structures.model_config import ModelConfig
 
 
 class IModel(ABC):
@@ -50,6 +51,6 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def get_training_config(self) -> Dict[str, Any]:
+    def get_training_config(self) -> ModelConfig:
         """Gets the current training configuration for the model."""
         pass

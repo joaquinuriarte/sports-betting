@@ -60,17 +60,19 @@ class ModelManagerTest(unittest.TestCase):
         """
         Test the train method of ModelManager.
         """
-        # Use cast to satisfy mypy type checking
-        mock_model = cast(IModel, Mock(spec=IModel))
+        # Use Mock to simulate a model that implements IModel
+        mock_model = Mock(spec=IModel)
 
-        # Cast mock_model to Mock and configure get_training_config
-        mock_model_mock = cast(Mock, mock_model)
-        mock_model_mock.get_training_config.return_value = {
-            "model_signature": "test_model"
-        }
+        # Set up mock training config to return a valid ModelConfig
+        mock_model_config = Mock(spec=ModelConfig)
+        mock_model_config.model_signature = "test_model"
 
-        train_dataset = cast(ModelDataset, Mock(spec=ModelDataset))
-        val_dataset = cast(ModelDataset, Mock(spec=ModelDataset))
+        # Configure `get_training_config` to return the mocked config
+        mock_model.get_training_config.return_value = mock_model_config
+
+        # Set up training and validation datasets
+        train_dataset = Mock(spec=ModelDataset)
+        val_dataset = Mock(spec=ModelDataset)
 
         models = [mock_model]
         train_val_datasets = [(train_dataset, val_dataset)]
@@ -78,7 +80,7 @@ class ModelManagerTest(unittest.TestCase):
         # Call the train method
         self.model_manager.train(models, train_val_datasets)
 
-        # Assert train was called
+        # Assert that the trainer's `train` method was called with the expected arguments
         self.trainer.train.assert_called_once_with(
             mock_model, train_dataset, val_dataset
         )

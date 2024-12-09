@@ -1,12 +1,11 @@
 import logging
-from ..interfaces.model_interface import IModel
+from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
-from ..interfaces.predictor_interface import IPredictor
+from modules.model_manager.interfaces.predictor_interface import IPredictor
 import pandas as pd
 from typing import List
 
 logging.basicConfig(level=logging.INFO)
-
 
 class Predictor(IPredictor):
     """
@@ -26,15 +25,8 @@ class Predictor(IPredictor):
         """
         logging.info("Starting prediction.")
 
-        # Extract features from each Example in the batch
-        features = [
-            list(feature.values())[0]
-            for example in examples
-            for feature in example.features
-        ]
-
         # Run prediction through the model
-        predictions = model.predict(features)
+        predictions = model.predict(examples)
 
         logging.info("Prediction completed.")
         return predictions

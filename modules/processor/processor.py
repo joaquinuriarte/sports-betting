@@ -1,75 +1,136 @@
-from ..interfaces.dataset_generator_interface import IDatasetGenerator
-from ..interfaces.model_manager_interface import IModelManager
-from modules.interfaces.factory_interface import IFactory
-from main.interfaces.join_operator_interface import IJoinOperator
-from main.interfaces.feature_processor_operator_interface import (
-    IFeatureProcessorOperator,
-)
-from main.interfaces.data_io_interface import DataIO
-from modules.dataset_generator.interfaces.strategy_interface import (
-    IDatasetGeneratorStrategy,
-)
-from modules.dataset_generator.dataset_generator import DatasetGenerator
 from modules.data_structures.processed_dataset import ProcessedDataset
-import pandas as pd
+from modules.interfaces.factory_interface import IFactory
+from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
+from modules.processor.helpers.configuration_loader import ConfigurationLoader
+from modules.interfaces.processor_interface import IProcessor
+from modules.data_structures.model_dataset import ModelDataset, Example
+from typing import Tuple, Optional, List, Any
 
-# TODO Processor tiene que crear ModelDataset from ProcessedDataset. Using info on yaml, create tensors or any other datatype required for the model. This way we decouple this from model manager and we can train many model configurations on the same dataset without having to redundantly repeat the processedDataset->Modeldataset conversion
 
+class Processor(IProcessor):
+    """
+    Main orchestrator for ModelDataset generation and train/test split.
+    """
 
-class Processor:
     def __init__(
         self,
-        config_path: str,
-        model_manager: IModelManager,
-        data_io_factory: IFactory[DataIO],
-        feature_processor_factory: IFactory[IFeatureProcessorOperator],
-        join_factory: IFactory[IJoinOperator],
-        strategy_factory: IFactory[IDatasetGeneratorStrategy],
-    ):
-        # Initialize DatasetGenerator with the necessary factories
-        self.dataset_generator: IDatasetGenerator = DatasetGenerator(
-            config_path=config_path,
-            data_io_factory=data_io_factory,
-            feature_processor_factory=feature_processor_factory,
-            join_factory=join_factory,
-            strategy_factory=strategy_factory,
+        yaml_path: str,
+        configuration_loader: ConfigurationLoader,
+        processed_dataset: ProcessedDataset,
+        split_strategy_factory: IFactory[ISplitStrategy],
+    ) -> None:
+
+        self.processed_dataset = processed_dataset
+
+        # Find split strategy
+        split_strategy_name, self.percent_split = configuration_loader.load_config(
+            yaml_path
         )
 
-        self.config_path = config_path
-        self.model_manager: IModelManager = (
-            model_manager  # TODO we need to construct instance here. What parameters does it accept? Overlap with step 2 below
+        # Create split strategy implementation
+        self.split_strategy: ISplitStrategy = split_strategy_factory.create(
+            split_strategy_name
         )
 
-    def train_model(self):
+    def generate(
+        self, val_dataset_flag: Optional[bool] = True
+    ) -> Tuple[ModelDataset, Optional[ModelDataset]]:
         """
-        Train the model using the generated dataset.
+        Generates training and optionally validation datasets.
         """
-        # Step 1: Generate dataset
-        processed_dataset: ProcessedDataset = self.dataset_generator.generate()
+        # Create Model Dataset
+        train_dataset = self.build_model_dataset(self.processed_dataset)
+        validation_dataset = None
 
-        # Step 2: Set up the model
-        self.model_manager.setup_model(
-            self.config_path
-        )  # TODO we need to build this. This should create datastructures, tensors, ect?
+        # Split Model Dataset if flag is True
+        if val_dataset_flag:
+            if self.percent_split is None:
+                raise ValueError("percent_split must be defined in the configuration.")
+            train_dataset, validation_dataset = self.split_strategy.split(
+                train_dataset, float(self.percent_split)
+            )
 
-        # Step 3: Train model using ModelManager
-        self.model_manager.train(processed_dataset.features, processed_dataset.labels)
+        return train_dataset, validation_dataset
 
-        # TODO Should processor deal with saving weights?
-        # Step 4: Save model? Or is that done directly by train?
-
-    def run_inference(
-        self, new_data: pd.DataFrame
-    ):  # TODO we could wrap this argument in a class. What logic creates it?
+    def build_model_dataset(self, processed_dataset: ProcessedDataset) -> ModelDataset:
         """
-        Use the trained model to make predictions on new data.
+        Converts a ProcessedDataset into a ModelDataset by merging features and labels.
 
         Args:
-            new_data (pd.DataFrame): New data for which to generate predictions.
+            processed_dataset (ProcessedDataset): The processed dataset containing features and labels.
 
         Returns:
-            Predictions from the model.
+            ModelDataset: A dataset with examples containing both features and labels.
         """
-        # Use the trained model to make predictions
-        predictions = self.model_manager.predict(new_data)  # TODO Build this
-        return predictions
+        examples = []
+
+        # Iterate through the rows of features and labels
+        for game_id, feature_row in processed_dataset.features.iterrows():
+            assert game_id is not None, "Game ID cannot be None"
+            label_row = processed_dataset.labels.loc[str(game_id)]
+
+            # Create the feature dictionary
+            example_features = {
+                str(feature_name): [feature_value]
+                for feature_name, feature_value in feature_row.items()
+            }
+
+            # Append labels to the feature dictionary
+            example_features["PTS_home"] = [label_row["PTS_home"]]
+            example_features["PTS_away"] = [label_row["PTS_away"]]
+
+            # Create an Example object and add it to the list
+            examples.append(Example(features=example_features))
+
+        return ModelDataset(examples=examples)
+
+    # def load_from_dataframe(
+    #     self, df: pd.DataFrame, columns_to_load: Optional[List[str]] = None
+    # ):
+    #     """Loads dataframe content into dataset.
+
+    #     Args:
+    #         df: dataframe that contains data that will be loaded into self.examples.
+    #         columns_to_load: columns that we will be added to the dataset as features. If empty,
+    #             all columns are passed in to the dataset.
+
+    #     Raises:
+    #         KeyError: if a feature specified in columns_to_load is not a column in the input df.
+    #     """
+    #     examples = []
+    #     features = columns_to_load if columns_to_load else df.columns
+
+    #     if set(features).intersection(set(df.columns)) < set(features):
+    #         raise KeyError(
+    #             "One or more specified features do not exist in the dataframe."
+    #         )
+
+    #     for _, data in df.iterrows():
+    #         example_features = defaultdict(list)
+    #         for feature in features:
+    #             feature_value = data[feature]
+    #             print("Feature: ", feature_value)
+    #             if (
+    #                 isinstance(feature_value, str)
+    #                 or isinstance(feature_value, int)
+    #                 or isinstance(feature_value, float)
+    #             ):
+    #                 example_features[feature] = [feature_value]
+    #             elif isinstance(feature_value, list) and (
+    #                 self.check_list_is_type(feature_value, float)
+    #                 or self.check_list_is_type(feature_value, int)
+    #                 or self.check_list_is_type(feature_value, str)
+    #             ):
+    #                 example_features[feature] = feature_value
+
+    #             else:
+    #                 raise TypeError(
+    #                     "Features must be string, ints, floats, or a list of"
+    #                     "strings, ints, or floats."
+    #                 )
+    #         examples.append(Example(example_features))
+
+    #     self.examples = examples
+
+    # def check_list_is_type(input: List[Any], instance: Any) -> bool:
+    #     return all(isinstance(x, instance) for x in input)

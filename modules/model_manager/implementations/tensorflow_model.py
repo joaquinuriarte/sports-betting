@@ -1,9 +1,10 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import Any, Dict, List
-from ..interfaces.model_interface import IModel
+from typing import List
+from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
+from modules.data_structures.model_config import ModelConfig
 
 
 class TensorFlowModel(IModel):
@@ -14,18 +15,20 @@ class TensorFlowModel(IModel):
         model (tf.keras.Model): The TensorFlow model instance.
     """
 
-    def __init__(self, architecture_config: Dict[str, Any]) -> None:
+    def __init__(self, model_config: ModelConfig) -> None:
         # Store the model configuration
-        self.model_config = architecture_config
+        self.model_config = model_config
 
         # Initialize the model using the architecture configuration
-        self.model = self._initialize_model(self.model_config)
+        self.model = self._initialize_model()
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config["input_features"]
-        self.output_features: str = self.model_config["output_features"]
+        self.input_features: List[str] = self.model_config.architecture[
+            "input_features"
+        ]
+        self.output_features: str = self.model_config.architecture["output_features"]
 
-    def _initialize_model(self, architecture_config: Dict[str, Any]) -> tf.keras.Model:
+    def _initialize_model(self) -> tf.keras.Model:
         """
         Initializes the model based on the architecture configuration.
 
@@ -35,9 +38,9 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(shape=(architecture_config["input_size"],))
+        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
         x = inputs
-        for layer_config in architecture_config["layers"]:
+        for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
@@ -46,9 +49,9 @@ class TensorFlowModel(IModel):
         outputs = x
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
         model.compile(
-            optimizer=architecture_config.get("optimizer", "adam"),
-            loss=architecture_config.get("loss", "mse"),
-            metrics=architecture_config.get("metrics", ["accuracy"]),
+            optimizer=self.model_config.architecture.get("optimizer", "adam"),
+            loss=self.model_config.architecture.get("loss", "mse"),
+            metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
         )
         return model
 
@@ -66,10 +69,12 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    feature[input_feature]
+                    (
+                        example.features[input_feature][0]
+                        if input_feature in example.features
+                        else 0.0
+                    )
                     for input_feature in self.input_features
-                    for feature in example.features
-                    if input_feature in feature
                 ]
                 for example in examples
             ],
@@ -92,10 +97,10 @@ class TensorFlowModel(IModel):
         feature_array = np.array(
             [
                 [
-                    next(
-                        feature[input_feature]
-                        for feature in example.features
-                        if input_feature in feature
+                    (
+                        example.features[input_feature][0]
+                        if input_feature in example.features
+                        else 0.0
                     )
                     for input_feature in self.input_features
                 ]
@@ -106,10 +111,10 @@ class TensorFlowModel(IModel):
 
         label_array = np.array(
             [
-                next(
-                    feature[self.output_features]
-                    for feature in example.features
-                    if self.output_features in feature
+                (
+                    example.features[self.output_features][0]
+                    if self.output_features in example.features
+                    else 0.0
                 )
                 for example in examples
             ],
@@ -160,7 +165,7 @@ class TensorFlowModel(IModel):
         """
         self.model.load_weights(path)
 
-    def get_training_config(self) -> Dict[str, Any]:
+    def get_training_config(self) -> ModelConfig:
         """
         Gets the current training configuration for the model.
 

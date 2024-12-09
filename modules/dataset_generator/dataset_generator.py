@@ -2,7 +2,7 @@ from .helpers.dataset_loader import DatasetLoader
 from .interfaces.strategy_interface import IDatasetGeneratorStrategy
 from modules.data_structures.processed_dataset import ProcessedDataset
 from modules.data_structures.dataset_config import DatasetConfig
-from ..interfaces.dataset_generator_interface import IDatasetGenerator
+from modules.interfaces.dataset_generator_interface import IDatasetGenerator
 from .helpers.configuration_loader import ConfigurationLoader
 from .interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
@@ -59,10 +59,10 @@ class DatasetGenerator(IDatasetGenerator):
             ProcessedDataset: The generated dataset containing features and labels.
         """
         # Load the data sources
-        dataframes = self.dataset_loader.load_data()
+        dataframe = self.dataset_loader.load_data()
 
         # Generate the features and labels using the strategy
-        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframes)
+        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframe)
 
         return processed_dataset
 
