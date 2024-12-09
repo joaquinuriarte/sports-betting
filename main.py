@@ -51,7 +51,6 @@ for item in models_and_config:
 
 #LEFTTTT
 #####################
-# wtf happened with past commit? Busca dataset generator interface
 # close branch
 # open integration_test_branch
 # Run pilot round as integration test (get datasets again)
