@@ -31,12 +31,19 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         self, df: pd.DataFrame, team_id: int, game_date: pd.Timestamp
     ) -> pd.DataFrame:
         """
-        Retrieves the most recent 10 games for a given team before the specified date.
+        Retrieves the most recent "look_back_window" games for a given team before the specified date.
         """
+        # Ensure GAME_DATE_EST is a datetime
+        df = df.assign(
+            GAME_DATE_EST=pd.to_datetime(df["GAME_DATE_EST"], errors="coerce")
+        )
+        # Drop rows with invalid dates
+        df = df.dropna(subset=["GAME_DATE_EST"])
+        # Perform filtering 
         recent_games = (
             df[(df["TEAM_ID"] == team_id) & (df["GAME_DATE_EST"] < game_date)]
             .sort_values(by="GAME_DATE_EST", ascending=False)
-            .head(10)
+            .head(self.look_back_window)
         )
         return recent_games
 

@@ -2,6 +2,7 @@
 # Use case: Pilot, "integration test"
 
 # === STEP 0: Imports
+print("# === STEP 0: Imports: Starting ...")
 from modules.dataset_generator.helpers.configuration_loader import ConfigurationLoader as DSConfigLoader
 from modules.dataset_generator.factories.data_io_factory import DataIOFactory
 from modules.dataset_generator.factories.feature_processor_factory import FeatureProcessorFactory
@@ -16,8 +17,10 @@ from modules.model_manager.predictor.predictor import Predictor
 from modules.model_manager.factories.model_factory import ModelFactory
 from modules.model_manager.helpers.configuration_loader import ConfigurationLoader as MMConfigLoader
 from modules.model_manager.model_manager import ModelManager
+print("# === STEP 0: Imports: Complete")
 
 # === STEP 1: Dependency Instantiations And Global Variable Declarations
+print("# === STEP 1: Dependency Instantiations And Global Variable Declarations: Starting ...")
 ## === DATASET GEN
 yaml_path = '/Users/joaquinuriarte/Documents/GitHub/sports-betting/configs/model_v0.yaml'
 ds_configuration_loader = DSConfigLoader()
@@ -30,17 +33,22 @@ trainer = Trainer()
 predictor = Predictor()
 model_factory = ModelFactory()
 mm_configuration_loader = MMConfigLoader()
-
+print("# === STEP 1: Dependency Instantiations And Global Variable Declarations: Complete")
 
 # === STEP 2: DATASET GEN
+print("# === STEP 2: DATASET GEN: Starting ...")
 dataset_generator = DatasetGenerator(yaml_path, ds_configuration_loader, data_factory, feature_processor_factory, join_factory, strategy_factory)
 processed_dataset = dataset_generator.generate()
+print("# === STEP 2: DATASET GEN: Complete")
 
 # === STEP 3: PROCESSOR
+print("# === STEP 3: PROCESSOR: Starting ...")
 processor = Processor(yaml_path, p_configuration_loader, processed_dataset, split_strategy_factory)
 train_dataset, validation_dataset = processor.generate(val_dataset_flag=True)
+print("# === STEP 3: PROCESSOR: Complete")
 
 # === STEP 4: MODEL MANAGER
+print("# === STEP 4: MODEL MANAGER: Starting ...")
 model_manager = ModelManager(trainer, predictor, model_factory, mm_configuration_loader)
 models_and_config = model_manager.create_models([yaml_path]) # No use for the ModelConfig, could spare returning it
 for item in models_and_config:
@@ -49,3 +57,4 @@ for item in models_and_config:
     validation_predictions = model_manager.predict([item[0]], [validation_dataset.examples])
     print(f"Validation_predictions: {validation_predictions}")
     print(f"Validation_dataset: {validation_dataset}")
+print("# === STEP 4: MODEL MANAGER: Complete")
