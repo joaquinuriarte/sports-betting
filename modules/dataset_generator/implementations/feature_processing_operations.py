@@ -34,8 +34,8 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         Retrieves the most recent "look_back_window" games for a given team before the specified date.
         """
         # Ensure GAME_DATE_EST is a datetime
-        df = df.assign(
-            GAME_DATE_EST=pd.to_datetime(df["GAME_DATE_EST"], errors="coerce")
+        df["GAME_DATE_EST"] = pd.to_datetime(
+            df["GAME_DATE_EST"].str.strip(), errors="coerce", format="%m-%d-%Y"
         )
         # Drop rows with invalid dates
         df = df.dropna(subset=["GAME_DATE_EST"])
