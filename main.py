@@ -1,5 +1,5 @@
 # Main file
-# Use case: Pilot, "integration test"
+# Use case: Pilot test, "integration test"
 
 # === STEP 0: Imports
 print("# === STEP 0: Imports: Starting ...")
