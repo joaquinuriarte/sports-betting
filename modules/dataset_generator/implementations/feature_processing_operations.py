@@ -33,12 +33,6 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         """
         Retrieves the most recent "look_back_window" games for a given team before the specified date.
         """
-        # Ensure GAME_DATE_EST is a datetime
-        df["GAME_DATE_EST"] = pd.to_datetime(
-            df["GAME_DATE_EST"].str.strip(), errors="coerce", format="%m-%d-%Y"
-        )
-        # Drop rows with invalid dates
-        df = df.dropna(subset=["GAME_DATE_EST"])
         # Perform filtering 
         recent_games = (
             df[(df["TEAM_ID"] == team_id) & (df["GAME_DATE_EST"] < game_date)]
@@ -178,7 +172,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         labels = df[["GAME_ID", "PTS_home", "PTS_away"]].dropna().drop_duplicates()
         return labels
     
-    def _convert_min_column(dataframe: pd.DataFrame) -> pd.DataFrame:
+    def _convert_min_column(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
         Converts the 'MIN' column into total minutes as a float. Drops rows with invalid 'MIN' values.
 
