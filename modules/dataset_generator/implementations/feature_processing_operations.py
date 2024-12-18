@@ -33,7 +33,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         """
         Retrieves the most recent "look_back_window" games for a given team before the specified date.
         """
-        # Perform filtering 
+        # Perform filtering
         recent_games = (
             df[(df["TEAM_ID"] == team_id) & (df["GAME_DATE_EST"] < game_date)]
             .sort_values(by="GAME_DATE_EST", ascending=False)
@@ -171,7 +171,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         """
         labels = df[["GAME_ID", "PTS_home", "PTS_away"]].dropna().drop_duplicates()
         return labels
-    
+
     def _convert_min_column(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
         Converts the 'MIN' column into total minutes as a float. Drops rows with invalid 'MIN' values.
@@ -182,7 +182,8 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         Returns:
             pd.DataFrame: DataFrame with 'MIN' column converted to float.
         """
-        def convert_min_to_float(min_str):
+
+        def convert_min_to_float(min_str: str) -> Optional[float]:
             try:
                 parts = list(map(int, min_str.split(":")))
                 if len(parts) == 2 or len(parts) == 3:  # Format MM:SS or MM:SS:00
@@ -199,10 +200,12 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         # Drop rows with invalid 'MIN' values
         invalid_rows = dataframe["MIN"].isna()
         if invalid_rows.any():
-            logging.warning(f"Dropping {invalid_rows.sum()} rows with invalid 'MIN' values.")
+            logging.warning(
+                f"Dropping {invalid_rows.sum()} rows with invalid 'MIN' values."
+            )
             dataframe = dataframe[~invalid_rows]
 
-        return dataframe 
+        return dataframe
 
     def process(self, dataframe: pd.DataFrame) -> ProcessedDataset:
         """
@@ -211,7 +214,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         Returns:
             ProcessedDataset: The processed dataset with features and labels.
         """
-         # Preprocess 'MIN' column (A casting specific to this implementation of feature processing)
+        # Preprocess 'MIN' column (A casting specific to this implementation of feature processing)
         dataframe = self._convert_min_column(dataframe)
 
         features_df = self.process_features(dataframe).set_index("GAME_ID")

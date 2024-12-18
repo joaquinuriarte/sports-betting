@@ -16,37 +16,38 @@ class TestConfigurationLoader(unittest.TestCase):
         Set up a temporary YAML file for testing.
         """
         self.config_data = {
-        "model": {
-            "dataset": {
-                "sources": [
-                    {
-                        "path": "/path/to/data.csv",
-                        "file_type": "csv",
-                        "columns": [
-                            {"name": "column1", "dtype": "string"},
-                            {"name": "column2", "dtype": "int"},
-                            {"name": "column3", "dtype": "float"}
-                        ],
-                    }
-                ],
-                "joins": [
-                    {
-                        "left": "table1",
-                        "right": "table2",
-                        "keys": ["key1", "key2"],
-                        "type": "inner",
-                    }
-                ],
-            },
-            "strategy": "join_based",
-            "feature_processor": {
-                "type": "top_n_players",
-                "top_n_players": 5,
-                "sorting_criteria": "MIN",
-                "look_back_window": 10,
-                "player_stats_columns": ["PTS", "REB", "AST"],
-            },
-        }}
+            "model": {
+                "dataset": {
+                    "sources": [
+                        {
+                            "path": "/path/to/data.csv",
+                            "file_type": "csv",
+                            "columns": [
+                                {"name": "column1", "dtype": "string"},
+                                {"name": "column2", "dtype": "int"},
+                                {"name": "column3", "dtype": "float"},
+                            ],
+                        }
+                    ],
+                    "joins": [
+                        {
+                            "left": "table1",
+                            "right": "table2",
+                            "keys": ["key1", "key2"],
+                            "type": "inner",
+                        }
+                    ],
+                },
+                "strategy": "join_based",
+                "feature_processor": {
+                    "type": "top_n_players",
+                    "top_n_players": 5,
+                    "sorting_criteria": "MIN",
+                    "look_back_window": 10,
+                    "player_stats_columns": ["PTS", "REB", "AST"],
+                },
+            }
+        }
 
         # Use text mode to write the YAML configuration
         with tempfile.NamedTemporaryFile(

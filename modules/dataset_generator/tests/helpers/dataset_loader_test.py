@@ -66,7 +66,6 @@ class TestDatasetLoader(unittest.TestCase):
             sources=self.sources,
         )
 
-
     def test_load_data(self) -> None:
         """
         Test that the DatasetLoader loads data correctly from all sources.
@@ -109,6 +108,7 @@ class TestDatasetLoader(unittest.TestCase):
         pd.testing.assert_frame_equal(
             dataframes[2], pd.DataFrame({"column5": [9, 10], "column6": [11, 12]})
         )
+
 
 if __name__ == "__main__":
     unittest.main()

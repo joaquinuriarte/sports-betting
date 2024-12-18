@@ -120,7 +120,11 @@ class DatasetGenerator(IDatasetGenerator):
 
         # Step 3: Create and return the strategy using the strategy factory
         dataset_generation_strategy: IDatasetGeneratorStrategy = (
-            strategy_factory.create(config.strategy, feature_processor=feature_processor, join_operations=join_operations)
+            strategy_factory.create(
+                config.strategy,
+                feature_processor=feature_processor,
+                join_operations=join_operations,
+            )
         )
 
         return dataset_generation_strategy

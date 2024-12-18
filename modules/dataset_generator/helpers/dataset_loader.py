@@ -23,7 +23,7 @@ class DatasetLoader:
     def load_data(self) -> List[pd.DataFrame]:
         """
         Loads the data from all sources.
-        Validate and cast all dataframes before returning. 
+        Validate and cast all dataframes before returning.
 
         Returns:
             list: List of DataFrames for each data source.
@@ -34,7 +34,7 @@ class DatasetLoader:
             df = self._validate_and_cast(df, source)
             dataframes.append(df)
         return dataframes
-    
+
     def _validate_and_cast(self, df: pd.DataFrame, source: Source) -> pd.DataFrame:
         """
         Validates and casts columns in the DataFrame according to the source metadata.
@@ -55,11 +55,17 @@ class DatasetLoader:
                 try:
                     # Attempt to cast column to the expected dtype
                     if dtype == "datetime":
-                        df[column_name] = pd.to_datetime(df[column_name], errors="coerce")
+                        df[column_name] = pd.to_datetime(
+                            df[column_name], errors="coerce"
+                        )
                     elif dtype == "int":
-                        df[column_name] = pd.to_numeric(df[column_name], errors="coerce")
+                        df[column_name] = pd.to_numeric(
+                            df[column_name], errors="coerce"
+                        )
                     elif dtype == "float":
-                        df[column_name] = pd.to_numeric(df[column_name], errors="coerce")
+                        df[column_name] = pd.to_numeric(
+                            df[column_name], errors="coerce"
+                        )
                     elif dtype == "string":
                         df[column_name] = df[column_name].astype(str)
                 except Exception as e:
@@ -86,6 +92,5 @@ class DatasetLoader:
                     df = df[~invalid_rows]
 
         # Drop rows with missing values in required columns
-        df = df.dropna(subset=source.columns.keys(), how="any")
+        df = df.dropna(subset=list(source.columns.keys()), how="any")
         return df
-

@@ -1,6 +1,8 @@
 import pandas as pd
 import unittest
-from modules.dataset_generator.implementations.feature_processing_operations import TopNPlayersFeatureProcessor
+from modules.dataset_generator.implementations.feature_processing_operations import (
+    TopNPlayersFeatureProcessor,
+)
 from datetime import datetime
 from modules.data_structures.processed_dataset import ProcessedDataset
 
@@ -29,7 +31,17 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
                 "VISITOR_TEAM_ID": [102, 103, 101, 103, 101, 102, 103, 101, 102],
                 "PTS_home": [100, 95, 88, 102, 110, 98, 103, 97, 105],
                 "PTS_away": [90, 88, 85, 99, 105, 93, 101, 95, 102],
-                "MIN": ["30:00", "25:30", "20:45", "35:15", "32:10", "28:50", "34:20", "30:00", "29:55"],
+                "MIN": [
+                    "30:00",
+                    "25:30",
+                    "20:45",
+                    "35:15",
+                    "32:10",
+                    "28:50",
+                    "34:20",
+                    "30:00",
+                    "29:55",
+                ],
                 "PTS": [15, 12, 10, 18, 20, 14, 16, 19, 17],
             }
         )
@@ -40,7 +52,6 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
             look_back_window=2,
             player_stats_columns=["MIN", "PTS"],
         )
-
 
     def test_convert_min_column(self):
         """

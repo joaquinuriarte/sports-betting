@@ -26,7 +26,7 @@ class ConfigurationLoader:
                 columns={
                     column["name"]: {
                         "dtype": column.get("dtype"),
-                        "regex": column.get("regex")
+                        "regex": column.get("regex"),
                     }
                     for column in source["columns"]
                 },
