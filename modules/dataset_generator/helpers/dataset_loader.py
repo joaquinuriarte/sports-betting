@@ -57,7 +57,7 @@ class DatasetLoader:
                     if dtype == "datetime":
                         df[column_name] = pd.to_datetime(df[column_name], errors="coerce")
                     elif dtype == "int":
-                        df[column_name] = pd.to_numeric(df[column_name], errors="coerce", downcast="integer")
+                        df[column_name] = pd.to_numeric(df[column_name], errors="coerce")
                     elif dtype == "float":
                         df[column_name] = pd.to_numeric(df[column_name], errors="coerce")
                     elif dtype == "string":
