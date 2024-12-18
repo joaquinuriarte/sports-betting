@@ -56,7 +56,7 @@ class XmlIO(DataIO):
     def read_df_from_path(self, path: str, columns: List[str]) -> pd.DataFrame:
         try:
             # Read the entire XML to get all columns
-            df = pd.read_xml(path)
+            df = pd.read_xml(path, parser="lxml")
 
             # Check for missing columns
             available_columns = df.columns.tolist()
