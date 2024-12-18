@@ -59,10 +59,10 @@ class DatasetGenerator(IDatasetGenerator):
             ProcessedDataset: The generated dataset containing features and labels.
         """
         # Load the data sources
-        dataframe = self.dataset_loader.load_data()
+        dataframes = self.dataset_loader.load_data()
 
         # Generate the features and labels using the strategy
-        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframe)
+        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframes)
 
         return processed_dataset
 
