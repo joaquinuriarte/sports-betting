@@ -51,7 +51,7 @@ class ModelManager(IModelManager):
         for yaml in yaml_path:
             model_config: ModelConfig = self.config_loader.load_config(yaml)
             model: IModel = self.model_factory.create(
-                model_config.type_name, model_config
+                model_config.type_name, model_config=model_config
             )
 
             models_and_config.append((model, model_config))

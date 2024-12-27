@@ -67,7 +67,7 @@ class Processor(IProcessor):
         # Iterate through the rows of features and labels
         for game_id, feature_row in processed_dataset.features.iterrows():
             assert game_id is not None, "Game ID cannot be None"
-            label_row = processed_dataset.labels.loc[str(game_id)]
+            label_row = processed_dataset.labels.loc[int(game_id)]
 
             # Create the feature dictionary
             example_features = {

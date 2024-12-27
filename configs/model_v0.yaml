@@ -1,123 +1,116 @@
 model:
-  # Placeholder for the generated signature, will be updated dynamically
-  model_signature: ''
-
-  # Model's training data
+  architecture:
+    input_features:
+      - MIN
+      - PTS
+      - AST
+      - TO
+      - PLUS_MINUS
+      - OREB
+      - DREB
+      - PF
+      - FG3_PCT
+      - FG_PCT
+      - FT_PCT
+    input_size: 178
+    layers:
+      - activation: ReLU
+        in_features: 10
+        type: Dense
+        units: 128
+      - activation: ReLU
+        in_features: 128
+        type: Dense
+        units: 64
+      - activation: None
+        in_features: 64
+        type: linear
+        units: 1
+    output_features: PTS
+    output_size: 1
+    type: tensorflow
   dataset:
-    sources:
-      - name: 'games'
-        path: '/Users/joaquinuriarte/Desktop/dataset/games.csv'
-        file_type: 'csv'
-        columns:
-          - name: 'GAME_DATE_EST'
-            dtype: 'datetime'
-          - name: 'GAME_ID'
-            dtype: 'int'
-          - name: 'HOME_TEAM_ID'
-            dtype: 'int'
-          - name: 'VISITOR_TEAM_ID'
-            dtype: 'int'
-          - name: 'PTS_home'
-            dtype: 'float'
-          - name: 'PTS_away'
-            dtype: 'float'
-
-      - name: 'game_details'
-        path: '/Users/joaquinuriarte/Desktop/dataset/games_details.csv'
-        file_type: 'csv'
-        columns:
-          - name: 'GAME_ID'
-            dtype: 'int'
-          - name: 'TEAM_ID'
-            dtype: 'int'
-          - name: 'PLAYER_ID'
-            dtype: 'int'
-          - name: 'MIN'
-            dtype: 'string'
-            regex: '^(?:\d{1,2}:\d{2}|\d{1,2}:\d{2}:\d{2})$' # Matches 'MM:SS' format
-          - name: 'PTS'
-            dtype: 'float'
-          - name: 'AST'
-            dtype: 'float'
-          - name: 'TO'
-            dtype: 'float'
-          - name: 'PLUS_MINUS'
-            dtype: 'float'
-          - name: 'OREB'
-            dtype: 'float'
-          - name: 'DREB'
-            dtype: 'float'
-          - name: 'PF'
-            dtype: 'float'
-          - name: 'FG3_PCT'
-            dtype: 'float'
-          - name: 'FG_PCT'
-            dtype: 'float'
-          - name: 'FT_PCT'
-            dtype: 'float'
     joins:
-      - left: 'games'
-        right: 'game_details'
-        keys: ['GAME_ID']
-        type: 'left'
+      - keys:
+          - GAME_ID
+        left: games
+        right: game_details
+        type: left
+    sources:
+      - columns:
+          - dtype: datetime
+            name: GAME_DATE_EST
+          - dtype: int
+            name: GAME_ID
+          - dtype: int
+            name: HOME_TEAM_ID
+          - dtype: int
+            name: VISITOR_TEAM_ID
+          - dtype: float
+            name: PTS_home
+          - dtype: float
+            name: PTS_away
+        file_type: csv
+        name: games
+        path: /Users/joaquinuriarte/Desktop/dataset/games.csv
+      - columns:
+          - dtype: int
+            name: GAME_ID
+          - dtype: int
+            name: TEAM_ID
+          - dtype: int
+            name: PLAYER_ID
+          - dtype: string
+            name: MIN
+            regex: ^(?:\d{1,2}:\d{2}|\d{1,2}:\d{2}:\d{2})$
+          - dtype: float
+            name: PTS
+          - dtype: float
+            name: AST
+          - dtype: float
+            name: TO
+          - dtype: float
+            name: PLUS_MINUS
+          - dtype: float
+            name: OREB
+          - dtype: float
+            name: DREB
+          - dtype: float
+            name: PF
+          - dtype: float
+            name: FG3_PCT
+          - dtype: float
+            name: FG_PCT
+          - dtype: float
+            name: FT_PCT
+        file_type: csv
+        name: game_details
+        path: /Users/joaquinuriarte/Desktop/dataset/games_details.csv
   feature_processor:
-    type: 'top_n_players'
-    top_n_players: 8
-    sorting_criteria: 'MIN'
     look_back_window: 10
     player_stats_columns:
-      - 'MIN'
-      - 'PTS'
-      - 'AST'
-      - 'TO'
-      - 'PLUS_MINUS'
-      - 'OREB'
-      - 'DREB'
-      - 'PF'
-      - 'FG3_PCT'
-      - 'FG_PCT'
-      - 'FT_PCT'
-  strategy: 'join_based'
-
-  # Model's architecture configuration
-  architecture:
-    types: 'tensorflow'
-    input_size: 178 # Each team has an input for their final score and 8 input vectors holding averaged stats for their top 8 players. Each of these vectors contains 11 stats. So the final number of inputs is 2*(1+8*11) = 178
-    output_size: 1 # TODO: Need to revisit the research paper to determine the appropriate output size.
-    layers:
-      - type: Dense
-        in_features: 10
-        units: 128
-        activation: ReLU
-      - type: Dense
-        in_features: 128
-        units: 64
-        activation: ReLU
-      - type: linear
-        in_features: 64
-        units: 1
-        activation: None
-    input_features:
-      - 'MIN'
-      - 'PTS'
-      - 'AST'
-      - 'TO'
-      - 'PLUS_MINUS'
-      - 'OREB'
-      - 'DREB'
-      - 'PF'
-      - 'FG3_PCT'
-      - 'FG_PCT'
-      - 'FT_PCT'
-    output_features: PTS
-
-  # Training configuration
+      - MIN
+      - PTS
+      - AST
+      - TO
+      - PLUS_MINUS
+      - OREB
+      - DREB
+      - PF
+      - FG3_PCT
+      - FG_PCT
+      - FT_PCT
+    sorting_criteria: MIN
+    top_n_players: 8
+    type: top_n_players
+  model_signature: 6b7502c84d7f1dcac835d288d88c5be7
+  strategy: join_based
   training:
+    batch_size: 32
     epochs: 20
     learning_rate: 0.001
-    optimizer: Adam
     loss_function: MSELoss
+    optimizer: Adam
     split_strategy:
+      percent_split: 70
       strategy: random_split
-      percent_split: 70 # Optional argument depending if strategy at hands requires it
-    batch_size: 32
