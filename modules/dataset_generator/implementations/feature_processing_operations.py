@@ -109,7 +109,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         feature_data = {}
         for player_index, (_, player_data) in enumerate(top_players.iterrows()):
             for stat_name, value in player_data.items():
-                new_column_name = f"home_player_{player_index + 1}_{stat_name}"
+                new_column_name = f"player_{player_index + 1}_{stat_name}"
                 feature_data[new_column_name] = value
 
         # Create a DataFrame with a single row containing all the top player statistics
