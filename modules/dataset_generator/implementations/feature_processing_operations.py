@@ -173,6 +173,10 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
             feature_vector_A = self.create_feature_vector(top_n_A)
             feature_vector_B = self.create_feature_vector(top_n_B)
 
+            # Add prefixes to differentiate Team A and Team B columns
+            feature_vector_A = feature_vector_A.add_prefix("A_")
+            feature_vector_B = feature_vector_B.add_prefix("B_")
+
             feature_vector = pd.concat(
                 [feature_vector_A, feature_vector_B], axis=1)
             feature_vector["GAME_ID"] = game_id
