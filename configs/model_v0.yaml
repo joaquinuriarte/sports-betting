@@ -12,10 +12,10 @@ model:
       - FG3_PCT
       - FG_PCT
       - FT_PCT
-    input_size: 178
+    input_size: 176
     layers:
       - activation: ReLU
-        in_features: 10
+        in_features: 176
         type: Dense
         units: 128
       - activation: ReLU
@@ -103,13 +103,13 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players
-  model_signature: 6b7502c84d7f1dcac835d288d88c5be7
+  model_signature:
   strategy: join_based
   training:
     batch_size: 32
     epochs: 20
     learning_rate: 0.001
-    loss_function: MSELoss
+    loss_function: binary_crossentropy
     optimizer: Adam
     split_strategy:
       percent_split: 70
