@@ -155,7 +155,8 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
             feature_vector_A = self.create_feature_vector(top_n_A)
             feature_vector_B = self.create_feature_vector(top_n_B)
 
-            feature_vector = pd.concat([feature_vector_A, feature_vector_B], axis=1)
+            feature_vector = pd.concat(
+                [feature_vector_A, feature_vector_B], axis=1)
             feature_vector["GAME_ID"] = game_id
             feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
             feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
@@ -163,14 +164,6 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
             feature_vectors.append(feature_vector)
 
         return pd.concat(feature_vectors, ignore_index=True)
-
-    def extract_labels(self, df: pd.DataFrame) -> pd.DataFrame:
-        """
-        Extracts the labels (final scores) from the input DataFrame.
-        Removes rows with missing scores.
-        """
-        labels = df[["GAME_ID", "PTS_home", "PTS_away"]].dropna().drop_duplicates()
-        return labels
 
     def _convert_min_column(self, dataframe: pd.DataFrame) -> pd.DataFrame:
         """
@@ -217,14 +210,15 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         # Preprocess 'MIN' column (A casting specific to this implementation of feature processing)
         dataframe = self._convert_min_column(dataframe)
 
+        # Process features
         features_df = self.process_features(dataframe).set_index("GAME_ID")
-        labels_df = self.extract_labels(dataframe).set_index("GAME_ID")
 
-        # Ensure that only matching GAME_IDs are kept (we dropped duplicates on both sides and took out rows with data quality issues)
-        merged_df = features_df.join(labels_df, how="inner")
+        # Add the Team_A_Wins column
+        features_df['Team_A_Wins'] = (
+            features_df['final_score_A'] > features_df['final_score_B']).astype(int)
 
-        # Separate features and labels
-        final_features = merged_df.drop(columns=["PTS_home", "PTS_away"])
-        final_labels = merged_df[["PTS_home", "PTS_away"]]
+        # Drop final scores
+        final_features = features_df.drop(
+            columns=["final_score_A", "final_score_B"])
 
-        return ProcessedDataset(features=final_features, labels=final_labels)
+        return ProcessedDataset(features=final_features)

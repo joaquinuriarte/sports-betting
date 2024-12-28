@@ -26,7 +26,7 @@ model:
         in_features: 64
         type: linear
         units: 1
-    output_features: PTS
+    output_features: Team_A_Wins
     output_size: 1
     type: tensorflow
   dataset:
