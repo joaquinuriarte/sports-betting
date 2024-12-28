@@ -46,17 +46,35 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
     ) -> Optional[pd.DataFrame]:
         """
         Gets the top N players' stats for a team within the past 10 games.
+
+        Args:
+            df (pd.DataFrame): DataFrame containing game logs with columns for PLAYER_ID, team ID, and player stats.
+            team_id (int): ID of the team whose players are to be considered.
+            game_date (pd.Timestamp): The date of the game for which the top players are selected.
+
+        Returns:
+            Optional[pd.DataFrame]: DataFrame containing stats for the top N players, sorted by minutes played (descending).
         """
+        # Filter for recent games for the given team
         recent_games = self.get_recent_games(df, team_id, game_date)
+
+        # Check if there are enough games to proceed
         if recent_games.shape[0] < self.look_back_window:
             return None  # Not enough games to generate stats
 
-        player_stats = recent_games.groupby("PLAYER_ID")[
-            self.player_stats_columns
-        ].mean()
-        top_n_players = player_stats.sort_values(
-            by=self.sorting_criteria, ascending=False
-        ).head(self.top_n_players)
+        # Group by PLAYER_ID and calculate the mean of player stats columns
+        player_stats = (
+            recent_games.groupby("PLAYER_ID")[self.player_stats_columns]
+            .mean()
+            .reset_index()
+        )
+
+        # Sort by the sorting criteria (e.g., "MIN") and pick the top N players
+        top_n_players = (
+            player_stats.sort_values(by=self.sorting_criteria, ascending=False)
+            .head(self.top_n_players)
+            .set_index("PLAYER_ID")
+        )
 
         # TODO: Figure out if it's possible that less than 8 players come out of this list. That would break the model down the line
         # if top_n_players < 8:

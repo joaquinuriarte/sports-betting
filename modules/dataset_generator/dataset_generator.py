@@ -104,11 +104,11 @@ class DatasetGenerator(IDatasetGenerator):
         """
         # Step 1: Create feature processor instance
         feature_processor: IFeatureProcessorOperator = feature_processor_factory.create(
-            config.feature_processor_type,
-            config.top_n_players,
-            config.sorting_criteria,
-            config.look_back_window,
-            config.player_stats_columns,
+            type_name=config.feature_processor_type,
+            top_n_players=config.top_n_players,
+            sorting_criteria=config.sorting_criteria,
+            look_back_window=config.look_back_window,
+            player_stats_columns=config.player_stats_columns,
         )
 
         # Create join operations with keys
