@@ -211,14 +211,14 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         dataframe = self._convert_min_column(dataframe)
 
         # Process features
-        features_df = self.process_features(dataframe).set_index("GAME_ID")
+        final_features = self.process_features(dataframe).set_index("GAME_ID")
 
         # Add the Team_A_Wins column
-        features_df['Team_A_Wins'] = (
-            features_df['final_score_A'] > features_df['final_score_B']).astype(int)
+        final_features['Team_A_Wins'] = (
+            final_features['final_score_A'] > final_features['final_score_B']).astype(int)
 
         # Drop final scores
-        final_features = features_df.drop(
+        final_features = final_features.drop(
             columns=["final_score_A", "final_score_B"])
 
         return ProcessedDataset(features=final_features)
