@@ -38,7 +38,8 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
+        inputs = tf.keras.Input(
+            shape=(self.model_config.architecture["input_size"],))
         x = inputs
         for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
@@ -46,12 +47,14 @@ class TensorFlowModel(IModel):
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None),
                 )(x)
-        outputs = x
+        outputs = tf.keras.layers.Dense(units=1)(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
         model.compile(
             optimizer=self.model_config.architecture.get("optimizer", "adam"),
-            loss=self.model_config.architecture.get("loss", "mse"),
-            metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
+            # Need to understand why we need to use logits=True
+            loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
+            metrics=self.model_config.architecture.get(
+                "metrics", ["accuracy"]),
         )
         return model
 
@@ -141,9 +144,11 @@ class TensorFlowModel(IModel):
             pd.DataFrame: The predicted output.
         """
         output_tensor = self.forward(examples)
-        predictions = output_tensor.numpy()
+        predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
+        rounded_predictions = np.round(predictions)     # Apply rounding
         prediction_df = pd.DataFrame(
-            predictions, columns=[f"output_{i}" for i in range(predictions.shape[1])]
+            rounded_predictions, columns=[
+                f"output_{i}" for i in range(rounded_predictions.shape[1])]
         )
         return prediction_df
 
