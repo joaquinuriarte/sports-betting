@@ -68,22 +68,26 @@ class TensorFlowModel(IModel):
         Returns:
             tf.Tensor: Output after passing through the model's layers.
         """
-        # Convert examples to TensorFlow tensor
+        # Extract features dynamically excluding the output feature
         feature_array = np.array(
             [
                 [
-                    (
-                        example.features[input_feature][0]
-                        if input_feature in example.features
-                        else 0.0
-                    )
-                    for input_feature in self.input_features
+                    example.features[feature_name][0] if feature_name in example.features else 0.0
+                    for feature_name in example.features
+                    if feature_name != self.output_features  # Exclude output feature
                 ]
                 for example in examples
             ],
             dtype=np.float32,
         )
-        features_tensor = tf.convert_to_tensor(feature_array)
+
+        # Ensure feature array matches expected input size
+        expected_input_size = self.model_config.architecture["input_size"]
+        if feature_array.shape[1] != expected_input_size:
+            raise ValueError(
+                f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+
+        features_tensor=tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
 
@@ -96,23 +100,27 @@ class TensorFlowModel(IModel):
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        # Extract features and labels from examples
-        feature_array = np.array(
+        # Extract features dynamically excluding the output feature
+        feature_array=np.array(
             [
                 [
-                    (
-                        example.features[input_feature][0]
-                        if input_feature in example.features
-                        else 0.0
-                    )
-                    for input_feature in self.input_features
+                    example.features[feature_name][0] if feature_name in example.features else 0.0
+                    for feature_name in example.features
+                    if feature_name != self.output_features  # Exclude output feature
                 ]
                 for example in examples
             ],
             dtype=np.float32,
         )
 
-        label_array = np.array(
+        # Ensure feature array matches expected input size
+        expected_input_size=self.model_config.architecture["input_size"]
+        if feature_array.shape[1] != expected_input_size:
+            raise ValueError(
+                f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+            )
+
+        label_array=np.array(
             [
                 (
                     example.features[self.output_features][0]
@@ -125,8 +133,8 @@ class TensorFlowModel(IModel):
         )
 
         # Convert arrays to tensors
-        features_tensor = tf.convert_to_tensor(feature_array)
-        labels_tensor = tf.convert_to_tensor(label_array)
+        features_tensor=tf.convert_to_tensor(feature_array)
+        labels_tensor=tf.convert_to_tensor(label_array)
 
         # Train the model
         self.model.fit(
@@ -143,10 +151,10 @@ class TensorFlowModel(IModel):
         Returns:
             pd.DataFrame: The predicted output.
         """
-        output_tensor = self.forward(examples)
-        predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
-        rounded_predictions = np.round(predictions)     # Apply rounding
-        prediction_df = pd.DataFrame(
+        output_tensor=self.forward(examples)
+        predictions=tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
+        rounded_predictions=np.round(predictions)     # Apply rounding
+        prediction_df=pd.DataFrame(
             rounded_predictions, columns=[
                 f"output_{i}" for i in range(rounded_predictions.shape[1])]
         )
