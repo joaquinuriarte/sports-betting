@@ -86,8 +86,9 @@ class TensorFlowModel(IModel):
         if feature_array.shape[1] != expected_input_size:
             raise ValueError(
                 f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+            )
 
-        features_tensor=tf.convert_to_tensor(feature_array)
+        features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
 
@@ -101,7 +102,7 @@ class TensorFlowModel(IModel):
             batch_size (int): Batch size to use during training.
         """
         # Extract features dynamically excluding the output feature
-        feature_array=np.array(
+        feature_array = np.array(
             [
                 [
                     example.features[feature_name][0] if feature_name in example.features else 0.0
@@ -114,13 +115,13 @@ class TensorFlowModel(IModel):
         )
 
         # Ensure feature array matches expected input size
-        expected_input_size=self.model_config.architecture["input_size"]
+        expected_input_size = self.model_config.architecture["input_size"]
         if feature_array.shape[1] != expected_input_size:
             raise ValueError(
                 f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
             )
 
-        label_array=np.array(
+        label_array = np.array(
             [
                 (
                     example.features[self.output_features][0]
@@ -133,8 +134,8 @@ class TensorFlowModel(IModel):
         )
 
         # Convert arrays to tensors
-        features_tensor=tf.convert_to_tensor(feature_array)
-        labels_tensor=tf.convert_to_tensor(label_array)
+        features_tensor = tf.convert_to_tensor(feature_array)
+        labels_tensor = tf.convert_to_tensor(label_array)
 
         # Train the model
         self.model.fit(
@@ -151,10 +152,10 @@ class TensorFlowModel(IModel):
         Returns:
             pd.DataFrame: The predicted output.
         """
-        output_tensor=self.forward(examples)
-        predictions=tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
-        rounded_predictions=np.round(predictions)     # Apply rounding
-        prediction_df=pd.DataFrame(
+        output_tensor = self.forward(examples)
+        predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
+        rounded_predictions = np.round(predictions)     # Apply rounding
+        prediction_df = pd.DataFrame(
             rounded_predictions, columns=[
                 f"output_{i}" for i in range(rounded_predictions.shape[1])]
         )
