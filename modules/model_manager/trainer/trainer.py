@@ -2,9 +2,9 @@ import os
 import pandas as pd
 import numpy as np
 from numpy.typing import NDArray
-from modules.data_structures.model_dataset import Example
+import matplotlib.pyplot as plt
 from typing import Optional, List
-from modules.data_structures.model_dataset import ModelDataset
+from modules.data_structures.model_dataset import ModelDataset, Example
 from ..interfaces.model_interface import IModel
 from ..interfaces.trainer_interface import ITrainer
 
@@ -26,6 +26,8 @@ class Trainer(ITrainer):
             checkpoint_dir (Optional[str]): Directory to save training checkpoints. If None, checkpoints are not saved.
         """
         self.checkpoint_dir = checkpoint_dir
+        self.train_accuracies = []
+        self.val_accuracies = []
 
     def train(
         self,
@@ -53,6 +55,17 @@ class Trainer(ITrainer):
             f"Training model '{model_signature}' for {epochs} epochs with batch size {batch_size}."
         )
 
+        # Prepare real-time plotting
+        plt.ion()
+        fig, ax = plt.subplots()
+        ax.set_title("Training and Validation Accuracy")
+        ax.set_xlabel("Epochs")
+        ax.set_ylabel("Accuracy")
+        train_line, = ax.plot([], [], label="Training Accuracy", color="blue")
+        val_line, = ax.plot(
+            [], [], label="Validation Accuracy", color="orange")
+        ax.legend()
+
         # Loop over epochs to train and save checkpoints
         for epoch in range(epochs):
             logging.info(
@@ -60,48 +73,49 @@ class Trainer(ITrainer):
             )
 
             # Train the model for this epoch
-            model.train(train_dataset.examples, epochs=1, batch_size=batch_size)
+            model.train(train_dataset.examples,
+                        epochs=1, batch_size=batch_size)
 
-            logging.info(f"Model '{model_signature}': Completed epoch {epoch + 1}.")
-
-        # Evaluate on validation data after training
-        if val_dataset:
-            val_predictions = model.predict(val_dataset.examples)
-            true_labels = self.extract_labels(val_dataset.examples, output_features)
+            # Calculate training accuracy
+            train_predictions = model.predict(train_dataset.examples)
+            train_labels = self.extract_labels(
+                train_dataset.examples, output_features)
+            train_accuracy = self.calculate_accuracy(
+                train_predictions, train_labels)
+            self.train_accuracies.append(train_accuracy)
 
             # Calculate validation accuracy
-            accuracy = self.calculate_accuracy(val_predictions, true_labels)
-            logging.info(
-                f"Model '{model_signature}': Validation Accuracy after training: {accuracy:.4f}"
-            )
+            if val_dataset:
+                val_predictions = model.predict(val_dataset.examples)
+                val_labels = self.extract_labels(
+                    val_dataset.examples, output_features)
+                val_accuracy = self.calculate_accuracy(
+                    val_predictions, val_labels)
+                self.val_accuracies.append(val_accuracy)
+                logging.info(
+                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}, Validation Accuracy: {val_accuracy:.4f}"
+                )
+            else:
+                logging.info(
+                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}")
 
-        # Save a checkpoint after each epoch if a checkpoint directory is specified
-        if self.checkpoint_dir:
-            os.makedirs(self.checkpoint_dir, exist_ok=True)
-            checkpoint_path = os.path.join(
-                self.checkpoint_dir,
-                f"{model_signature}_checkpoint_epoch_{epoch + 1}.pth",
-            )
-            logging.info(
-                f"Saving checkpoint for model '{model_signature}' to {checkpoint_path}"
-            )
-            model.save(checkpoint_path)
+            # Update the plot
+            train_line.set_xdata(range(1, len(self.train_accuracies) + 1))
+            train_line.set_ydata(self.train_accuracies)
+            if val_dataset:
+                val_line.set_xdata(range(1, len(self.val_accuracies) + 1))
+                val_line.set_ydata(self.val_accuracies)
+            ax.relim()
+            ax.autoscale_view()
+            plt.pause(0.01)
 
-        logging.info(f"Training for model '{model_signature}' completed.")
+        # Save the final plot
+        plt.ioff()
+        plt.savefig(
+            f"{self.checkpoint_dir}/{model_signature}_training_validation_accuracy.png")
+        plt.show()
 
-    def extract_labels(
-        self, examples: List[Example], output_features: str
-    ) -> NDArray[np.float32]:
-        """
-        Extracts true labels from examples based on the specified output feature.
-
-        Args:
-            examples (List[Example]): A list of `Example` instances.
-            output_features (str): The name of the feature containing the labels.
-
-        Returns:
-            np.ndarray: Array of true labels.
-        """
+    def extract_labels(self, examples: List[Example], output_features: str) -> NDArray[np.float32]:
         label_array = np.array(
             [
                 (
@@ -115,19 +129,7 @@ class Trainer(ITrainer):
         )
         return label_array
 
-    def calculate_accuracy(
-        self, predictions: pd.DataFrame, true_labels: NDArray[np.float32]
-    ) -> float:
-        """
-        Calculates the accuracy of predictions compared to true labels.
-
-        Args:
-            predictions (pd.DataFrame): Predictions from the model.
-            true_labels (np.ndarray): Ground truth labels.
-
-        Returns:
-            float: Accuracy value.
-        """
+    def calculate_accuracy(self, predictions: pd.DataFrame, true_labels: NDArray[np.float32]) -> float:
         predicted_classes = predictions.values.argmax(axis=1)
         true_classes = true_labels.astype(int)
         accuracy: float = (predicted_classes == true_classes).mean()
