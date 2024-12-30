@@ -23,9 +23,6 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config.architecture[
-            "input_features"
-        ]
         self.output_features: str = self.model_config.architecture["output_features"]
 
     def _initialize_model(self) -> tf.keras.Model:

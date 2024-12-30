@@ -1,17 +1,5 @@
 model:
   architecture:
-    input_features:
-      - MIN
-      - PTS
-      - AST
-      - TO
-      - PLUS_MINUS
-      - OREB
-      - DREB
-      - PF
-      - FG3_PCT
-      - FG_PCT
-      - FT_PCT
     input_size: 176
     layers:
       - activation: ReLU
@@ -103,7 +91,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players
-  model_signature: 42ab4d2d0d5b9bf7693be8827be6e836
+  model_signature:
   strategy: join_based
   training:
     batch_size: 32
