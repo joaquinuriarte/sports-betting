@@ -35,7 +35,7 @@ class ModelManager(IModelManager):
     def create_models(
         self,
         yaml_path: List[str],
-    ) -> List[Tuple[IModel, ModelConfig]]:
+    ) -> List[IModel]:
         """
         Creates models from a list of YAML configuration paths.
 
@@ -45,7 +45,7 @@ class ModelManager(IModelManager):
         Returns:
             List[Tuple[IModel, ModelConfig]]: A list of tuples containing model instances and their configurations.
         """
-        models_and_config = []
+        models = []
 
         # Create Models and Model configs
         for yaml in yaml_path:
@@ -54,9 +54,9 @@ class ModelManager(IModelManager):
                 model_config.type_name, model_config=model_config
             )
 
-            models_and_config.append((model, model_config))
+            models.append(model)
 
-        return models_and_config
+        return models
 
     def train(
         self,
