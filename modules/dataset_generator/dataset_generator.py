@@ -36,8 +36,7 @@ class DatasetGenerator(IDatasetGenerator):
         self.strategy_factory = strategy_factory
 
         # create datasetConfig con loader
-        dataset_config: DatasetConfig = self.configuration_loader.load_config(
-            yaml_path)
+        dataset_config: DatasetConfig = self.configuration_loader.load_config(yaml_path)
 
         # create loader (list of data readers)
         self.dataset_loader: DatasetLoader = self.create_loader(
@@ -63,8 +62,7 @@ class DatasetGenerator(IDatasetGenerator):
         dataframes = self.dataset_loader.load_data()
 
         # Generate the features and labels using the strategy
-        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(
-            dataframes)
+        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframes)
 
         return processed_dataset
 

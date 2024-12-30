@@ -45,8 +45,7 @@ class Processor(IProcessor):
         # Split Model Dataset if flag is True
         if val_dataset_flag:
             if self.percent_split is None:
-                raise ValueError(
-                    "percent_split must be defined in the configuration.")
+                raise ValueError("percent_split must be defined in the configuration.")
             train_dataset, validation_dataset = self.split_strategy.split(
                 train_dataset, float(self.percent_split)
             )

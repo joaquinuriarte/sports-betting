@@ -177,8 +177,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
             feature_vector_A = feature_vector_A.add_prefix("A_")
             feature_vector_B = feature_vector_B.add_prefix("B_")
 
-            feature_vector = pd.concat(
-                [feature_vector_A, feature_vector_B], axis=1)
+            feature_vector = pd.concat([feature_vector_A, feature_vector_B], axis=1)
             feature_vector["GAME_ID"] = game_id
             feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
             feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
@@ -236,11 +235,11 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         final_features = self.process_features(dataframe).set_index("GAME_ID")
 
         # Add the Team_A_Wins column
-        final_features['Team_A_Wins'] = (
-            final_features['final_score_A'] > final_features['final_score_B']).astype(int)
+        final_features["Team_A_Wins"] = (
+            final_features["final_score_A"] > final_features["final_score_B"]
+        ).astype(int)
 
         # Drop final scores
-        final_features = final_features.drop(
-            columns=["final_score_A", "final_score_B"])
+        final_features = final_features.drop(columns=["final_score_A", "final_score_B"])
 
         return ProcessedDataset(features=final_features)

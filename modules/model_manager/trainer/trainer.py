@@ -1,6 +1,7 @@
 import os
 import pandas as pd
 import numpy as np
+from numpy.typing import NDArray
 from modules.data_structures.model_dataset import Example
 from typing import Optional, List
 from modules.data_structures.model_dataset import ModelDataset
@@ -59,17 +60,14 @@ class Trainer(ITrainer):
             )
 
             # Train the model for this epoch
-            model.train(train_dataset.examples,
-                        epochs=1, batch_size=batch_size)
+            model.train(train_dataset.examples, epochs=1, batch_size=batch_size)
 
-            logging.info(
-                f"Model '{model_signature}': Completed epoch {epoch + 1}.")
+            logging.info(f"Model '{model_signature}': Completed epoch {epoch + 1}.")
 
         # Evaluate on validation data after training
         if val_dataset:
             val_predictions = model.predict(val_dataset.examples)
-            true_labels = self.extract_labels(
-                val_dataset.examples, output_features)
+            true_labels = self.extract_labels(val_dataset.examples, output_features)
 
             # Calculate validation accuracy
             accuracy = self.calculate_accuracy(val_predictions, true_labels)
@@ -91,7 +89,9 @@ class Trainer(ITrainer):
 
         logging.info(f"Training for model '{model_signature}' completed.")
 
-    def extract_labels(self, examples: List[Example], output_features: str) -> np.ndarray:
+    def extract_labels(
+        self, examples: List[Example], output_features: str
+    ) -> NDArray[np.float32]:
         """
         Extracts true labels from examples based on the specified output feature.
 
@@ -115,7 +115,9 @@ class Trainer(ITrainer):
         )
         return label_array
 
-    def calculate_accuracy(self, predictions: pd.DataFrame, true_labels: np.ndarray) -> float:
+    def calculate_accuracy(
+        self, predictions: pd.DataFrame, true_labels: NDArray[np.float32]
+    ) -> float:
         """
         Calculates the accuracy of predictions compared to true labels.
 
@@ -128,5 +130,5 @@ class Trainer(ITrainer):
         """
         predicted_classes = predictions.values.argmax(axis=1)
         true_classes = true_labels.astype(int)
-        accuracy = (predicted_classes == true_classes).mean()
+        accuracy: float = (predicted_classes == true_classes).mean()
         return accuracy
