@@ -7,6 +7,7 @@ from typing import List
 
 logging.basicConfig(level=logging.INFO)
 
+
 class Predictor(IPredictor):
     """
     Handles the prediction process for models.

@@ -1,12 +1,14 @@
 from abc import ABC, abstractmethod
-from typing import List
+from typing import Dict, Optional
 import pandas as pd
 
 
 class DataIO(ABC):
 
     @abstractmethod
-    def read_df_from_path(self, path: str, columns: List[str]) -> pd.DataFrame:
+    def read_df_from_path(
+        self, path: str, columns: Dict[str, Dict[str, Optional[str]]]
+    ) -> pd.DataFrame:
         """
         Reads and optionally joins data based on the model configuration.
 

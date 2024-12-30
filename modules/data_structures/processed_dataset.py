@@ -13,4 +13,3 @@ class ProcessedDataset:
     """
 
     features: pd.DataFrame
-    labels: pd.DataFrame

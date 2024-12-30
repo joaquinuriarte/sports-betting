@@ -22,7 +22,11 @@ class TestConfigurationLoader(unittest.TestCase):
                         {
                             "path": "/path/to/data.csv",
                             "file_type": "csv",
-                            "columns": ["column1", "column2", "column3"],
+                            "columns": [
+                                {"name": "column1", "dtype": "string"},
+                                {"name": "column2", "dtype": "int"},
+                                {"name": "column3", "dtype": "float"},
+                            ],
                         }
                     ],
                     "joins": [
@@ -72,7 +76,14 @@ class TestConfigurationLoader(unittest.TestCase):
         self.assertIsInstance(config.sources[0], Source)
         self.assertEqual(config.sources[0].path, "/path/to/data.csv")
         self.assertEqual(config.sources[0].file_type, "csv")
-        self.assertEqual(config.sources[0].columns, ["column1", "column2", "column3"])
+        self.assertEqual(
+            config.sources[0].columns,
+            {
+                "column1": {"dtype": "string", "regex": None},
+                "column2": {"dtype": "int", "regex": None},
+                "column3": {"dtype": "float", "regex": None},
+            },
+        )
 
         # Assertions for joins
         self.assertEqual(len(config.joins), 1)

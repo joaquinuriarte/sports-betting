@@ -59,10 +59,10 @@ class DatasetGenerator(IDatasetGenerator):
             ProcessedDataset: The generated dataset containing features and labels.
         """
         # Load the data sources
-        dataframe = self.dataset_loader.load_data()
+        dataframes = self.dataset_loader.load_data()
 
         # Generate the features and labels using the strategy
-        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframe)
+        processed_dataset: ProcessedDataset = self.dataset_strategy.generate(dataframes)
 
         return processed_dataset
 
@@ -102,11 +102,11 @@ class DatasetGenerator(IDatasetGenerator):
         """
         # Step 1: Create feature processor instance
         feature_processor: IFeatureProcessorOperator = feature_processor_factory.create(
-            config.feature_processor_type,
-            config.top_n_players,
-            config.sorting_criteria,
-            config.look_back_window,
-            config.player_stats_columns,
+            type_name=config.feature_processor_type,
+            top_n_players=config.top_n_players,
+            sorting_criteria=config.sorting_criteria,
+            look_back_window=config.look_back_window,
+            player_stats_columns=config.player_stats_columns,
         )
 
         # Create join operations with keys
@@ -120,7 +120,11 @@ class DatasetGenerator(IDatasetGenerator):
 
         # Step 3: Create and return the strategy using the strategy factory
         dataset_generation_strategy: IDatasetGeneratorStrategy = (
-            strategy_factory.create(config.strategy, feature_processor, join_operations)
+            strategy_factory.create(
+                config.strategy,
+                feature_processor=feature_processor,
+                join_operations=join_operations,
+            )
         )
 
         return dataset_generation_strategy

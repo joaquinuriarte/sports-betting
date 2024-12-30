@@ -28,22 +28,31 @@ class TestDatasetLoader(unittest.TestCase):
             {"column5": [9, 10], "column6": [11, 12]}
         )
 
-        # Create sources
+        # Create sources with metadata for columns
         self.sources = [
             Source(
                 path="dummy_csv_path.csv",
                 file_type="csv",
-                columns=["column1", "column2"],
+                columns={
+                    "column1": {"dtype": "int"},
+                    "column2": {"dtype": "int"},
+                },
             ),
             Source(
                 path="dummy_txt_path.txt",
                 file_type="txt",
-                columns=["column3", "column4"],
+                columns={
+                    "column3": {"dtype": "int"},
+                    "column4": {"dtype": "int"},
+                },
             ),
             Source(
                 path="dummy_xml_path.xml",
                 file_type="xml",
-                columns=["column5", "column6"],
+                columns={
+                    "column5": {"dtype": "int"},
+                    "column6": {"dtype": "int"},
+                },
             ),
         ]
 
@@ -68,13 +77,25 @@ class TestDatasetLoader(unittest.TestCase):
 
         # Assert that each mock data loader's read_df_from_path was called with the correct arguments
         self.mock_csv_loader.read_df_from_path.assert_called_once_with(
-            path="dummy_csv_path.csv", columns=["column1", "column2"]
+            path="dummy_csv_path.csv",
+            columns={
+                "column1": {"dtype": "int"},
+                "column2": {"dtype": "int"},
+            },
         )
         self.mock_txt_loader.read_df_from_path.assert_called_once_with(
-            path="dummy_txt_path.txt", columns=["column3", "column4"]
+            path="dummy_txt_path.txt",
+            columns={
+                "column3": {"dtype": "int"},
+                "column4": {"dtype": "int"},
+            },
         )
         self.mock_xml_loader.read_df_from_path.assert_called_once_with(
-            path="dummy_xml_path.xml", columns=["column5", "column6"]
+            path="dummy_xml_path.xml",
+            columns={
+                "column5": {"dtype": "int"},
+                "column6": {"dtype": "int"},
+            },
         )
 
         # Verify the contents of the returned DataFrames

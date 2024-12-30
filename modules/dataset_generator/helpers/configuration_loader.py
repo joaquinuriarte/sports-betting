@@ -23,7 +23,13 @@ class ConfigurationLoader:
             Source(
                 path=source["path"],
                 file_type=source["file_type"],
-                columns=source["columns"],
+                columns={
+                    column["name"]: {
+                        "dtype": column.get("dtype"),
+                        "regex": column.get("regex"),
+                    }
+                    for column in source["columns"]
+                },
             )
             for source in config["model"]["dataset"]["sources"]
         ]

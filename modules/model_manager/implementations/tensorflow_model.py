@@ -23,9 +23,6 @@ class TensorFlowModel(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
-        self.input_features: List[str] = self.model_config.architecture[
-            "input_features"
-        ]
         self.output_features: str = self.model_config.architecture["output_features"]
 
     def _initialize_model(self) -> tf.keras.Model:
@@ -46,11 +43,12 @@ class TensorFlowModel(IModel):
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None),
                 )(x)
-        outputs = x
+        outputs = tf.keras.layers.Dense(units=1)(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
         model.compile(
             optimizer=self.model_config.architecture.get("optimizer", "adam"),
-            loss=self.model_config.architecture.get("loss", "mse"),
+            # Need to understand why we need to use logits=True
+            loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
             metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
         )
         return model
@@ -65,21 +63,30 @@ class TensorFlowModel(IModel):
         Returns:
             tf.Tensor: Output after passing through the model's layers.
         """
-        # Convert examples to TensorFlow tensor
+        # Extract features dynamically excluding the output feature
         feature_array = np.array(
             [
                 [
                     (
-                        example.features[input_feature][0]
-                        if input_feature in example.features
+                        example.features[feature_name][0]
+                        if feature_name in example.features
                         else 0.0
                     )
-                    for input_feature in self.input_features
+                    for feature_name in example.features
+                    if feature_name != self.output_features  # Exclude output feature
                 ]
                 for example in examples
             ],
             dtype=np.float32,
         )
+
+        # Ensure feature array matches expected input size
+        expected_input_size = self.model_config.architecture["input_size"]
+        if feature_array.shape[1] != expected_input_size:
+            raise ValueError(
+                f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+            )
+
         features_tensor = tf.convert_to_tensor(feature_array)
 
         return self.model(features_tensor)
@@ -93,21 +100,29 @@ class TensorFlowModel(IModel):
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        # Extract features and labels from examples
+        # Extract features dynamically excluding the output feature
         feature_array = np.array(
             [
                 [
                     (
-                        example.features[input_feature][0]
-                        if input_feature in example.features
+                        example.features[feature_name][0]
+                        if feature_name in example.features
                         else 0.0
                     )
-                    for input_feature in self.input_features
+                    for feature_name in example.features
+                    if feature_name != self.output_features  # Exclude output feature
                 ]
                 for example in examples
             ],
             dtype=np.float32,
         )
+
+        # Ensure feature array matches expected input size
+        expected_input_size = self.model_config.architecture["input_size"]
+        if feature_array.shape[1] != expected_input_size:
+            raise ValueError(
+                f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+            )
 
         label_array = np.array(
             [
@@ -141,9 +156,11 @@ class TensorFlowModel(IModel):
             pd.DataFrame: The predicted output.
         """
         output_tensor = self.forward(examples)
-        predictions = output_tensor.numpy()
+        predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
+        rounded_predictions = np.round(predictions)  # Apply rounding
         prediction_df = pd.DataFrame(
-            predictions, columns=[f"output_{i}" for i in range(predictions.shape[1])]
+            rounded_predictions,
+            columns=[f"output_{i}" for i in range(rounded_predictions.shape[1])],
         )
         return prediction_df
 

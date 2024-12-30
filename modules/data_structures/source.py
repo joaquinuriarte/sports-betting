@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List
+from typing import Dict, Optional
 
 
 @dataclass
@@ -9,11 +9,10 @@ class Source:
 
     Attributes:
         path (str): File path or URL where the data source is located.
-        columns (List[str]): List of columns to extract.
+        columns (Dict[str, Dict[str, Optional[str]]]): Dictionary of columns and their metadata.
         file_type (str): The type of file (e.g., 'csv', 'xml', 'txt').
-        file_reader (DataIO): Instance of DataIO for reading the file.
     """
 
     path: str
-    columns: List[str]
+    columns: Dict[str, Dict[str, Optional[str]]]  # Each column maps to its metadata
     file_type: str

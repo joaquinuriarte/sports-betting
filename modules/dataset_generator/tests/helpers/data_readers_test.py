@@ -59,7 +59,7 @@ class TestDataIO(unittest.TestCase):
         """
         csv_io = CsvIO()
         df = csv_io.read_df_from_path(
-            self.csv_file.name, columns=["column1", "column2"]
+            self.csv_file.name, columns={"column1": {}, "column2": {}}
         )
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
@@ -70,7 +70,7 @@ class TestDataIO(unittest.TestCase):
         """
         txt_io = TxtIO()
         df = txt_io.read_df_from_path(
-            self.txt_file.name, columns=["column1", "column2"]
+            self.txt_file.name, columns={"column1": {}, "column2": {}}
         )
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
@@ -81,29 +81,29 @@ class TestDataIO(unittest.TestCase):
         """
         xml_io = XmlIO()
         df = xml_io.read_df_from_path(
-            self.xml_file.name, columns=["column1", "column2"]
+            self.xml_file.name, columns={"column1": {}, "column2": {}}
         )
         expected_df = pd.DataFrame({"column1": [1, 4], "column2": [2, 5]})
         pd.testing.assert_frame_equal(df, expected_df)
 
     def test_csv_io_exception(self) -> None:
         """
-        Test CsvIO raises an IOError when a non-existing column is requested.
+        Test CsvIO raises a ValueError when a non-existing column is requested.
         """
         csv_io = CsvIO()
-        with self.assertRaises(IOError):
+        with self.assertRaises(ValueError):
             csv_io.read_df_from_path(
-                self.csv_file.name, columns=["non_existent_column"]
+                self.csv_file.name, columns={"non_existent_column": {}}
             )
 
     def test_txt_io_exception(self) -> None:
         """
-        Test TxtIO raises an IOError when a non-existing column is requested.
+        Test TxtIO raises a ValueError when a non-existing column is requested.
         """
         txt_io = TxtIO()
-        with self.assertRaises(IOError):
+        with self.assertRaises(ValueError):
             txt_io.read_df_from_path(
-                self.txt_file.name, columns=["non_existent_column"]
+                self.txt_file.name, columns={"non_existent_column": {}}
             )
 
     def test_xml_io_exception(self) -> None:
@@ -111,9 +111,9 @@ class TestDataIO(unittest.TestCase):
         Test XmlIO raises an IOError when a non-existing column is requested.
         """
         xml_io = XmlIO()
-        with self.assertRaises(IOError):
+        with self.assertRaises(ValueError):
             xml_io.read_df_from_path(
-                self.xml_file.name, columns=["non_existent_column"]
+                self.xml_file.name, columns={"non_existent_column": {}}
             )
 
 

@@ -27,31 +27,21 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
                     datetime(2022, 1, 8),
                     datetime(2022, 1, 9),
                 ],
-                "HOME_TEAM_ID": [
-                    101,
-                    101,
-                    102,
-                    102,
-                    103,
-                    103,
-                    101,
-                    102,
-                    103,
-                ],  # Added column
-                "VISITOR_TEAM_ID": [
-                    102,
-                    103,
-                    101,
-                    103,
-                    101,
-                    102,
-                    103,
-                    101,
-                    102,
-                ],  # Added column
+                "HOME_TEAM_ID": [101, 101, 102, 102, 103, 103, 101, 102, 103],
+                "VISITOR_TEAM_ID": [102, 103, 101, 103, 101, 102, 103, 101, 102],
                 "PTS_home": [100, 95, 88, 102, 110, 98, 103, 97, 105],
                 "PTS_away": [90, 88, 85, 99, 105, 93, 101, 95, 102],
-                "MIN": [30, 25, 20, 35, 32, 28, 34, 30, 29],
+                "MIN": [
+                    "30:00",
+                    "25:30",
+                    "20:45",
+                    "35:15",
+                    "32:10",
+                    "28:50",
+                    "34:20",
+                    "30:00",
+                    "29:55",
+                ],
                 "PTS": [15, 12, 10, 18, 20, 14, 16, 19, 17],
             }
         )
@@ -63,12 +53,21 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
             player_stats_columns=["MIN", "PTS"],
         )
 
+    def test_convert_min_column(self):
+        """
+        Test the `_convert_min_column` function to ensure it converts MIN to numeric.
+        """
+        processed_df = self.processor._convert_min_column(self.df)
+        self.assertTrue(pd.api.types.is_float_dtype(processed_df["MIN"]))
+        self.assertFalse(processed_df["MIN"].isna().any())
+
     def test_get_top_players_stats(self) -> None:
         """
         Test get_top_players_stats method for fetching top N player statistics.
         """
+        df_min_int = self.processor._convert_min_column(self.df)
         top_players_stats = self.processor.get_top_players_stats(
-            self.df, team_id=101, game_date=pd.Timestamp("2022-01-05")
+            df_min_int, team_id=101, game_date=pd.Timestamp("2022-01-05")
         )
         self.assertIsNotNone(top_players_stats)
         if top_players_stats is not None:
@@ -90,7 +89,8 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         """
         Test process_features method for creating feature vectors for each game.
         """
-        processed_features = self.processor.process_features(self.df)
+        df_min_int = self.processor._convert_min_column(self.df)
+        processed_features = self.processor.process_features(df_min_int)
         self.assertFalse(processed_features.empty)
         self.assertIn("GAME_ID", processed_features.columns)
 
@@ -98,7 +98,8 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         """
         Test extract_labels method for extracting game labels.
         """
-        labels = self.processor.extract_labels(self.df)
+        df_min_int = self.processor._convert_min_column(self.df)
+        labels = self.processor.extract_labels(df_min_int)
         self.assertFalse(labels.empty)
         self.assertEqual(labels.shape[1], 3)  # GAME_ID, PTS_home, PTS_away
 
