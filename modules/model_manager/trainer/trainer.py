@@ -1,9 +1,5 @@
-import os
-import pandas as pd
-import numpy as np
-from numpy.typing import NDArray
-from typing import Optional, List
-from modules.data_structures.model_dataset import ModelDataset, Example
+from typing import Optional
+from modules.data_structures.model_dataset import ModelDataset
 from ..interfaces.model_interface import IModel
 from ..interfaces.trainer_interface import ITrainer
 
@@ -44,7 +40,6 @@ class Trainer(ITrainer):
         model_config = model.get_training_config()
         epochs = model_config.training.get("epochs", 10)
         batch_size = model_config.training.get("batch_size", 32)
-        output_features = model_config.architecture["output_features"]
 
         # train and val accuracy lists
         train_accuracies = []
@@ -67,46 +62,19 @@ class Trainer(ITrainer):
                         epochs=1, batch_size=batch_size)
 
             # Calculate training accuracy
-            train_predictions = model.predict(train_dataset.examples)
-            train_labels = self.extract_labels(
-                train_dataset.examples, output_features)
-            train_accuracy = self.calculate_accuracy(
-                train_predictions, train_labels)
+            train_accuracy = model.accuracy(train_dataset.examples)
             train_accuracies.append(train_accuracy)
 
             # Calculate validation accuracy
             if val_dataset:
-                val_predictions = model.predict(val_dataset.examples)
-                val_labels = self.extract_labels(
-                    val_dataset.examples, output_features)
-                val_accuracy = self.calculate_accuracy(
-                    val_predictions, val_labels)
+                val_accuracy = model.accuracy(val_dataset.examples)
                 val_accuracies.append(val_accuracy)
                 logging.info(
                     f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}, Validation Accuracy: {val_accuracy:.4f}"
                 )
             else:
                 logging.info(
-                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}")
+                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}"
+                )
 
         return train_accuracies, val_accuracies if val_dataset else None
-
-    def extract_labels(self, examples: List[Example], output_features: str) -> NDArray[np.float32]:
-        label_array = np.array(
-            [
-                (
-                    example.features[output_features][0]
-                    if output_features in example.features
-                    else 0.0
-                )
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
-        return label_array
-
-    def calculate_accuracy(self, predictions: pd.DataFrame, true_labels: NDArray[np.float32]) -> float:
-        predicted_classes = predictions.values.argmax(axis=1)
-        true_classes = true_labels.astype(int)
-        accuracy: float = (predicted_classes == true_classes).mean()
-        return accuracy

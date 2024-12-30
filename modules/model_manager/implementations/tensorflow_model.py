@@ -35,7 +35,8 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
+        inputs = tf.keras.Input(
+            shape=(self.model_config.architecture["input_size"],))
         x = inputs
         for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
@@ -49,7 +50,8 @@ class TensorFlowModel(IModel):
             optimizer=self.model_config.architecture.get("optimizer", "adam"),
             # Need to understand why we need to use logits=True
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
+            metrics=self.model_config.architecture.get(
+                "metrics", ["accuracy"]),
         )
         return model
 
@@ -160,7 +162,8 @@ class TensorFlowModel(IModel):
         rounded_predictions = np.round(predictions)  # Apply rounding
         prediction_df = pd.DataFrame(
             rounded_predictions,
-            columns=[f"output_{i}" for i in range(rounded_predictions.shape[1])],
+            columns=[f"output_{i}" for i in range(
+                rounded_predictions.shape[1])],
         )
         return prediction_df
 
@@ -190,3 +193,55 @@ class TensorFlowModel(IModel):
             dict: Dictionary containing the full model configuration.
         """
         return self.model_config
+
+    def accuracy(self, examples: List[Example]) -> float:
+        """
+        Calculates the accuracy of the model's predictions on the given examples.
+
+        Args:
+            examples (List[Example]): A list of `Example` instances.
+
+        Returns:
+            float: Accuracy value.
+        """
+        # Extract features and labels
+        feature_array = np.array(
+            [
+                [
+                    (
+                        example.features[feature_name][0]
+                        if feature_name in example.features
+                        else 0.0
+                    )
+                    for feature_name in example.features
+                    if feature_name != self.output_features  # Exclude output feature
+                ]
+                for example in examples
+            ],
+            dtype=np.float32,
+        )
+        label_array = np.array(
+            [
+                (
+                    example.features[self.output_features][0]
+                    if self.output_features in example.features
+                    else 0.0
+                )
+                for example in examples
+            ],
+            dtype=np.float32,
+        )
+
+        # Convert to tensors
+        features_tensor = tf.convert_to_tensor(feature_array)
+        labels_tensor = tf.convert_to_tensor(label_array)
+
+        # Get predictions
+        predictions = self.model(features_tensor, training=False)
+        # Apply sigmoid since `from_logits=True`
+        predictions = tf.sigmoid(predictions)
+
+        # Use TensorFlow's built-in accuracy metric
+        accuracy_metric = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
+        accuracy_metric.update_state(labels_tensor, predictions)
+        return accuracy_metric.result().numpy()
