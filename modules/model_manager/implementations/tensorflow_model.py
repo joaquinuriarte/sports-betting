@@ -49,7 +49,9 @@ class TensorFlowModel(IModel):
             optimizer=self.model_config.architecture.get("optimizer", "adam"),
             # Need to understand why we need to use logits=True
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=self.model_config.architecture.get("metrics", ["accuracy"]),
+            metrics=self.model_config.architecture.get("metrics", [tf.keras.metrics.AUC(),
+                                                                  tf.keras.metrics.Accuracy(),
+                                                                  tf.keras.metrics.F1Score()]),
         )
         return model
 
