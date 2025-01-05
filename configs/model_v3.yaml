@@ -5,13 +5,25 @@ model:
     - activation: ReLU
       in_features: 176
       type: Dense
-      units: 128
+      units: 256
     - activation: ReLU
-      in_features: 128
+      in_features: 256
       type: Dense
-      units: 64
+      units: 256
+    - activation: ReLU
+      in_features: 256
+      type: Dense
+      units: 256
+    - activation: ReLU
+      in_features: 256
+      type: Dense
+      units: 256
+    - activation: ReLU
+      in_features: 256
+      type: Dense
+      units: 128
     - activation: None
-      in_features: 64
+      in_features: 128
       type: linear
       units: 1
     output_features: Team_A_Wins
@@ -91,7 +103,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players
-  model_signature: 8997782287ac95361ce10ecee1af1840
+  model_signature: a66dc2186c73083d595c99f93bda6606
   strategy: join_based
   training:
     batch_size: 32

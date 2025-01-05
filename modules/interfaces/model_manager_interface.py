@@ -11,7 +11,7 @@ class IModelManager(ABC):
     def create_models(
         self,
         yaml_path: List[str],
-    ) -> List[Tuple[IModel, ModelConfig]]:
+    ) -> List[IModel]:
         """Instantiates models from a yaml path and returns models with their configuration object."""
         pass
 
