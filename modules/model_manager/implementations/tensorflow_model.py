@@ -47,10 +47,10 @@ class TensorFlowModel(IModel):
         outputs = tf.keras.layers.Dense(units=1)(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
         model.compile(
-            optimizer=self.model_config.architecture.get("optimizer", "adam"),
+            optimizer=self.model_config.training.get("optimizer", "adam"),
             # Need to understand why we need to use logits=True
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=self.model_config.architecture.get(
+            metrics=self.model_config.training.get(
                 "metrics", ["accuracy"]),
         )
         return model
