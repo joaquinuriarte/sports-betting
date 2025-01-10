@@ -1,5 +1,4 @@
 import yaml
-from typing import Tuple, Optional
 
 
 class ConfigurationLoader:
@@ -8,15 +7,15 @@ class ConfigurationLoader:
     extracting the split strategy and its related parameters.
     """
 
-    def load_config(self, config_path: str) -> Tuple[str, Optional[int]]:
+    def load_config(self, config_path: str) -> dict:
         """
-        Loads the configuration from the YAML file and retrieves the split strategy and percent_split.
+        Loads the configuration from the YAML file and retrieves the split strategy and related configurations.
 
         Args:
             config_path (str): Path to the YAML configuration file.
 
         Returns:
-            Tuple[str, Optional[int]]: The split strategy (e.g., "random_split") and percent_split (optional).
+            dict: A dictionary containing split strategy configuration.
         """
         with open(config_path, "r") as file:
             config_data = yaml.safe_load(file)
@@ -25,16 +24,18 @@ class ConfigurationLoader:
             raise KeyError("The configuration file is invalid or empty.")
 
         try:
-            # Safely navigate the nested dictionary
             training_config = config_data.get("model", {}).get("training", {})
             split_strategy_config = training_config.get("split_strategy", {})
-            split_strategy = split_strategy_config[
-                "strategy"
-            ]  # Will raise KeyError if missing
-            percent_split = split_strategy_config.get("percent_split")  # Optional
-        except KeyError as e:
-            raise KeyError(
-                f"Missing expected configuration field: {e}. Ensure 'split_strategy' and its components are defined."
-            )
+            if not split_strategy_config:
+                raise KeyError("Missing 'split_strategy' configuration.")
 
-        return split_strategy, percent_split
+            return {
+                "strategy": split_strategy_config["strategy"],
+                "train_split": split_strategy_config.get("train_split"),
+                "val_split": split_strategy_config.get("val_split"),
+                "test_split": split_strategy_config.get("test_split"),
+                "use_val": split_strategy_config.get("use_val", False),
+                "use_test": split_strategy_config.get("use_test", False),
+            }
+        except KeyError as e:
+            raise KeyError(f"Missing expected configuration field: {e}.")

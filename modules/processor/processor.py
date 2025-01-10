@@ -22,35 +22,50 @@ class Processor(IProcessor):
 
         self.processed_dataset = processed_dataset
 
-        # Find split strategy
-        split_strategy_name, self.percent_split = configuration_loader.load_config(
-            yaml_path
-        )
+        # Load split strategy and parameters
+        split_config = configuration_loader.load_config(yaml_path)
+        self.split_strategy_name = split_config["strategy"]
+        self.train_split = split_config["train_split"]
+        self.val_split = split_config["val_split"]
+        self.test_split = split_config["test_split"]
+        self.use_val = split_config["use_val"]
+        self.use_test = split_config["use_test"]
 
         # Create split strategy implementation
         self.split_strategy: ISplitStrategy = split_strategy_factory.create(
-            split_strategy_name
-        )
+            self.split_strategy_name)
 
     def generate(
-        self, val_dataset_flag: Optional[bool] = True
-    ) -> Tuple[ModelDataset, Optional[ModelDataset]]:
+        self
+    ) -> Tuple[ModelDataset, Optional[ModelDataset], Optional[ModelDataset]]:
         """
-        Generates training and optionally validation datasets.
+        Generates training, validation, and test datasets.
         """
         # Create Model Dataset
-        train_dataset = self.build_model_dataset(self.processed_dataset)
-        validation_dataset = None
+        model_dataset = self.build_model_dataset(self.processed_dataset)
 
-        # Split Model Dataset if flag is True
-        if val_dataset_flag:
-            if self.percent_split is None:
-                raise ValueError("percent_split must be defined in the configuration.")
-            train_dataset, validation_dataset = self.split_strategy.split(
-                train_dataset, float(self.percent_split)
+        # Validate split percentages
+        total_split = self.train_split + \
+            (self.val_split or 0) + (self.test_split or 0)
+        if total_split != 100:
+            raise ValueError("Split percentages must add up to 100.")
+
+        # Split the dataset
+        train_dataset, remaining_dataset = self.split_strategy.split(
+            model_dataset, self.train_split / 100.0
+        )
+
+        val_dataset, test_dataset = None, None
+        if self.use_val and remaining_dataset is not None:
+            val_split_ratio = self.val_split / \
+                (self.val_split + self.test_split)
+            val_dataset, test_dataset = self.split_strategy.split(
+                remaining_dataset, val_split_ratio
             )
+        elif self.use_test and remaining_dataset is not None:
+            test_dataset = remaining_dataset
 
-        return train_dataset, validation_dataset
+        return train_dataset, val_dataset, test_dataset
 
     def build_model_dataset(self, processed_dataset: ProcessedDataset) -> ModelDataset:
         """
