@@ -1,4 +1,5 @@
 import yaml
+from typing import Dict, Any
 
 
 class ConfigurationLoader:
@@ -7,7 +8,7 @@ class ConfigurationLoader:
     extracting the split strategy and its related parameters.
     """
 
-    def load_config(self, config_path: str) -> dict:
+    def load_config(self, config_path: str) -> Dict[str, Any]:
         """
         Loads the configuration from the YAML file and retrieves the split strategy and related configurations.
 
