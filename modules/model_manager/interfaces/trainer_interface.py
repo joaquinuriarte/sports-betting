@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from modules.data_structures.model_dataset import ModelDataset
 from .model_interface import IModel
 
@@ -26,7 +26,7 @@ class ITrainer(ABC):
         model: IModel,
         train_dataset: ModelDataset,
         val_dataset: Optional[ModelDataset] = None,
-    ) -> None:
+    ) -> Tuple[List[float], Optional[List[float]]]:
         """
         Trains the model using the provided dataset.
 

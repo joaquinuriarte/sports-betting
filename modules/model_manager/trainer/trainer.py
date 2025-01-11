@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple, List
 from modules.data_structures.model_dataset import ModelDataset
 from ..interfaces.model_interface import IModel
 from ..interfaces.trainer_interface import ITrainer
@@ -27,7 +27,7 @@ class Trainer(ITrainer):
         model: IModel,
         train_dataset: ModelDataset,
         val_dataset: Optional[ModelDataset] = None,
-    ) -> None:
+    ) -> Tuple[List[float], Optional[List[float]]]:
         """
         Trains a model using the provided datasets.
 
