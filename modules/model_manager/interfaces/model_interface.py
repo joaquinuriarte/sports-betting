@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from modules.data_structures.model_dataset import (
     Example,
 )
-from typing import Any, List
+from typing import Any, List, Optional
 import pandas as pd
 from modules.data_structures.model_config import ModelConfig
 
@@ -46,7 +46,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, examples: List[Example]) -> pd.DataFrame:
+    def predict(self, examples: List[Example], return_target_labels: Optional[bool] = False) -> pd.DataFrame:
         """Generates predictions for the provided examples."""
         pass
 

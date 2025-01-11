@@ -27,7 +27,7 @@ class Predictor(IPredictor):
         logging.info("Starting prediction.")
 
         # Run prediction through the model
-        predictions = model.predict(examples)
+        predictions = model.predict(examples, return_target_labels=False)
 
         logging.info("Prediction completed.")
         return predictions

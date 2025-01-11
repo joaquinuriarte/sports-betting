@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Optional
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
@@ -24,6 +24,7 @@ class TensorFlowModel(IModel):
 
         # Store Model variables
         self.output_features: str = self.model_config.architecture["output_features"]
+        self.prediction_threshold = self.model_config.architecture["prediction_threshold"]
 
     def _initialize_model(self) -> tf.keras.Model:
         """
@@ -171,24 +172,42 @@ class TensorFlowModel(IModel):
             features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
         )
 
-    def predict(self, examples: List[Example]) -> pd.DataFrame:
+    def predict(self, examples: List[Example], return_target_labels: Optional[bool] = False) -> pd.DataFrame:
         """
         Generates predictions for the provided examples.
 
         Args:
             examples (List[Example]): A list of `Example` instances.
+            return_target_labels (Optional[bool]): Whether to include target labels in the returned DataFrame.
 
         Returns:
             pd.DataFrame: The predicted output.
         """
         output_tensor = self.forward(examples)
         predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
-        rounded_predictions = np.round(predictions)  # Apply rounding
+
+        # Use global prediction threshold
+        threshold = self.prediction_threshold
+        binary_predictions = self.custom_round_sigmoid_outputs(
+            predictions, threshold=threshold).numpy()
+
         prediction_df = pd.DataFrame(
-            rounded_predictions,
-            columns=[f"output_{i}" for i in range(
-                rounded_predictions.shape[1])],
-        )
+            {"predictions": binary_predictions.flatten()})
+
+        if return_target_labels:
+            label_array = np.array(
+                [
+                    (
+                        example.features[self.output_features][0]
+                        if self.output_features in example.features
+                        else 0.0
+                    )
+                    for example in examples
+                ],
+                dtype=np.float32,
+            )
+            prediction_df["target_label"] = label_array
+
         return prediction_df
 
     def save(self, path: str) -> None:
@@ -269,3 +288,16 @@ class TensorFlowModel(IModel):
         accuracy_metric = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
         accuracy_metric.update_state(labels_tensor, predictions)
         return accuracy_metric.result().numpy()
+
+    def custom_round_sigmoid_outputs(values: tf.Tensor, threshold: float) -> tf.Tensor:
+        """
+        Custom function to round sigmoid outputs to 0 or 1 based on a threshold.
+
+        Args:
+            values (np.ndarray or tf.Tensor): Input values between 0 and 1.
+            threshold (float): Threshold for rounding. Values >= threshold are rounded to 1, others to 0.
+
+        Returns:
+            tf.Tensor: Rounded values.
+        """
+        return tf.cast(values >= threshold, tf.float32)
