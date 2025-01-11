@@ -24,7 +24,7 @@ class TensorFlowModel(IModel):
 
         # Store Model variables
         self.output_features: str = self.model_config.architecture["output_features"]
-        self.prediction_threshold = self.model_config.architecture["prediction_threshold"]
+        self.prediction_threshold: float = self.model_config.architecture["prediction_threshold"]
 
     def _initialize_model(self) -> tf.keras.Model:
         """
@@ -189,7 +189,7 @@ class TensorFlowModel(IModel):
         # Use global prediction threshold
         threshold = self.prediction_threshold
         binary_predictions = self.custom_round_sigmoid_outputs(
-            predictions, threshold=threshold).numpy()
+            predictions, threshold).numpy()
 
         prediction_df = pd.DataFrame(
             {"predictions": binary_predictions.flatten()})
@@ -237,6 +237,7 @@ class TensorFlowModel(IModel):
         """
         return self.model_config
 
+    # Returning float when its actually returning Any # Anyways fix
     def accuracy(self, examples: List[Example]) -> float:
         """
         Calculates the accuracy of the model's predictions on the given examples.
@@ -289,6 +290,7 @@ class TensorFlowModel(IModel):
         accuracy_metric.update_state(labels_tensor, predictions)
         return accuracy_metric.result().numpy()
 
+    @staticmethod
     def custom_round_sigmoid_outputs(values: tf.Tensor, threshold: float) -> tf.Tensor:
         """
         Custom function to round sigmoid outputs to 0 or 1 based on a threshold.
