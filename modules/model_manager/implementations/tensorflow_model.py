@@ -29,30 +29,54 @@ class TensorFlowModel(IModel):
         """
         Initializes the model based on the architecture configuration.
 
-        Args:
-            architecture_config (dict): Configuration for building the model architecture.
-
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
         inputs = tf.keras.Input(
             shape=(self.model_config.architecture["input_size"],))
         x = inputs
+
         for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None),
                 )(x)
-        outputs = tf.keras.layers.Dense(units=1)(x)
+            elif layer_config["type"] == "BatchNormalization":
+                x = tf.keras.layers.BatchNormalization(
+                    axis=-1,
+                    momentum=layer_config.get("momentum", 0.99),
+                    epsilon=layer_config.get("epsilon", 0.001),
+                    center=layer_config.get("center", True),
+                    scale=layer_config.get("scale", True),
+                )(x)
+            elif layer_config["type"] == "Dropout":
+                if "rate" not in layer_config:
+                    raise ValueError(
+                        "Dropout layer requires a 'rate' key in the configuration.")
+                x = tf.keras.layers.Dropout(rate=layer_config["rate"])(x)
+            elif layer_config["type"] == "Embedding":
+                if "input_dimension" not in layer_config or "output_dimension" not in layer_config:
+                    raise ValueError(
+                        "Embedding layer requires 'input_dimension' and 'output_dimension' keys in the configuration.")
+                x = tf.keras.layers.Embedding(
+                    input_dim=layer_config["input_dimension"],
+                    output_dim=layer_config["output_dimension"],
+                )(x)
+            else:
+                raise ValueError(
+                    f"Layer type '{layer_config['type']}' is not implemented.")
+
+        # TODO: Compile output layer using info on yaml instead
+        outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
+
         model.compile(
             optimizer=self.model_config.training.get("optimizer", "adam"),
-            # Need to understand why we need to use logits=True
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=self.model_config.training.get(
-                "metrics", ["accuracy"]),
+            metrics=self.model_config.training.get("metrics", ["accuracy"]),
         )
+
         return model
 
     def forward(self, examples: List[Example]) -> tf.Tensor:
