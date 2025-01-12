@@ -63,7 +63,7 @@ class ModelManager(IModelManager):
         models: List[IModel],
         train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
         save_after_training: Optional[bool] = True,
-    ) -> List[Tuple[List, List]]:
+    ) -> List[Tuple[List[float], Optional[List[float]]]]:
         """
         Trains the provided models using corresponding training and validation datasets.
 
@@ -158,7 +158,7 @@ class ModelManager(IModelManager):
         self,
         yaml_paths: List[str],
         weights_paths: List[str],
-    ) -> List[Tuple[IModel, ModelConfig]]:
+    ) -> List[IModel]:
         """
         Loads models from provided YAML paths and weight paths.
 
@@ -179,7 +179,7 @@ class ModelManager(IModelManager):
         models_and_configs = self.create_models(yaml_paths)
 
         # Load model weights
-        for (model, _), weights_path in zip(models_and_configs, weights_paths):
+        for model, weights_path in zip(models_and_configs, weights_paths):
             model.load(weights_path)
 
         return models_and_configs
