@@ -19,9 +19,9 @@ class IModelManager(ABC):
     def train(
         self,
         models: List[IModel],
-        train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
+        train_val_datasets: List[Tuple[ModelDataset, Optional[ModelDataset]]],
         save_after_training: Optional[bool] = True,
-    ) -> List[Tuple[List[float], Optional[List[float]]]]:
+    ) -> None:
         """Trains the models using their provided ModelDataset."""
         pass
 

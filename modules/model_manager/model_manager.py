@@ -61,9 +61,9 @@ class ModelManager(IModelManager):
     def train(
         self,
         models: List[IModel],
-        train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
+        train_val_datasets: List[Tuple[ModelDataset, Optional[ModelDataset]]],
         save_after_training: Optional[bool] = True,
-    ) -> List[Tuple[List[float], Optional[List[float]]]]:
+    ) -> None:
         """
         Trains the provided models using corresponding training and validation datasets.
 
@@ -78,22 +78,18 @@ class ModelManager(IModelManager):
                 "Number of models and train_val_datasets provided must be equal."
             )
 
-        # train and val tuple
-        train_val_accuracies = []
-
         # Train models
         for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
-            train_accuracies, val_accuracies = self.trainer.train(
-                model, train_dataset, val_dataset)
-
-            # save accuracies
-            train_val_accuracies.append((train_accuracies, val_accuracies))
+            if val_dataset is not None:
+                self.trainer.train(
+                    model, train_dataset, val_dataset)
+            else:
+                self.trainer.train(
+                    model, train_dataset)
 
             # Save model
             if save_after_training:
                 self.save(model)
-
-        return train_val_accuracies
 
     def predict(
         self,

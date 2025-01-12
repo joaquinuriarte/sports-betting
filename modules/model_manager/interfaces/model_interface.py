@@ -35,7 +35,7 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
+    def train(self, training_examples: List[Example], epochs: int, batch_size: int, validation_examples: Optional[List[Example]] = None) -> None:
         """
         Trains the model using the provided examples.
         Args:

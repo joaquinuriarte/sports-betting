@@ -26,7 +26,7 @@ class ITrainer(ABC):
         model: IModel,
         train_dataset: ModelDataset,
         val_dataset: Optional[ModelDataset] = None,
-    ) -> Tuple[List[float], Optional[List[float]]]:
+    ) -> None:
         """
         Trains the model using the provided dataset.
 
