@@ -2,6 +2,7 @@ import tensorflow as tf
 import numpy as np
 import pandas as pd
 from typing import List, Optional
+from numpy.typing import NDArray
 import datetime
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
@@ -267,7 +268,7 @@ class TensorFlowModel(IModel):
         """
         return tf.cast(values >= threshold, tf.float32)
 
-    def _extract_features(self, examples: List[Example]) -> np.ndarray:
+    def _extract_features(self, examples: List[Example]) -> NDArray[np.float32]:
         """
         Extracts features dynamically excluding the output feature.
 
@@ -293,7 +294,7 @@ class TensorFlowModel(IModel):
             dtype=np.float32,
         )
 
-    def _extract_labels(self, examples: List[Example]) -> np.ndarray:
+    def _extract_labels(self, examples: List[Example]) -> NDArray[np.float32]:
         """
         Extracts labels from the examples.
 
