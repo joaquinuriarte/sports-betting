@@ -36,8 +36,7 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(
-            shape=(self.model_config.architecture["input_size"],))
+        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
         x = inputs
 
         for layer_config in self.model_config.architecture["layers"]:
@@ -154,8 +153,7 @@ class TensorFlowModel(IModel):
         # Call model fit with/without validation data
         if validation_examples:
             # Extract validation features dynamically excluding the output feature
-            validation_feature_array = self._extract_features(
-                validation_examples)
+            validation_feature_array = self._extract_features(validation_examples)
 
             # Ensure feature array matches expected input size
             expected_input_size = self.model_config.architecture["input_size"]
@@ -168,18 +166,15 @@ class TensorFlowModel(IModel):
             validation_label_array = self._extract_labels(validation_examples)
 
             # Convert validation arrays to tensors
-            validation_features_tensor = tf.convert_to_tensor(
-                validation_feature_array)
-            validation_labels_tensor = tf.convert_to_tensor(
-                validation_label_array)
+            validation_features_tensor = tf.convert_to_tensor(validation_feature_array)
+            validation_labels_tensor = tf.convert_to_tensor(validation_label_array)
 
             self.model.fit(
                 training_features_tensor,
                 training_labels_tensor,
                 epochs=epochs,
                 batch_size=batch_size,
-                validation_data=(validation_features_tensor,
-                                 validation_labels_tensor),
+                validation_data=(validation_features_tensor, validation_labels_tensor),
                 callbacks=[tensorboard_callback],
             )
         else:
@@ -213,8 +208,7 @@ class TensorFlowModel(IModel):
             predictions, threshold
         ).numpy()
 
-        prediction_df = pd.DataFrame(
-            {"predictions": binary_predictions.flatten()})
+        prediction_df = pd.DataFrame({"predictions": binary_predictions.flatten()})
 
         if return_target_labels:
             label_array = self._extract_labels(examples)

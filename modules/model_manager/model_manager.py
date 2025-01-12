@@ -81,11 +81,9 @@ class ModelManager(IModelManager):
         # Train models
         for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
             if val_dataset is not None:
-                self.trainer.train(
-                    model, train_dataset, val_dataset)
+                self.trainer.train(model, train_dataset, val_dataset)
             else:
-                self.trainer.train(
-                    model, train_dataset)
+                self.trainer.train(model, train_dataset)
 
             # Save model
             if save_after_training:
@@ -108,8 +106,7 @@ class ModelManager(IModelManager):
         """
         # Verify correct input dimensions
         if len(models) != len(input_data):
-            raise ValueError(
-                "Number of models and input_data provided must be equal.")
+            raise ValueError("Number of models and input_data provided must be equal.")
 
         # Extract and predict
         output_data = []

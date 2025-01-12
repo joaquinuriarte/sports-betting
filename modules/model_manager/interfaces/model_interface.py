@@ -35,7 +35,13 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, training_examples: List[Example], epochs: int, batch_size: int, validation_examples: Optional[List[Example]] = None) -> None:
+    def train(
+        self,
+        training_examples: List[Example],
+        epochs: int,
+        batch_size: int,
+        validation_examples: Optional[List[Example]] = None,
+    ) -> None:
         """
         Trains the model using the provided examples.
         Args:
@@ -46,7 +52,9 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, examples: List[Example], return_target_labels: Optional[bool] = False) -> pd.DataFrame:
+    def predict(
+        self, examples: List[Example], return_target_labels: Optional[bool] = False
+    ) -> pd.DataFrame:
         """Generates predictions for the provided examples."""
         pass
 

@@ -55,13 +55,14 @@ class Trainer(ITrainer):
 
             # Train the model for this epoch
             if val_dataset:
-                model.train(train_dataset.examples,
-                            epochs=1, batch_size=batch_size, validation_examples=val_dataset.examples)
+                model.train(
+                    train_dataset.examples,
+                    epochs=1,
+                    batch_size=batch_size,
+                    validation_examples=val_dataset.examples,
+                )
             else:
-                model.train(train_dataset.examples,
-                            epochs=1, batch_size=batch_size)
+                model.train(train_dataset.examples, epochs=1, batch_size=batch_size)
 
         # Final print
-        logging.info(
-            f"Model '{model_signature}': Finished training."
-        )
+        logging.info(f"Model '{model_signature}': Finished training.")
