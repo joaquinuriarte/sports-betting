@@ -33,10 +33,11 @@ class Processor(IProcessor):
 
         # Create split strategy implementation
         self.split_strategy: ISplitStrategy = split_strategy_factory.create(
-            self.split_strategy_name)
+            self.split_strategy_name
+        )
 
     def generate(
-        self
+        self,
     ) -> Tuple[ModelDataset, Optional[ModelDataset], Optional[ModelDataset]]:
         """
         Generates training, validation, and test datasets.
@@ -45,8 +46,7 @@ class Processor(IProcessor):
         model_dataset = self.build_model_dataset(self.processed_dataset)
 
         # Validate split percentages
-        total_split = self.train_split + \
-            (self.val_split or 0) + (self.test_split or 0)
+        total_split = self.train_split + (self.val_split or 0) + (self.test_split or 0)
         if total_split != 100:
             raise ValueError("Split percentages must add up to 100.")
 
@@ -57,8 +57,7 @@ class Processor(IProcessor):
 
         val_dataset, test_dataset = None, None
         if self.use_val and remaining_dataset is not None:
-            val_split_ratio = self.val_split / \
-                (self.val_split + self.test_split)
+            val_split_ratio = self.val_split / (self.val_split + self.test_split)
             val_dataset, test_dataset = self.split_strategy.split(
                 remaining_dataset, val_split_ratio
             )
