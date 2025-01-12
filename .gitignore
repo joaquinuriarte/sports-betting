@@ -12,3 +12,9 @@ __pycache__/
 
 # Processed Datasets
 processed_datasets/*.pkl
+
+# Logs
+logs/*
+
+# Models
+models/*
