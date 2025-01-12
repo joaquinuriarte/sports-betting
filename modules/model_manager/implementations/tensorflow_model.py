@@ -36,7 +36,8 @@ class TensorFlowModel(IModel):
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
         """
-        inputs = tf.keras.Input(shape=(self.model_config.architecture["input_size"],))
+        inputs = tf.keras.Input(
+            shape=(self.model_config.architecture["input_size"],))
         x = inputs
 
         for layer_config in self.model_config.architecture["layers"]:
@@ -153,7 +154,8 @@ class TensorFlowModel(IModel):
         # Call model fit with/without validation data
         if validation_examples:
             # Extract validation features dynamically excluding the output feature
-            validation_feature_array = self._extract_features(validation_examples)
+            validation_feature_array = self._extract_features(
+                validation_examples)
 
             # Ensure feature array matches expected input size
             expected_input_size = self.model_config.architecture["input_size"]
@@ -166,15 +168,18 @@ class TensorFlowModel(IModel):
             validation_label_array = self._extract_labels(validation_examples)
 
             # Convert validation arrays to tensors
-            validation_features_tensor = tf.convert_to_tensor(validation_feature_array)
-            validation_labels_tensor = tf.convert_to_tensor(validation_label_array)
+            validation_features_tensor = tf.convert_to_tensor(
+                validation_feature_array)
+            validation_labels_tensor = tf.convert_to_tensor(
+                validation_label_array)
 
             self.model.fit(
                 training_features_tensor,
                 training_labels_tensor,
                 epochs=epochs,
                 batch_size=batch_size,
-                validation_data=(validation_features_tensor, validation_labels_tensor),
+                validation_data=(validation_features_tensor,
+                                 validation_labels_tensor),
                 callbacks=[tensorboard_callback],
             )
         else:
@@ -208,7 +213,8 @@ class TensorFlowModel(IModel):
             predictions, threshold
         ).numpy()
 
-        prediction_df = pd.DataFrame({"predictions": binary_predictions.flatten()})
+        prediction_df = pd.DataFrame(
+            {"predictions": binary_predictions.flatten()})
 
         if return_target_labels:
             label_array = self._extract_labels(examples)
@@ -242,59 +248,6 @@ class TensorFlowModel(IModel):
             dict: Dictionary containing the full model configuration.
         """
         return self.model_config
-
-    # Returning float when its actually returning Any # Anyways fix
-    def accuracy(self, examples: List[Example]) -> float:
-        """
-        Calculates the accuracy of the model's predictions on the given examples.
-
-        Args:
-            examples (List[Example]): A list of `Example` instances.
-
-        Returns:
-            float: Accuracy value.
-        """
-        # Extract features and labels
-        feature_array = np.array(
-            [
-                [
-                    (
-                        example.features[feature_name][0]
-                        if feature_name in example.features
-                        else 0.0
-                    )
-                    for feature_name in example.features
-                    if feature_name != self.output_features  # Exclude output feature
-                ]
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
-        label_array = np.array(
-            [
-                (
-                    example.features[self.output_features][0]
-                    if self.output_features in example.features
-                    else 0.0
-                )
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
-
-        # Convert to tensors
-        features_tensor = tf.convert_to_tensor(feature_array)
-        labels_tensor = tf.convert_to_tensor(label_array)
-
-        # Get predictions
-        predictions = self.model(features_tensor, training=False)
-        # Apply sigmoid since `from_logits=True`
-        predictions = tf.sigmoid(predictions)
-
-        # Use TensorFlow's built-in accuracy metric
-        accuracy_metric = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
-        accuracy_metric.update_state(labels_tensor, predictions)
-        return accuracy_metric.result().numpy()
 
     ####################
     ## HELPER METHODS ##
