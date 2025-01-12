@@ -62,8 +62,3 @@ class IModel(ABC):
     def get_training_config(self) -> ModelConfig:
         """Gets the current training configuration for the model."""
         pass
-
-    @abstractmethod
-    def accuracy(self, examples: List[Example]) -> float:
-        """Calculates the accuracy on the given examples."""
-        pass
