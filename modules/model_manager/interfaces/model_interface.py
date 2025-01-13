@@ -2,7 +2,7 @@ from abc import ABC, abstractmethod
 from modules.data_structures.model_dataset import (
     Example,
 )
-from typing import Any, List
+from typing import Any, List, Optional
 import pandas as pd
 from modules.data_structures.model_config import ModelConfig
 
@@ -35,7 +35,13 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
+    def train(
+        self,
+        training_examples: List[Example],
+        epochs: int,
+        batch_size: int,
+        validation_examples: Optional[List[Example]] = None,
+    ) -> None:
         """
         Trains the model using the provided examples.
         Args:
@@ -46,16 +52,13 @@ class IModel(ABC):
         pass
 
     @abstractmethod
-    def predict(self, examples: List[Example]) -> pd.DataFrame:
+    def predict(
+        self, examples: List[Example], return_target_labels: Optional[bool] = False
+    ) -> pd.DataFrame:
         """Generates predictions for the provided examples."""
         pass
 
     @abstractmethod
     def get_training_config(self) -> ModelConfig:
         """Gets the current training configuration for the model."""
-        pass
-
-    @abstractmethod
-    def accuracy(self, examples: List[Example]) -> float:
-        """Calculates the accuracy on the given examples."""
         pass

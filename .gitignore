@@ -10,3 +10,11 @@ __pycache__/
 # VS Code settings
 .vscode/
 
+# Processed Datasets
+processed_datasets/*.pkl
+
+# Logs
+logs/*
+
+# Models
+models/*

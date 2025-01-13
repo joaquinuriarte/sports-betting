@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Optional, List
+from typing import Optional, List, Tuple
 from modules.data_structures.model_dataset import ModelDataset
 from .model_interface import IModel
 

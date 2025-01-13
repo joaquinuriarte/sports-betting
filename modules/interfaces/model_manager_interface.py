@@ -19,7 +19,7 @@ class IModelManager(ABC):
     def train(
         self,
         models: List[IModel],
-        train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
+        train_val_datasets: List[Tuple[ModelDataset, Optional[ModelDataset]]],
         save_after_training: Optional[bool] = True,
     ) -> None:
         """Trains the models using their provided ModelDataset."""
@@ -46,6 +46,6 @@ class IModelManager(ABC):
         self,
         yaml_paths: List[str],
         weights_paths: List[str],
-    ) -> List[Tuple[IModel, ModelConfig]]:
+    ) -> List[IModel]:
         """Loads the model weights to the model."""
         pass

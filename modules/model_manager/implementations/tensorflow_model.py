@@ -1,7 +1,9 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import List
+from typing import List, Optional
+from numpy.typing import NDArray
+import datetime
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
@@ -24,13 +26,13 @@ class TensorFlowModel(IModel):
 
         # Store Model variables
         self.output_features: str = self.model_config.architecture["output_features"]
+        self.prediction_threshold: float = self.model_config.architecture[
+            "prediction_threshold"
+        ]
 
     def _initialize_model(self) -> tf.keras.Model:
         """
         Initializes the model based on the architecture configuration.
-
-        Args:
-            architecture_config (dict): Configuration for building the model architecture.
 
         Returns:
             tf.keras.Model: The initialized TensorFlow model.
@@ -38,21 +40,59 @@ class TensorFlowModel(IModel):
         inputs = tf.keras.Input(
             shape=(self.model_config.architecture["input_size"],))
         x = inputs
+
         for layer_config in self.model_config.architecture["layers"]:
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None),
                 )(x)
-        outputs = tf.keras.layers.Dense(units=1)(x)
+            elif layer_config["type"] == "BatchNormalization":
+                x = tf.keras.layers.BatchNormalization(
+                    axis=-1,
+                    momentum=layer_config.get("momentum", 0.99),
+                    epsilon=layer_config.get("epsilon", 0.001),
+                    center=layer_config.get("center", True),
+                    scale=layer_config.get("scale", True),
+                )(x)
+            elif layer_config["type"] == "Dropout":
+                if "rate" not in layer_config:
+                    raise ValueError(
+                        "Dropout layer requires a 'rate' key in the configuration."
+                    )
+                x = tf.keras.layers.Dropout(rate=layer_config["rate"])(x)
+            elif layer_config["type"] == "Embedding":
+                if (
+                    "input_dimension" not in layer_config
+                    or "output_dimension" not in layer_config
+                ):
+                    raise ValueError(
+                        "Embedding layer requires 'input_dimension' and 'output_dimension' keys in the configuration."
+                    )
+                x = tf.keras.layers.Embedding(
+                    input_dim=layer_config["input_dimension"],
+                    output_dim=layer_config["output_dimension"],
+                )(x)
+            elif layer_config["type"] == "linear":
+                x = tf.keras.layers.Dense(
+                    units=layer_config["units"],
+                    activation=None  # Linear activation is the default
+                )(x)
+            else:
+                raise ValueError(
+                    f"Layer type '{layer_config['type']}' is not implemented."
+                )
+
+        # TODO: Compile output layer using info on yaml instead
+        outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
+
         model.compile(
             optimizer=self.model_config.training.get("optimizer", "adam"),
-            # Need to understand why we need to use logits=True
             loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=self.model_config.training.get(
-                "metrics", ["accuracy"]),
+            metrics=[self.model_config.training.get("metrics", "accuracy")],
         )
+
         return model
 
     def forward(self, examples: List[Example]) -> tf.Tensor:
@@ -66,21 +106,7 @@ class TensorFlowModel(IModel):
             tf.Tensor: Output after passing through the model's layers.
         """
         # Extract features dynamically excluding the output feature
-        feature_array = np.array(
-            [
-                [
-                    (
-                        example.features[feature_name][0]
-                        if feature_name in example.features
-                        else 0.0
-                    )
-                    for feature_name in example.features
-                    if feature_name != self.output_features  # Exclude output feature
-                ]
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
+        feature_array = self._extract_features(examples)
 
         # Ensure feature array matches expected input size
         expected_input_size = self.model_config.architecture["input_size"]
@@ -93,7 +119,13 @@ class TensorFlowModel(IModel):
 
         return self.model(features_tensor)
 
-    def train(self, examples: List[Example], epochs: int, batch_size: int) -> None:
+    def train(
+        self,
+        training_examples: List[Example],
+        epochs: int,
+        batch_size: int,
+        validation_examples: Optional[List[Example]] = None,
+    ) -> None:
         """
         Trains the model using the provided examples.
 
@@ -102,69 +134,98 @@ class TensorFlowModel(IModel):
             epochs (int): Number of epochs to train the model.
             batch_size (int): Batch size to use during training.
         """
-        # Extract features dynamically excluding the output feature
-        feature_array = np.array(
-            [
-                [
-                    (
-                        example.features[feature_name][0]
-                        if feature_name in example.features
-                        else 0.0
-                    )
-                    for feature_name in example.features
-                    if feature_name != self.output_features  # Exclude output feature
-                ]
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
+        # Extract training features dynamically excluding the output feature
+        training_feature_array = self._extract_features(training_examples)
 
         # Ensure feature array matches expected input size
         expected_input_size = self.model_config.architecture["input_size"]
-        if feature_array.shape[1] != expected_input_size:
+        if training_feature_array.shape[1] != expected_input_size:
             raise ValueError(
-                f"Feature array has {feature_array.shape[1]} features, but the model expects {expected_input_size}."
+                f"Training feature array has {training_feature_array.shape[1]} features, but the model expects {expected_input_size}."
             )
 
-        label_array = np.array(
-            [
-                (
-                    example.features[self.output_features][0]
-                    if self.output_features in example.features
-                    else 0.0
+        # Extract training y_labels
+        training_label_array = self._extract_labels(training_examples)
+
+        # Convert training arrays to tensors
+        training_features_tensor = tf.convert_to_tensor(training_feature_array)
+        training_labels_tensor = tf.convert_to_tensor(training_label_array)
+
+        # Setup tensorboard logs
+        log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        tensorboard_callback = tf.keras.callbacks.TensorBoard(
+            log_dir=log_dir, histogram_freq=1
+        )
+
+        # Call model fit with/without validation data
+        if validation_examples:
+            # Extract validation features dynamically excluding the output feature
+            validation_feature_array = self._extract_features(
+                validation_examples)
+
+            # Ensure feature array matches expected input size
+            expected_input_size = self.model_config.architecture["input_size"]
+            if validation_feature_array.shape[1] != expected_input_size:
+                raise ValueError(
+                    f"Validation feature array has {validation_feature_array.shape[1]} features, but the model expects {expected_input_size}."
                 )
-                for example in examples
-            ],
-            dtype=np.float32,
-        )
 
-        # Convert arrays to tensors
-        features_tensor = tf.convert_to_tensor(feature_array)
-        labels_tensor = tf.convert_to_tensor(label_array)
+            # Extract validation y_labels
+            validation_label_array = self._extract_labels(validation_examples)
 
-        # Train the model
-        self.model.fit(
-            features_tensor, labels_tensor, epochs=epochs, batch_size=batch_size
-        )
+            # Convert validation arrays to tensors
+            validation_features_tensor = tf.convert_to_tensor(
+                validation_feature_array)
+            validation_labels_tensor = tf.convert_to_tensor(
+                validation_label_array)
 
-    def predict(self, examples: List[Example]) -> pd.DataFrame:
+            self.model.fit(
+                training_features_tensor,
+                training_labels_tensor,
+                epochs=epochs,
+                batch_size=batch_size,
+                validation_data=(validation_features_tensor,
+                                 validation_labels_tensor),
+                callbacks=[tensorboard_callback],
+            )
+        else:
+            self.model.fit(
+                training_features_tensor,
+                training_labels_tensor,
+                epochs=epochs,
+                batch_size=batch_size,
+                callbacks=[tensorboard_callback],
+            )
+
+    def predict(
+        self, examples: List[Example], return_target_labels: Optional[bool] = False
+    ) -> pd.DataFrame:
         """
         Generates predictions for the provided examples.
 
         Args:
             examples (List[Example]): A list of `Example` instances.
+            return_target_labels (Optional[bool]): Whether to include target labels in the returned DataFrame.
 
         Returns:
             pd.DataFrame: The predicted output.
         """
         output_tensor = self.forward(examples)
         predictions = tf.sigmoid(output_tensor).numpy()  # Apply sigmoid
-        rounded_predictions = np.round(predictions)  # Apply rounding
+
+        # Use global prediction threshold
+        threshold = self.prediction_threshold
+        binary_predictions = self.custom_round_sigmoid_outputs(
+            predictions, threshold
+        ).numpy()
+
         prediction_df = pd.DataFrame(
-            rounded_predictions,
-            columns=[f"output_{i}" for i in range(
-                rounded_predictions.shape[1])],
-        )
+            {"predictions": binary_predictions.flatten()})
+
+        if return_target_labels:
+            label_array = self._extract_labels(examples)
+            prediction_df["target_label"] = label_array
+
         return prediction_df
 
     def save(self, path: str) -> None:
@@ -194,18 +255,35 @@ class TensorFlowModel(IModel):
         """
         return self.model_config
 
-    def accuracy(self, examples: List[Example]) -> float:
+    ####################
+    ## HELPER METHODS ##
+    ####################
+
+    @staticmethod
+    def custom_round_sigmoid_outputs(values: tf.Tensor, threshold: float) -> tf.Tensor:
         """
-        Calculates the accuracy of the model's predictions on the given examples.
+        Custom function to round sigmoid outputs to 0 or 1 based on a threshold.
+
+        Args:
+            values (np.ndarray or tf.Tensor): Input values between 0 and 1.
+            threshold (float): Threshold for rounding. Values >= threshold are rounded to 1, others to 0.
+
+        Returns:
+            tf.Tensor: Rounded values.
+        """
+        return tf.cast(values >= threshold, tf.float32)
+
+    def _extract_features(self, examples: List[Example]) -> NDArray[np.float32]:
+        """
+        Extracts features dynamically excluding the output feature.
 
         Args:
             examples (List[Example]): A list of `Example` instances.
 
         Returns:
-            float: Accuracy value.
+        np.ndarray: Extracted feature array.
         """
-        # Extract features and labels
-        feature_array = np.array(
+        return np.array(
             [
                 [
                     (
@@ -214,13 +292,24 @@ class TensorFlowModel(IModel):
                         else 0.0
                     )
                     for feature_name in example.features
-                    if feature_name != self.output_features  # Exclude output feature
+                    if feature_name != self.output_features
                 ]
                 for example in examples
             ],
             dtype=np.float32,
         )
-        label_array = np.array(
+
+    def _extract_labels(self, examples: List[Example]) -> NDArray[np.float32]:
+        """
+        Extracts labels from the examples.
+
+        Args:
+            examples (List[Example]): A list of `Example` instances.
+
+        Returns:
+            np.ndarray: Extracted label array.
+        """
+        return np.array(
             [
                 (
                     example.features[self.output_features][0]
@@ -231,17 +320,3 @@ class TensorFlowModel(IModel):
             ],
             dtype=np.float32,
         )
-
-        # Convert to tensors
-        features_tensor = tf.convert_to_tensor(feature_array)
-        labels_tensor = tf.convert_to_tensor(label_array)
-
-        # Get predictions
-        predictions = self.model(features_tensor, training=False)
-        # Apply sigmoid since `from_logits=True`
-        predictions = tf.sigmoid(predictions)
-
-        # Use TensorFlow's built-in accuracy metric
-        accuracy_metric = tf.keras.metrics.BinaryAccuracy(threshold=0.5)
-        accuracy_metric.update_state(labels_tensor, predictions)
-        return accuracy_metric.result().numpy()

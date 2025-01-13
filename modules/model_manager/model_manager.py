@@ -61,9 +61,9 @@ class ModelManager(IModelManager):
     def train(
         self,
         models: List[IModel],
-        train_val_datasets: List[Tuple[ModelDataset, ModelDataset]],
+        train_val_datasets: List[Tuple[ModelDataset, Optional[ModelDataset]]],
         save_after_training: Optional[bool] = True,
-    ) -> List[Tuple[List, List]]:
+    ) -> None:
         """
         Trains the provided models using corresponding training and validation datasets.
 
@@ -78,22 +78,16 @@ class ModelManager(IModelManager):
                 "Number of models and train_val_datasets provided must be equal."
             )
 
-        # train and val tuple
-        train_val_accuracies = []
-
         # Train models
         for model, (train_dataset, val_dataset) in zip(models, train_val_datasets):
-            train_accuracies, val_accuracies = self.trainer.train(
-                model, train_dataset, val_dataset)
-
-            # save accuracies
-            train_val_accuracies.append((train_accuracies, val_accuracies))
+            if val_dataset is not None:
+                self.trainer.train(model, train_dataset, val_dataset)
+            else:
+                self.trainer.train(model, train_dataset)
 
             # Save model
             if save_after_training:
                 self.save(model)
-
-        return train_val_accuracies
 
     def predict(
         self,
@@ -112,8 +106,7 @@ class ModelManager(IModelManager):
         """
         # Verify correct input dimensions
         if len(models) != len(input_data):
-            raise ValueError(
-                "Number of models and input_data provided must be equal.")
+            raise ValueError("Number of models and input_data provided must be equal.")
 
         # Extract and predict
         output_data = []
@@ -158,7 +151,7 @@ class ModelManager(IModelManager):
         self,
         yaml_paths: List[str],
         weights_paths: List[str],
-    ) -> List[Tuple[IModel, ModelConfig]]:
+    ) -> List[IModel]:
         """
         Loads models from provided YAML paths and weight paths.
 
@@ -179,7 +172,7 @@ class ModelManager(IModelManager):
         models_and_configs = self.create_models(yaml_paths)
 
         # Load model weights
-        for (model, _), weights_path in zip(models_and_configs, weights_paths):
+        for model, weights_path in zip(models_and_configs, weights_paths):
             model.load(weights_path)
 
         return models_and_configs

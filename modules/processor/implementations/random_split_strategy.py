@@ -10,33 +10,33 @@ class RandomSplitStrategy(ISplitStrategy):
     """
 
     def split(
-        self, dataset: ModelDataset, train_percentage: float
+        self, dataset: ModelDataset, split_percentage: float
     ) -> Tuple[ModelDataset, ModelDataset]:
         """
-        Splits the dataset randomly into training and validation datasets.
+        Splits the dataset randomly into two subsets.
 
         Args:
             dataset (ModelDataset): The dataset to split.
-            train_percentage (float): The percentage of data to allocate to the training set.
+            split_percentage (float): The percentage of data to allocate to the first subset.
 
         Returns:
-            Tuple[ModelDataset, ModelDataset]: The training and validation datasets.
+            Tuple[ModelDataset, ModelDataset]: The two subsets after splitting.
         """
-        if not (0 < train_percentage < 100):
-            raise ValueError("train_percentage must be between 0 and 100.")
+        if not (0 < split_percentage < 100):
+            raise ValueError("split_percentage must be between 0 and 100.")
 
         total_examples = len(dataset.examples)
-        train_size = int((train_percentage / 100) * total_examples)
+        split_size = int((split_percentage / 100) * total_examples)
 
         # Shuffle examples to ensure randomness
         shuffled_examples = dataset.examples.copy()
         random.shuffle(shuffled_examples)
 
         # Split the dataset
-        train_examples = shuffled_examples[:train_size]
-        val_examples = shuffled_examples[train_size:]
+        first_subset = shuffled_examples[:split_size]
+        second_subset = shuffled_examples[split_size:]
 
-        train_dataset = ModelDataset(examples=train_examples)
-        val_dataset = ModelDataset(examples=val_examples)
+        first_dataset = ModelDataset(examples=first_subset)
+        second_dataset = ModelDataset(examples=second_subset)
 
-        return train_dataset, val_dataset
+        return first_dataset, second_dataset

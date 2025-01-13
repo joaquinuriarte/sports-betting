@@ -10,8 +10,8 @@ class IProcessor(ABC):
 
     @abstractmethod
     def generate(
-        self, val_dataset_flag: Optional[bool] = True
-    ) -> Tuple[ModelDataset, Optional[ModelDataset]]:
+        self
+    ) -> Tuple[ModelDataset, Optional[ModelDataset], Optional[ModelDataset]]:
         """
         Generates the training and optional validation datasets.
 

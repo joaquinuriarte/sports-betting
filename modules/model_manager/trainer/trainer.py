@@ -1,4 +1,4 @@
-from typing import Optional
+from typing import Optional, Tuple, List
 from modules.data_structures.model_dataset import ModelDataset
 from ..interfaces.model_interface import IModel
 from ..interfaces.trainer_interface import ITrainer
@@ -41,10 +41,6 @@ class Trainer(ITrainer):
         epochs = model_config.training.get("epochs", 10)
         batch_size = model_config.training.get("batch_size", 32)
 
-        # train and val accuracy lists
-        train_accuracies = []
-        val_accuracies = []
-
         # Log training information
         model_signature = model_config.model_signature
         logging.info(
@@ -58,23 +54,15 @@ class Trainer(ITrainer):
             )
 
             # Train the model for this epoch
-            model.train(train_dataset.examples,
-                        epochs=1, batch_size=batch_size)
-
-            # Calculate training accuracy
-            train_accuracy = model.accuracy(train_dataset.examples)
-            train_accuracies.append(train_accuracy)
-
-            # Calculate validation accuracy
             if val_dataset:
-                val_accuracy = model.accuracy(val_dataset.examples)
-                val_accuracies.append(val_accuracy)
-                logging.info(
-                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}, Validation Accuracy: {val_accuracy:.4f}"
+                model.train(
+                    train_dataset.examples,
+                    epochs=1,
+                    batch_size=batch_size,
+                    validation_examples=val_dataset.examples,
                 )
             else:
-                logging.info(
-                    f"Epoch {epoch + 1}/{epochs} - Training Accuracy: {train_accuracy:.4f}"
-                )
+                model.train(train_dataset.examples, epochs=1, batch_size=batch_size)
 
-        return train_accuracies, val_accuracies if val_dataset else None
+        # Final print
+        logging.info(f"Model '{model_signature}': Finished training.")

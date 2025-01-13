@@ -17,6 +17,7 @@ model:
     output_features: Team_A_Wins
     output_size: 1
     type: tensorflow
+    prediction_threshold: .5
   dataset:
     joins:
       - keys:
@@ -101,5 +102,9 @@ model:
     optimizer: Adam
     metrics: accuracy
     split_strategy:
-      percent_split: 70
       strategy: random_split
+      train_split: 70
+      val_split: 15
+      test_split: 15
+      use_val: true
+      use_test: true

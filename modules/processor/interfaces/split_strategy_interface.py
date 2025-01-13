@@ -10,7 +10,7 @@ class ISplitStrategy(ABC):
 
     @abstractmethod
     def split(
-        self, dataset: ModelDataset, train_percentage: float
+        self, dataset: ModelDataset, split_percentage: float
     ) -> Tuple[ModelDataset, ModelDataset]:
         """
         Splits the dataset into training and validation datasets.
