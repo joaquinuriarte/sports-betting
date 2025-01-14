@@ -59,8 +59,8 @@ class Processor(IProcessor):
 
         val_dataset, test_dataset = None, None
         if self.use_val and remaining_dataset is not None:
-            val_split_ratio = self.val_split / \
-                (self.val_split + self.test_split)
+            val_split_ratio = 100 * (self.val_split /
+                                     (self.val_split + self.test_split))
             val_dataset, test_dataset = self.split_strategy.split(
                 remaining_dataset, val_split_ratio
             )
