@@ -11,7 +11,7 @@ __pycache__/
 .vscode/
 
 # Processed Datasets
-processed_datasets/*.pkl
+processed_datasets/*
 
 # Logs
 logs/*
