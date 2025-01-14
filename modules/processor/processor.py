@@ -46,18 +46,21 @@ class Processor(IProcessor):
         model_dataset = self.build_model_dataset(self.processed_dataset)
 
         # Validate split percentages
-        total_split = self.train_split + (self.val_split or 0) + (self.test_split or 0)
+        total_split = self.train_split + \
+            (self.val_split or 0) + (self.test_split or 0)
+
         if total_split != 100:
             raise ValueError("Split percentages must add up to 100.")
 
         # Split the dataset
         train_dataset, remaining_dataset = self.split_strategy.split(
-            model_dataset, self.train_split / 100.0
+            model_dataset, self.train_split
         )
 
         val_dataset, test_dataset = None, None
         if self.use_val and remaining_dataset is not None:
-            val_split_ratio = self.val_split / (self.val_split + self.test_split)
+            val_split_ratio = self.val_split / \
+                (self.val_split + self.test_split)
             val_dataset, test_dataset = self.split_strategy.split(
                 remaining_dataset, val_split_ratio
             )
