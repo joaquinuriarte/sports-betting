@@ -84,7 +84,7 @@ class TensorFlowModel(IModel):
                 )
 
         # TODO: Compile output layer using info on yaml instead
-        outputs = tf.keras.layers.Dense(units=1, activation="sigmoid")(x)
+        outputs = tf.keras.layers.Dense(units=1)(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
         model.compile(
