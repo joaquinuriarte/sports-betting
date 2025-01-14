@@ -4,6 +4,7 @@ import pandas as pd
 from typing import List, Optional
 from numpy.typing import NDArray
 import datetime
+import os
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
@@ -151,8 +152,14 @@ class TensorFlowModel(IModel):
         training_features_tensor = tf.convert_to_tensor(training_feature_array)
         training_labels_tensor = tf.convert_to_tensor(training_label_array)
 
-        # Setup tensorboard logs
-        log_dir = "logs/fit/" + datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        # Setup tensorboard logs with model signature first
+        log_dir = "logs/fit/" + f"{self.model_config.model_signature}/" + \
+            datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+
+        # Ensure the directory exists
+        os.makedirs(log_dir, exist_ok=True)
+
+        # Create the TensorBoard callback
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=log_dir, histogram_freq=1
         )
