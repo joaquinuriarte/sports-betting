@@ -327,3 +327,12 @@ class TensorFlowModel(IModel):
             ],
             dtype=np.float32,
         )
+
+    def set_prediction_threshold(self, threshold: float) -> None:
+        """
+        Sets the prediction threshold for the model.
+
+        Args:
+            threshold (float): The new prediction threshold value.
+        """
+        self.prediction_threshold = threshold
