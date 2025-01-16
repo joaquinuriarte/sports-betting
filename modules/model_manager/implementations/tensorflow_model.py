@@ -46,7 +46,8 @@ class TensorFlowModel(IModel):
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
-                    activation=layer_config.get("activation", None),
+                    activation=layer_config.get("activation", None) if layer_config.get(
+                        "activation", None) != "None" else None,
                 )(x)
             elif layer_config["type"] == "BatchNormalization":
                 x = tf.keras.layers.BatchNormalization(
