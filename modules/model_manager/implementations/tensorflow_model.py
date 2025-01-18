@@ -1,7 +1,8 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import List, Optional
+from typing import List, Optional, Any, Dict
+from keras.callbacks import History
 from numpy.typing import NDArray
 import datetime
 import os
@@ -30,7 +31,7 @@ class TensorFlowModel(IModel):
         self.prediction_threshold: float = self.model_config.architecture[
             "prediction_threshold"
         ]
-        self.training_history = None
+        self.training_history: Optional[History] = None
 
     def _initialize_model(self) -> tf.keras.Model:
         """
@@ -339,13 +340,26 @@ class TensorFlowModel(IModel):
         """
         self.prediction_threshold = threshold
 
-    def get_training_history(self) -> dict:
+    def get_training_history(self) -> Dict[str, List[float]]:
         """
         Gets the current training history for the model.
 
         Returns:
-            dict: A dictionary containing the training and validation metrics for each epoch.
-                Keys include metrics like 'loss', 'val_loss', 'accuracy', 'val_accuracy', etc.
-                Values are lists of the respective metric values for each epoch.
+            Dict[str, list]: A dictionary containing the training and validation metrics for each epoch.
+                             Keys include metrics like 'loss', 'val_loss', 'accuracy', etc.
+        Raises:
+            ValueError: If the training history is not available.
         """
-        return self.training_history.history
+        if self.training_history is None:
+            raise ValueError(
+                "Training history is not available. Train the model first.")
+
+        # Ensure the training_history attribute has a 'history' attribute
+        if not hasattr(self.training_history, "history"):
+            raise ValueError(
+                "Invalid training history object. Missing 'history' attribute.")
+
+        # Cast the history attribute explicitly to the expected type
+        history_dict: Dict[str, List[float]] = dict(
+            self.training_history.history)
+        return history_dict
