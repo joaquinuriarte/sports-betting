@@ -47,22 +47,21 @@ class Trainer(ITrainer):
             f"Training model '{model_signature}' for {epochs} epochs with batch size {batch_size}."
         )
 
-        # Loop over epochs to train and save checkpoints
-        for epoch in range(epochs):
-            logging.info(
-                f"Model '{model_signature}': Starting epoch {epoch + 1}/{epochs}."
-            )
+        logging.info(
+            f"Model '{model_signature}': Starting epoch {epochs + 1}/{epochs}."
+        )
 
-            # Train the model for this epoch
-            if val_dataset:
-                model.train(
-                    train_dataset.examples,
-                    epochs=1,
-                    batch_size=batch_size,
-                    validation_examples=val_dataset.examples,
-                )
-            else:
-                model.train(train_dataset.examples, epochs=1, batch_size=batch_size)
+        # Train the model for this epoch
+        if val_dataset:
+            model.train(
+                train_dataset.examples,
+                epochs=epochs,
+                batch_size=batch_size,
+                validation_examples=val_dataset.examples,
+            )
+        else:
+            model.train(train_dataset.examples,
+                        epochs=epochs, batch_size=batch_size)
 
         # Final print
         logging.info(f"Model '{model_signature}': Finished training.")

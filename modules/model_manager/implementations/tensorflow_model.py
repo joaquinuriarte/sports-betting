@@ -30,6 +30,7 @@ class TensorFlowModel(IModel):
         self.prediction_threshold: float = self.model_config.architecture[
             "prediction_threshold"
         ]
+        self.training_history = None
 
     def _initialize_model(self) -> tf.keras.Model:
         """
@@ -162,7 +163,7 @@ class TensorFlowModel(IModel):
 
         # Create the TensorBoard callback
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
-            log_dir=log_dir, histogram_freq=1
+            log_dir=log_dir
         )
 
         # Call model fit with/without validation data
@@ -187,7 +188,7 @@ class TensorFlowModel(IModel):
             validation_labels_tensor = tf.convert_to_tensor(
                 validation_label_array)
 
-            self.model.fit(
+            self.training_history = self.model.fit(
                 training_features_tensor,
                 training_labels_tensor,
                 epochs=epochs,
@@ -197,7 +198,7 @@ class TensorFlowModel(IModel):
                 callbacks=[tensorboard_callback],
             )
         else:
-            self.model.fit(
+            self.training_history = self.model.fit(
                 training_features_tensor,
                 training_labels_tensor,
                 epochs=epochs,
@@ -337,3 +338,14 @@ class TensorFlowModel(IModel):
             threshold (float): The new prediction threshold value.
         """
         self.prediction_threshold = threshold
+
+    def get_training_history(self) -> dict:
+        """
+        Gets the current training history for the model.
+
+        Returns:
+            dict: A dictionary containing the training and validation metrics for each epoch.
+                Keys include metrics like 'loss', 'val_loss', 'accuracy', 'val_accuracy', etc.
+                Values are lists of the respective metric values for each epoch.
+        """
+        return self.training_history.history
