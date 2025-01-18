@@ -9,7 +9,6 @@ class ProcessedDataset:
 
     Attributes:
         features (pd.DataFrame): The feature data.
-        labels (pd.DataFrame): The label data.
     """
 
     features: pd.DataFrame
