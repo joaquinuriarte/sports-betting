@@ -47,10 +47,6 @@ class Trainer(ITrainer):
             f"Training model '{model_signature}' for {epochs} epochs with batch size {batch_size}."
         )
 
-        logging.info(
-            f"Model '{model_signature}': Starting epoch {epochs + 1}/{epochs}."
-        )
-
         # Train the model for this epoch
         if val_dataset:
             model.train(
