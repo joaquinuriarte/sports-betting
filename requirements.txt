@@ -15,6 +15,7 @@ cycler==0.12.1
 DateTime==5.5
 debugpy==1.8.11
 decorator==5.1.1
+et_xmlfile==2.0.0
 exceptiongroup==1.2.1
 executing==2.1.0
 filelock==3.15.4
@@ -52,6 +53,7 @@ nest-asyncio==1.6.0
 networkx==3.1
 numpy==1.24.3
 oauthlib==3.2.2
+openpyxl==3.1.5
 opt_einsum==3.4.0
 packaging==24.0
 pandas==2.0.3
