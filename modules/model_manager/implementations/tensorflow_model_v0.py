@@ -88,7 +88,8 @@ class TensorFlowModelV0(IModel):
                 )
 
         # TODO: Compile output layer using info on yaml instead
-        outputs = tf.keras.layers.Dense(units=1)(x)
+        outputs = tf.keras.layers.Dense(
+            units=self.model_config.architecture["input_size"])(x)
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
 
         model.compile(

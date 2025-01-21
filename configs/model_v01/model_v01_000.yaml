@@ -38,11 +38,13 @@ model:
         type: Dropout
       - activation: ReLU
         in_features: 32
-        type: linear
-        units: 1
-    output_features: Team_A_Wins
+        type: Dense
+        units: 2
+    output_features:
+      - final_score_A
+      - final_score_B
     output_size: 2
-    prediction_threshold:
+    prediction_threshold: null
     type: tensorflow_model_v01
   dataset:
     joins:
@@ -124,7 +126,9 @@ model:
     batch_size: 32
     epochs: 20
     learning_rate: 0.001
-    loss_function: binary_crossentropy
+    loss_function:
+      - binary_crossentropy
+      - true
     metrics: accuracy
     optimizer: Adam
     split_strategy:
