@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Dict
 from keras.callbacks import History
 from numpy.typing import NDArray
 import datetime

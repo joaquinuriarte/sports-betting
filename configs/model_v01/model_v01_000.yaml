@@ -36,13 +36,13 @@ model:
       - in_features: 32
         rate: 0.05
         type: Dropout
-      - activation: None
+      - activation: ReLU
         in_features: 32
         type: linear
         units: 1
     output_features: Team_A_Wins
-    output_size: 1
-    prediction_threshold: 0.5
+    output_size: 2
+    prediction_threshold:
     type: tensorflow_model_v01
   dataset:
     joins:
