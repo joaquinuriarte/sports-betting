@@ -43,7 +43,7 @@ model:
     output_features: Team_A_Wins
     output_size: 1
     prediction_threshold: 0.5
-    type: tensorflow
+    type: tensorflow_model_v01
   dataset:
     joins:
       - keys:

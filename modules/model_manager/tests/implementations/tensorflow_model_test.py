@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from modules.model_manager.implementations.tensorflow_model import TensorFlowModel
+from modules.model_manager.implementations.tensorflow_model_v0 import TensorFlowModelV0
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
 from typing import List
@@ -45,7 +45,7 @@ class TensorFlowModelTest(unittest.TestCase):
         )
 
         # Instantiate TensorFlowModel with the sample model configuration
-        self.model: TensorFlowModel = TensorFlowModel(self.model_config)
+        self.model: TensorFlowModelV0 = TensorFlowModelV0(self.model_config)
 
         self.examples: List[Example] = [
             Example(
@@ -97,8 +97,10 @@ class TensorFlowModelTest(unittest.TestCase):
         expected_labels = np.array([1.0, 0.0], dtype=np.float32)
 
         # Validate feature and label tensors
-        np.testing.assert_array_almost_equal(features_tensor.numpy(), expected_features)
-        np.testing.assert_array_almost_equal(labels_tensor.numpy(), expected_labels)
+        np.testing.assert_array_almost_equal(
+            features_tensor.numpy(), expected_features)
+        np.testing.assert_array_almost_equal(
+            labels_tensor.numpy(), expected_labels)
 
         # Validate additional arguments such as epochs and batch size
         self.assertEqual(kwargs["epochs"], epochs)
@@ -117,10 +119,11 @@ class TensorFlowModelTest(unittest.TestCase):
         output: tf.Tensor = self.model.forward(self.examples)
 
         # Assertions
-        np.testing.assert_array_almost_equal(output.numpy(), expected_output.numpy())
+        np.testing.assert_array_almost_equal(
+            output.numpy(), expected_output.numpy())
 
     @patch.object(
-        TensorFlowModel,
+        TensorFlowModelV0,
         "forward",
         return_value=tf.constant([[0.5], [0.8]], dtype=tf.float32),
     )

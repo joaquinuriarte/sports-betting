@@ -11,7 +11,7 @@ from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
 
 
-class TensorFlowModel(IModel):
+class TensorFlowModelV01(IModel):
     """
     A TensorFlow model wrapper that implements the IModel interface.
 
