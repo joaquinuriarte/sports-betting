@@ -1,7 +1,7 @@
 import pandas as pd
 import unittest
-from modules.dataset_generator.implementations.feature_processing_operations import (
-    TopNPlayersFeatureProcessor,
+from modules.dataset_generator.implementations.feature_processing_operations_v0 import (
+    TopNPlayersFeatureProcessorV0,
 )
 from datetime import datetime
 from modules.data_structures.processed_dataset import ProcessedDataset
@@ -46,7 +46,7 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
             }
         )
 
-        self.processor = TopNPlayersFeatureProcessor(
+        self.processor = TopNPlayersFeatureProcessorV0(
             top_n_players=2,
             sorting_criteria="PTS",
             look_back_window=2,
@@ -80,7 +80,8 @@ class TestTopNPlayersFeatureProcessor(unittest.TestCase):
         top_players_stats = pd.DataFrame(
             {"PTS": [20, 15], "MIN": [32, 28]}, index=[1, 2]
         )
-        feature_vector = self.processor.create_feature_vector(top_players_stats)
+        feature_vector = self.processor.create_feature_vector(
+            top_players_stats)
         self.assertEqual(feature_vector.shape, (1, 4))
         self.assertIn("home_player_1_PTS", feature_vector.columns)
         self.assertIn("home_player_2_MIN", feature_vector.columns)

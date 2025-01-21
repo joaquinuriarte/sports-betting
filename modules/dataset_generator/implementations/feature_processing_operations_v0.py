@@ -9,7 +9,7 @@ from ..interfaces.feature_processor_operator_interface import (
 logging.basicConfig(level=logging.INFO)
 
 
-class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
+class TopNPlayersFeatureProcessorV0(IFeatureProcessorOperator):
     """
     A feature processor that generates feature vectors for games
     based on the top N players' statistics.
@@ -177,7 +177,8 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
             feature_vector_A = feature_vector_A.add_prefix("A_")
             feature_vector_B = feature_vector_B.add_prefix("B_")
 
-            feature_vector = pd.concat([feature_vector_A, feature_vector_B], axis=1)
+            feature_vector = pd.concat(
+                [feature_vector_A, feature_vector_B], axis=1)
             feature_vector["GAME_ID"] = game_id
             feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
             feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
@@ -240,6 +241,7 @@ class TopNPlayersFeatureProcessor(IFeatureProcessorOperator):
         ).astype(int)
 
         # Drop final scores
-        final_features = final_features.drop(columns=["final_score_A", "final_score_B"])
+        final_features = final_features.drop(
+            columns=["final_score_A", "final_score_B"])
 
         return ProcessedDataset(features=final_features)

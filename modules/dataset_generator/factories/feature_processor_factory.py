@@ -1,5 +1,8 @@
-from modules.dataset_generator.implementations.feature_processing_operations import (
-    TopNPlayersFeatureProcessor,
+from modules.dataset_generator.implementations.feature_processing_operations_v0 import (
+    TopNPlayersFeatureProcessorV0,
+)
+from modules.dataset_generator.implementations.feature_processing_operations_v01 import (
+    TopNPlayersFeatureProcessorV01,
 )
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
@@ -31,13 +34,24 @@ class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
             ValueError: If the provided processing type is not supported.
         """
         # Default values should indicate error with yaml
-        if type_name == "top_n_players":
-            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessor(
+        if type_name == "top_n_players_v0":
+            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV0(
                 top_n_players=kwargs.get("top_n_players", 8),
                 sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
                 look_back_window=kwargs.get("look_back_window", 10),
-                player_stats_columns=kwargs.get("player_stats_columns", ["MIN"]),
+                player_stats_columns=kwargs.get(
+                    "player_stats_columns", ["MIN"]),
+            )
+            return feature_processor
+        elif type_name == "top_n_players_v01":
+            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV01(
+                top_n_players=kwargs.get("top_n_players", 8),
+                sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
+                look_back_window=kwargs.get("look_back_window", 10),
+                player_stats_columns=kwargs.get(
+                    "player_stats_columns", ["MIN"]),
             )
             return feature_processor
         else:
-            raise ValueError(f"Unsupported feature processing type: {type_name}")
+            raise ValueError(
+                f"Unsupported feature processing type: {type_name}")
