@@ -18,9 +18,10 @@ model:
         units: 32
       - activation: None
         in_features: 32
-        type: linear
+        type: Dense
         units: 1
-    output_features: Team_A_Wins
+    output_features:
+      - Team_A_Wins
     output_size: 1
     prediction_threshold: 0.5
     type: tensorflow_model_v0
@@ -104,7 +105,9 @@ model:
     batch_size: 32
     epochs: 40
     learning_rate: 0.001
-    loss_function: binary_crossentropy
+    loss_function:
+      - binary_crossentropy
+      - true
     metrics: accuracy
     optimizer: Adam
     split_strategy:
