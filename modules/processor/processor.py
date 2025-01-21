@@ -53,6 +53,7 @@ class Processor(IProcessor):
             raise ValueError("Split percentages must add up to 100.")
 
         # Split the dataset
+        # TODO Provide a way to ingest seed so split is similar if ran more than once
         train_dataset, remaining_dataset = self.split_strategy.split(
             model_dataset, self.train_split
         )
