@@ -27,7 +27,7 @@ class TensorFlowModelV0(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
-        self.output_features: str = self.model_config.architecture["output_features"]
+        self.output_features: List[str] = self.model_config.architecture["output_features"]
         self.prediction_threshold: float = self.model_config.architecture[
             "prediction_threshold"
         ]
@@ -44,7 +44,9 @@ class TensorFlowModelV0(IModel):
             shape=(self.model_config.architecture["input_size"],))
         x = inputs
 
-        for layer_config in self.model_config.architecture["layers"]:
+        # Process all layers except the last one (it's the output layer)
+        layers_config = self.model_config.architecture["layers"]
+        for layer_config in layers_config[:-1]:
             if layer_config["type"] == "Dense":
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
@@ -87,15 +89,55 @@ class TensorFlowModelV0(IModel):
                     f"Layer type '{layer_config['type']}' is not implemented."
                 )
 
-        # TODO: Compile output layer using info on yaml instead
-        outputs = tf.keras.layers.Dense(
-            units=self.model_config.architecture["input_size"])(x)
+        # Process output layer
+        output_config = layers_config[-1]
+        if output_config["type"] == "Dense":
+            outputs = tf.keras.layers.Dense(
+                # Use output size from config
+                units=self.model_config.architecture["output_size"],
+                activation=output_config.get("activation", None) if output_config.get(
+                    "activation", None) != "None" else None,
+            )(x)
+        else:
+            raise ValueError(
+                f"Output layer type '{output_config['type']}' is not implemented."
+            )
+
+        # Compile model
         model = tf.keras.Model(inputs=inputs, outputs=outputs)
+
+        # Process loss and metrics from config
+        loss_fxn = self.model_config.training.get("loss_function", None)
+        if loss_fxn is None:
+            raise ValueError(
+                f"Loss function type '{loss_fxn}' is not implemented."
+            )
+        if loss_fxn[0] == "binary_crossentropy":
+            if loss_fxn[1]:
+                loss = tf.keras.losses.BinaryCrossentropy(from_logits=True)
+            else:
+                loss = tf.keras.losses.BinaryCrossentropy(from_logits=False)
+        elif loss_fxn[0] == "mean_squarederror":
+            loss = tf.keras.losses.MeanSquaredError()
+        elif loss_fxn[0] == "categorical_crossentropy":
+            loss = tf.keras.losses.CategoricalCrossentropy()
+        else:
+            raise ValueError(
+                f"Loss function type '{loss_fxn['loss_function']}' is not implemented."
+            )
+
+        metric = self.model_config.training.get("metrics", None)
+        if metric is not None:
+            metrics = metric
+        else:
+            raise ValueError(
+                f"Metric type '{metric}' is not implemented."
+            )
 
         model.compile(
             optimizer=self.model_config.training.get("optimizer", "adam"),
-            loss=tf.keras.losses.BinaryCrossentropy(from_logits=True),
-            metrics=[self.model_config.training.get("metrics", "accuracy")],
+            loss=loss,
+            metrics=[metrics],
         )
 
         return model
@@ -286,13 +328,13 @@ class TensorFlowModelV0(IModel):
 
     def _extract_features(self, examples: List[Example]) -> NDArray[np.float32]:
         """
-        Extracts features dynamically excluding the output feature.
+        Extracts features dynamically excluding the output features.
 
         Args:
             examples (List[Example]): A list of `Example` instances.
 
         Returns:
-        np.ndarray: Extracted feature array.
+            np.ndarray: Extracted feature array.
         """
         return np.array(
             [
@@ -303,7 +345,7 @@ class TensorFlowModelV0(IModel):
                         else 0.0
                     )
                     for feature_name in example.features
-                    if feature_name != self.output_features
+                    if feature_name not in self.output_features
                 ]
                 for example in examples
             ],
@@ -312,21 +354,21 @@ class TensorFlowModelV0(IModel):
 
     def _extract_labels(self, examples: List[Example]) -> NDArray[np.float32]:
         """
-        Extracts labels from the examples.
+        Extracts labels from the examples for multiple output features.
 
         Args:
             examples (List[Example]): A list of `Example` instances.
 
         Returns:
-            np.ndarray: Extracted label array.
+            np.ndarray: Extracted label array, with each column corresponding to an output feature.
         """
         return np.array(
             [
-                (
-                    example.features[self.output_features][0]
-                    if self.output_features in example.features
-                    else 0.0
-                )
+                [
+                    example.features[feature_name][0] if feature_name in example.features else 0.0
+                    # Loop over all output features
+                    for feature_name in self.output_features
+                ]
                 for example in examples
             ],
             dtype=np.float32,
