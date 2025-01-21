@@ -93,7 +93,7 @@ model:
       - FT_PCT
     sorting_criteria: MIN
     top_n_players: 8
-    type: top_n_players
+    type: top_n_players_v0
   model_signature:
   strategy: join_based
   training:
