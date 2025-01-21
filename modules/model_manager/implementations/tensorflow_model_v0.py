@@ -79,11 +79,6 @@ class TensorFlowModelV0(IModel):
                     input_dim=layer_config["input_dimension"],
                     output_dim=layer_config["output_dimension"],
                 )(x)
-            elif layer_config["type"] == "linear":
-                x = tf.keras.layers.Dense(
-                    units=layer_config["units"],
-                    activation=None  # Linear activation is the default
-                )(x)
             else:
                 raise ValueError(
                     f"Layer type '{layer_config['type']}' is not implemented."
