@@ -16,7 +16,7 @@ model:
         units: 1
     output_features: Team_A_Wins
     output_size: 1
-    type: tensorflow
+    type: tensorflow_model_v0
     prediction_threshold: .5
   dataset:
     joins:
@@ -92,7 +92,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players
-  model_signature: 8997782287ac95361ce10ecee1af1840
+  model_signature:
   strategy: join_based
   training:
     batch_size: 32
