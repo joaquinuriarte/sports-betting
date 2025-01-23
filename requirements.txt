@@ -36,6 +36,7 @@ ipykernel==6.29.5
 ipython==8.12.3
 jedi==0.19.2
 Jinja2==3.1.4
+joblib==1.4.2
 jupyter_client==8.6.3
 jupyter_core==5.7.2
 keras==2.13.1
@@ -82,6 +83,7 @@ pyzmq==26.2.0
 requests==2.32.3
 requests-oauthlib==2.0.0
 rsa==4.9
+scikit-learn==1.3.2
 scipy==1.10.1
 seaborn==0.13.2
 six==1.16.0
@@ -93,6 +95,7 @@ tensorflow==2.13.1
 tensorflow-estimator==2.13.0
 tensorflow-io-gcs-filesystem==0.34.0
 termcolor==2.4.0
+threadpoolctl==3.5.0
 tomli==2.0.1
 torch==2.2.2
 tornado==6.4.2
