@@ -15,11 +15,11 @@ processed_datasets/*
 
 # Logs
 logs/*
-z-model_binaries/model_v0/logs/*
-z-model_binaries/model_v0.1/logs/*
+model_binaries/model_v0/logs/*
+model_binaries/model_v0.1/logs/*
 
 
 # Models
 models/*
-z-model_binaries/model_v0/models/*
-z-model_binaries/model_v0.1/models/*
+model_binaries/model_v0/models/*
+model_binaries/model_v0.1/models/*
