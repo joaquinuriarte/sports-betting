@@ -235,6 +235,7 @@ class TensorFlowModelV0(IModel):
                 validation_data=(validation_features_tensor,
                                  validation_labels_tensor),
                 callbacks=[tensorboard_callback],
+                shuffle=True,
             )
         else:
             self.training_history = self.model.fit(
@@ -243,6 +244,7 @@ class TensorFlowModelV0(IModel):
                 epochs=epochs,
                 batch_size=batch_size,
                 callbacks=[tensorboard_callback],
+                shuffle=True,
             )
 
     def predict(
