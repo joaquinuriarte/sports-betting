@@ -1,3 +1,4 @@
+from typing import List, Counter
 import os
 import pickle
 from modules.data_structures.model_dataset import ModelDataset, Example
@@ -6,6 +7,7 @@ from collections import Counter
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import yaml
+import matplotlib.pyplot as plt
 
 
 def load_entity(folder_path, file_name):
@@ -28,14 +30,14 @@ def save_entity(folder_path, file_name, processed_dataset):
         pickle.dump(processed_dataset, f)
 
 
-def assess_dataset_balance(dataset: ModelDataset, y_label_columns: List[str]):
+def assess_dataset_balance(dataset: ModelDataset, y_label_columns: List[str], distribution_plot: bool = False):
     """
     Assess the balance of a dataset across specified label columns.
 
     Args:
         dataset (ModelDataset): The dataset to assess.
         y_label_columns (List[str]): List of label columns to analyze.
-        dataset_name (str): The name of the dataset (for reporting purposes).
+        is_regression (bool): If True, generates distributions for regression labels.
 
     Returns:
         None
@@ -45,19 +47,41 @@ def assess_dataset_balance(dataset: ModelDataset, y_label_columns: List[str]):
         y_labels = [example.features[column][0]
                     for example in dataset.examples]
 
-        # Count occurrences of each label
-        label_counts = Counter(y_labels)
+        if distribution_plot:
+            # Create bins for unique values
+            unique_values = sorted(set(y_labels))
+            counts = [y_labels.count(value) for value in unique_values]
+            total_samples = len(y_labels)
+            proportions = [count / total_samples * 100 for count in counts]
 
-        # Calculate proportions
-        total_samples = len(y_labels)
-        proportions = {label: count / total_samples *
-                       100 for label, count in label_counts.items()}
+            # Plot distribution for regression labels with exact bin sizes
+            plt.figure(figsize=(10, 6))
+            plt.bar(unique_values, proportions,
+                    width=0.8, edgecolor="k", alpha=0.7)
+            plt.xticks(unique_values[::3], rotation=270)
+            plt.title(f"Distribution of '{column}'")
+            plt.xlabel("Value")
+            plt.ylabel("Percentage (%)")
+            plt.grid(True, linestyle="--", alpha=0.6)
+            plt.show()
+        else:
+            # Count occurrences of each label
+            label_counts = Counter(y_labels)
 
-        # Display results
-        print(f"\nColumn: '{column}'")
-        for label, count in label_counts.items():
-            print(
-                f"  - Number of {label}s: {count} ({proportions[label]:.2f}%)")
+            # Calculate proportions
+            total_samples = len(y_labels)
+            proportions = {label: count / total_samples *
+                           100 for label, count in label_counts.items()}
+
+            # Sort label counts and proportions by count descending
+            sorted_counts = sorted(label_counts.items(),
+                                   key=lambda x: x[1], reverse=True)
+
+            # Display results
+            print(f"\nColumn: '{column}'")
+            for label, count in sorted_counts:
+                print(
+                    f"  - Number of {label}s: {count} ({proportions[label]:.2f}%)")
 
 
 def scale_features(dataset: ModelDataset, exclude_columns: List[str] = None, return_scaler: bool = False):
