@@ -5,6 +5,7 @@ from typing import List
 from collections import Counter
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
+import yaml
 
 
 def load_entity(folder_path, file_name):
@@ -103,3 +104,38 @@ def scale_features(dataset: ModelDataset, exclude_columns: List[str] = None, ret
     if return_scaler:
         return scaled_dataset, scaler
     return scaled_dataset
+
+
+def get_model_weights_paths(model: str, yaml_path_list: List[str]) -> List[str]:
+    """
+    Retrieve model weights paths using model and a list of YAML file paths.
+
+    Args:
+        model (str): The name of the model.
+        yaml_path_list (List[str]): List of paths to YAML configuration files.
+
+    Returns:
+        List[str]: A list of paths to the model weights.
+    """
+    # Retrieve model signatures from YAML files
+    signatures = []
+    for yaml_file in yaml_path_list:
+        with open(yaml_file, "r") as file:
+            config_data = yaml.safe_load(file)
+
+        # Save model signature
+        signatures.append(config_data.get("model", {}).get("model_signature"))
+
+    # Construct model weights paths using the signatures
+    weights_paths = []
+    for signature in signatures:
+        base_path = f'/Users/joaquinuriarte/Documents/GitHub/sports-betting/model_binaries/{model}/models/'
+        base_file_name = '/model_weights_'
+
+        directory = base_path + signature
+        file_name = base_file_name + signature + ".pth"
+
+        final_file_path = directory + file_name
+        weights_paths.append(final_file_path)
+
+    return weights_paths
