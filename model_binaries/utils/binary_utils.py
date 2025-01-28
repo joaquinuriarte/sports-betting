@@ -163,3 +163,8 @@ def get_model_weights_paths(model: str, yaml_path_list: List[str]) -> List[str]:
         weights_paths.append(final_file_path)
 
     return weights_paths
+
+
+def graph_predictions(predictions):
+    predictions.hist(bins=75, figsize=(20, 15))
+    plt.show()
