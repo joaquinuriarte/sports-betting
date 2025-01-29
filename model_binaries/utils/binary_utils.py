@@ -2,12 +2,13 @@ from typing import List, Counter
 import os
 import pickle
 from modules.data_structures.model_dataset import ModelDataset, Example
-from typing import List
+from typing import List, Dict, Any
 from collections import Counter
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
 import yaml
 import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
 
 
 def load_entity(folder_path, file_name):
@@ -168,3 +169,31 @@ def get_model_weights_paths(model: str, yaml_path_list: List[str]) -> List[str]:
 def graph_entity(predictions, bins):
     predictions.hist(bins=bins, figsize=(20, 15))
     plt.show()
+
+
+def train_random_forest_and_rank_features(X: pd.DataFrame, y: pd.Series, rf_params: Dict[str, Any]) -> pd.DataFrame:
+    """
+    Trains a RandomForestClassifier and ranks features by importance.
+
+    Args:
+        X (pd.DataFrame): Feature matrix.
+        y (pd.Series): Target variable.
+        rf_params (Dict[str, Any]): Parameters for RandomForestClassifier.
+
+    Returns:
+        pd.DataFrame: Feature importance ranking.
+    """
+    # Train RandomForest model
+    model = RandomForestClassifier(**rf_params)
+    model.fit(X, y)
+
+    # Get feature importance
+    feature_importances = model.feature_importances_
+
+    # Rank features
+    feature_ranking = pd.DataFrame(
+        {'Feature': X.columns, 'Importance': feature_importances})
+    feature_ranking = feature_ranking.sort_values(
+        by="Importance", ascending=False)
+
+    return feature_ranking
