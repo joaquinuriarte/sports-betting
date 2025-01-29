@@ -10,6 +10,8 @@ import yaml
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
 import seaborn as sns
+from sklearn.model_selection import KFold
+import numpy as np
 
 
 def load_entity(folder_path, file_name):
@@ -256,3 +258,87 @@ def correlation_analysis(X, method='pearson', threshold=0.9, show_heatmap=True):
         plt.show()
 
     return corr_matrix
+
+
+def cross_val_train(model_manager, yamls, train_dataset, n_splits=5):
+    """
+    Performs K-fold cross-validation training on a single model config (one YAML).
+    Returns a dictionary of averaged final metrics across folds.
+
+    Args:
+        model_manager: An object or module responsible for creating and managing models.
+        yamls (List[str]): A list containing exactly one YAML path/config.
+        train_dataset (ModelDataset): Dataset containing a list of Example objects.
+        n_splits (int): Number of folds for cross-validation.
+
+    Returns:
+        Dict[str, float]: A dictionary of averaged final metrics (e.g., val_loss, val_accuracy) across folds.
+    """
+
+    # Cross-validation
+    kf = KFold(n_splits=n_splits, shuffle=True, random_state=42)
+
+    fold_results = []
+
+    # Split over the indices of train_dataset.examples
+    num_examples = len(train_dataset.examples)
+    indices = range(num_examples)
+
+    if len(yamls) != 1:
+        raise ValueError(
+            f"cross_val_train only supports one model at a time.\n"
+            f"Expected 1 YAML, got {len(yamls)}."
+        )
+
+    for fold_idx, (train_index, val_index) in enumerate(kf.split(indices)):
+        # Create list of examples for each fold
+        train_examples = [train_dataset.examples[i] for i in train_index]
+        val_examples = [train_dataset.examples[i] for i in val_index]
+
+        # Wrap them back into ModelDataset objects
+        train_fold = ModelDataset(train_examples)
+        val_fold = ModelDataset(val_examples)
+
+        # Create a new model (make sure create_models returns a single model, not a list)
+        # Might return one model if yamls is length 1
+        model = model_manager.create_models(yamls)
+
+        # Optional: If you want separate TensorBoard logs for each fold:
+        fold_log_dir = f"logs/fit/{model.get_training_config().model_signature}/cross_val/fold_{fold_idx}"
+        model.set_tensorboard_log_dir(fold_log_dir)
+
+        # Train model using cross val folds
+        model_manager.train(
+            model,
+            [(train_fold, val_fold)],
+            save_after_training=True
+        )
+
+        # Get training history for model
+        history = model[0].get_training_history()
+
+        # Create a dict to hold final epoch metrics for this fold
+        fold_metrics = {}
+        for metric_name, values in history.items():
+            # values is a list of metric values for each epoch
+            # final value after last epoch:
+            final_val = values[-1] if len(values) > 0 else None
+            fold_metrics[metric_name] = final_val
+
+        fold_results.append(fold_metrics)
+
+    # Compute the average per metric across folds
+    if not fold_results:
+        raise ValueError("No folds were created or trained on.")
+
+    # Collect the metric names from the first fold
+    metric_names = fold_results[0].keys()
+    avg_metrics = {}
+
+    for metric_name in metric_names:
+        # gather each fold's final metric
+        fold_values = [fold_metrics[metric_name]
+                       for fold_metrics in fold_results]
+        avg_metrics[metric_name] = np.mean(fold_values)
+
+    return avg_metrics

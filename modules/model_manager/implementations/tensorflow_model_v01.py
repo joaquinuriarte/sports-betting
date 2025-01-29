@@ -27,6 +27,7 @@ class TensorFlowModelV01(IModel):
         self.model = self._initialize_model()
 
         # Store Model variables
+        self._log_dir_override: Optional[str] = None
         self.output_features: List[str] = self.model_config.architecture["output_features"]
         self.training_history: Optional[History] = None
 
@@ -120,6 +121,9 @@ class TensorFlowModelV01(IModel):
 
         metric = self.model_config.training.get("metrics", None)
         if metric is not None:
+            if isinstance(metric, str):
+                metric = [metric]
+
             metrics = metric
         else:
             raise ValueError(
@@ -129,7 +133,7 @@ class TensorFlowModelV01(IModel):
         model.compile(
             optimizer=self.model_config.training.get("optimizer", "adam"),
             loss=loss,
-            metrics=[metrics],
+            metrics=metrics,
         )
 
         return model
@@ -191,8 +195,13 @@ class TensorFlowModelV01(IModel):
         training_labels_tensor = tf.convert_to_tensor(training_label_array)
 
         # Setup tensorboard logs with model signature first
-        log_dir = "logs/fit/" + f"{self.model_config.model_signature}/" + \
-            datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        if self._log_dir_override:
+            # If user set a custom path, use it
+            log_dir = self._log_dir_override
+        else:
+            # Otherwise, build a default
+            log_dir = "logs/fit/" + f"{self.model_config.model_signature}/" + \
+                datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
         # Ensure the directory exists
         os.makedirs(log_dir, exist_ok=True)
@@ -391,3 +400,18 @@ class TensorFlowModelV01(IModel):
         history_dict: Dict[str, List[float]] = dict(
             self.training_history.history)
         return history_dict
+
+    def set_tensorboard_log_dir(self, log_dir: str) -> None:
+        """
+        Sets a custom log directory for TensorBoard logging.
+        If not set, the model will generate a default directory 
+        based on model signature and current date/time.
+        """
+        self._log_dir_override = log_dir
+
+    def get_tensorboard_log_dir(self) -> Optional[str]:
+        """
+        Returns the current custom log directory override, 
+        or None if none was set.
+        """
+        return self._log_dir_override
