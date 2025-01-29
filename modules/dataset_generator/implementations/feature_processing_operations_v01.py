@@ -9,7 +9,7 @@ from ..interfaces.feature_processor_operator_interface import (
 logging.basicConfig(level=logging.INFO)
 
 
-class TopNPlayersFeatureProcessorV0(IFeatureProcessorOperator):
+class TopNPlayersFeatureProcessorV01(IFeatureProcessorOperator):
     """
     A feature processor that generates feature vectors for games
     based on the top N players' statistics.
