@@ -342,3 +342,16 @@ def cross_val_train(model_manager, yamls, train_dataset, n_splits=5):
         avg_metrics[metric_name] = np.mean(fold_values)
 
     return avg_metrics
+
+
+def compute_f1(precision: float, recall: float) -> float:
+    """
+    Computes the F1-score given precision and recall.
+    F1 = 2 * (precision * recall) / (precision + recall)
+
+    If both precision and recall are zero, returns 0 to avoid division by zero.
+    """
+    if (precision + recall) == 0:
+        return 0.0
+
+    return 2 * (precision * recall) / (precision + recall)
