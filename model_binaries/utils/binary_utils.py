@@ -9,6 +9,7 @@ import pandas as pd
 import yaml
 import matplotlib.pyplot as plt
 from sklearn.ensemble import RandomForestClassifier
+import seaborn as sns
 
 
 def load_entity(folder_path, file_name):
@@ -197,3 +198,61 @@ def train_random_forest_and_rank_features(X: pd.DataFrame, y: pd.Series, rf_para
         by="Importance", ascending=False)
 
     return feature_ranking
+
+
+def correlation_analysis(X, method='pearson', threshold=0.9, show_heatmap=True):
+    """
+    Computes and displays correlation analysis results for a given DataFrame X.
+
+    Parameters
+    ----------
+    X : pd.DataFrame
+        The DataFrame containing your features.
+    method : str, optional
+        Correlation method to use. Options are 'pearson', 'kendall', or 'spearman'.
+        Default is 'pearson'.
+    threshold : float, optional
+        Absolute correlation threshold above which to highlight highly correlated pairs.
+        Default is 0.9.
+    show_heatmap : bool, optional
+        Whether to display a heatmap of the correlation matrix. Default is True.
+
+    Returns
+    -------
+    corr_matrix : pd.DataFrame
+        The computed correlation matrix.
+    """
+
+    # 1. Compute the correlation matrix
+    corr_matrix = X.corr(method=method)
+
+    # 2. Print or display the correlation matrix as needed
+    print("Correlation Matrix (method={}):\n".format(method), corr_matrix, "\n")
+
+    # 3. Identify pairs of features with correlation above the threshold
+    # We only want to look at each pair once, so we will restrict
+    #   row_index < column_index in the iteration.
+    highly_correlated_pairs = []
+    columns = corr_matrix.columns
+    for i in range(len(columns)):
+        for j in range(i + 1, len(columns)):
+            if abs(corr_matrix.iloc[i, j]) > threshold:
+                pair_info = (columns[i], columns[j], corr_matrix.iloc[i, j])
+                highly_correlated_pairs.append(pair_info)
+
+    if highly_correlated_pairs:
+        print(f"Features with |correlation| > {threshold}:")
+        for feature1, feature2, corr_value in highly_correlated_pairs:
+            print(f"  {feature1} and {feature2} => correlation: {corr_value:.3f}")
+    else:
+        print(
+            f"No pairs of features exceed the correlation threshold of {threshold}")
+
+    # 4. (Optional) Show a correlation heatmap
+    if show_heatmap:
+        plt.figure(figsize=(10, 8))
+        sns.heatmap(corr_matrix, annot=False, cmap='coolwarm', vmin=-1, vmax=1)
+        plt.title(f"{method.capitalize()} Correlation Heatmap")
+        plt.show()
+
+    return corr_matrix
