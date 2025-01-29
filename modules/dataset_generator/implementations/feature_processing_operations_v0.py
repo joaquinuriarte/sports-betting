@@ -37,7 +37,8 @@ class TopNPlayersFeatureProcessorV0(IFeatureProcessorOperator):
         recent_games = (
             df[(df["TEAM_ID"] == team_id) & (df["GAME_DATE_EST"] < game_date)]
             .sort_values(by="GAME_DATE_EST", ascending=False)
-            .head(self.look_back_window)
+            # +1 because we will drop the most recent game as it has stats that the model should not use to predict
+            .head(self.look_back_window + 1)
         )
         return recent_games
 
@@ -45,7 +46,7 @@ class TopNPlayersFeatureProcessorV0(IFeatureProcessorOperator):
         self, df: pd.DataFrame, team_id: int, game_date: pd.Timestamp
     ) -> Optional[pd.DataFrame]:
         """
-        Gets the top N players' stats for a team within the past 10 games.
+        Gets the top N (self.top_n_players) players' stats for a team within the past M (self.look_back_window) games.
 
         Args:
             df (pd.DataFrame): DataFrame containing game logs with columns for PLAYER_ID, team ID, and player stats.
@@ -61,6 +62,9 @@ class TopNPlayersFeatureProcessorV0(IFeatureProcessorOperator):
         # Check if there are enough games to proceed
         if recent_games.shape[0] < self.look_back_window:
             return None  # Not enough games to generate stats
+
+        # Drop the most recent game
+        recent_games.iloc[1:]
 
         # Group by PLAYER_ID and calculate the mean of player stats columns
         player_stats = (
