@@ -106,8 +106,8 @@ model:
     metrics: accuracy
     split_strategy:
       strategy: random_split
-      train_split: 70
-      val_split: 15
-      test_split: 15
-      use_val: true
+      train_split: 90
+      val_split: 0
+      test_split: 10
+      use_val: false
       use_test: true
