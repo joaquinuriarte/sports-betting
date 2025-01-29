@@ -165,6 +165,6 @@ def get_model_weights_paths(model: str, yaml_path_list: List[str]) -> List[str]:
     return weights_paths
 
 
-def graph_predictions(predictions):
-    predictions.hist(bins=75, figsize=(20, 15))
+def graph_entity(predictions, bins):
+    predictions.hist(bins=bins, figsize=(20, 15))
     plt.show()
