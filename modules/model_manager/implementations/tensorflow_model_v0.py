@@ -198,8 +198,13 @@ class TensorFlowModelV0(IModel):
         training_labels_tensor = tf.convert_to_tensor(training_label_array)
 
         # Setup tensorboard logs with model signature first
-        log_dir = "logs/fit/" + f"{self.model_config.model_signature}/" + \
-            datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
+        if self._log_dir_override:
+            # If user set a custom path, use it
+            log_dir = self._log_dir_override
+        else:
+            # Otherwise, build a default
+            log_dir = "logs/fit/" + f"{self.model_config.model_signature}/" + \
+                datetime.datetime.now().strftime("%Y%m%d-%H%M%S")
 
         # Ensure the directory exists
         os.makedirs(log_dir, exist_ok=True)

@@ -304,8 +304,8 @@ def cross_val_train(model_manager, yamls, train_dataset, n_splits=5):
         model = model_manager.create_models(yamls)
 
         # Optional: If you want separate TensorBoard logs for each fold:
-        fold_log_dir = f"logs/fit/{model.get_training_config().model_signature}/cross_val/fold_{fold_idx}"
-        model.set_tensorboard_log_dir(fold_log_dir)
+        fold_log_dir = f"logs/fit/{model[0].get_training_config().model_signature}/cross_val/fold_{fold_idx}"
+        model[0].set_tensorboard_log_dir(fold_log_dir)
 
         # Train model using cross val folds
         model_manager.train(
