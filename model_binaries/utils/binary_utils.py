@@ -1,6 +1,6 @@
 from sklearn.metrics import (
     mean_squared_error, mean_absolute_error,
-    accuracy_score, precision_score, recall_score, f1_score
+    accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 )
 from typing import List, Counter
 import os
@@ -361,24 +361,33 @@ def compute_f1(precision: float, recall: float) -> float:
     return 2 * (precision * recall) / (precision + recall)
 
 
-def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, final_score_B, target_final_score_A, target_final_score_B) -> dict:
+def evaluate_modelV01_predictions(
+    predictions: pd.DataFrame,
+    final_score_A: str,
+    final_score_B: str,
+    target_final_score_A: str,
+    target_final_score_B: str
+) -> dict:
     """
-    Computes regression metrics (MSE, MAE) for predicting final scores,
-    and classification metrics (accuracy, precision, recall, F1)
-    by converting score predictions to a binary 'Team A Wins' vs. 'Team B Wins' label.
+    Computes:
+      - Regression metrics (MSE, MAE) for predicting final scores
+      - Classification metrics (accuracy, precision, recall, F1, AUC)
+        by converting score predictions to a binary 'Team A Wins' (1) vs. 'Team B Wins' (0).
 
-    Assumes the dataframe has these columns:
-      - 'actual_A' : float or int, true final score for Team A
-      - 'actual_B' : float or int, true final score for Team B
-      - 'pred_A'   : float or int, predicted final score for Team A
-      - 'pred_B'   : float or int, predicted final score for Team B
+    Assumes the dataframe 'predictions' has columns:
+      - target_final_score_A : actual final score for Team A
+      - target_final_score_B : actual final score for Team B
+      - final_score_A        : predicted final score for Team A
+      - final_score_B        : predicted final score for Team B
 
     Returns:
         A dictionary with keys:
-        'mse', 'mae', 'accuracy', 'precision', 'recall', 'f1'
+        'mse_A', 'mse_B', 'mae_A', 'mae_B',
+        'combined_mse', 'combined_mae',
+        'accuracy', 'precision', 'recall', 'f1', 'auc'
     """
 
-    # 1) Compute regression metrics: MSE and MAE
+    # 1) Compute regression metrics: MSE and MAE for each team
     mse_A = mean_squared_error(
         predictions[target_final_score_A], predictions[final_score_A])
     mse_B = mean_squared_error(
@@ -388,7 +397,7 @@ def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, fina
     mae_B = mean_absolute_error(
         predictions[target_final_score_B], predictions[final_score_B])
 
-    # Single MSE/MAE across both outputs combined, you can do:
+    # You can also compute a single "combined" MSE/MAE across both outputs:
     combined_mse = mean_squared_error(
         np.hstack([predictions[target_final_score_A],
                   predictions[target_final_score_B]]),
@@ -400,21 +409,34 @@ def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, fina
         np.hstack([predictions[final_score_A], predictions[final_score_B]])
     )
 
-    # 2) Convert to a binary classification:
-    #    Actual label = 1 if actual_A > actual_B else 0
-    #    Pred label   = 1 if pred_A   > pred_B   else 0
+    # 2) Convert to binary classification:
+    #    Actual label = 1 if Team A's actual > Team B's actual
+    #    Pred label   = 1 if Team A's pred   > Team B's pred
     y_true = (predictions[target_final_score_A] >
               predictions[target_final_score_B]).astype(int)
     y_pred = (predictions[final_score_A] >
               predictions[final_score_B]).astype(int)
 
-    # 3) Compute classification metrics
+    # 3) Classification metrics
     accuracy = accuracy_score(y_true, y_pred)
     precision = precision_score(y_true, y_pred, zero_division=0)
     recall = recall_score(y_true, y_pred, zero_division=0)
     f1 = f1_score(y_true, y_pred, zero_division=0)
 
-    # 4) Return results
+    # 4) AUC:
+    # We do not have direct probabilities of Team A winning. Instead, we treat
+    # the predicted margin (Team A pred_score - Team B pred_score) as a continuous measure.
+    # Then, positive margin => more likely to predict "Team A wins".
+    y_margin = predictions[final_score_A] - predictions[final_score_B]
+
+    # Check if y_true has both 0 and 1 classes (otherwise roc_auc_score may fail)
+    if len(np.unique(y_true)) == 2:
+        auc = roc_auc_score(y_true, y_margin)
+    else:
+        # If your data for some reason doesn't contain both classes, handle gracefully:
+        auc = float('nan')
+
+    # 5) Return results
     results = {
         "mse_A": mse_A,
         "mse_B": mse_B,
@@ -425,7 +447,8 @@ def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, fina
         "accuracy": accuracy,
         "precision": precision,
         "recall": recall,
-        "f1": f1
+        "f1": f1,
+        "auc": auc
     }
 
     return results
