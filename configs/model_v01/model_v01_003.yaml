@@ -2,117 +2,117 @@ model:
   architecture:
     input_size: 176
     layers:
-    - activation: ReLU
-      in_features: 176
-      type: Dense
-      units: 512
-    - activation: ReLU
-      in_features: 512
-      type: Dense
-      units: 1024
-    - in_features: 1024
-      type: BatchNormalization
-    - activation: ReLU
-      in_features: 1024
-      type: Dense
-      units: 1024
-    - activation: ReLU
-      in_features: 1024
-      type: Dense
-      units: 512
-    - activation: ReLU
-      in_features: 512
-      type: Dense
-      units: 256
-    - activation: ReLU
-      in_features: 256
-      type: Dense
-      units: 128
-    - activation: ReLU
-      in_features: 128
-      type: Dense
-      units: 64
-    - activation: ReLU
-      in_features: 64
-      type: Dense
-      units: 2
+      - activation: ReLU
+        in_features: 176
+        type: Dense
+        units: 512
+      - activation: ReLU
+        in_features: 512
+        type: Dense
+        units: 1024
+      - in_features: 1024
+        type: BatchNormalization
+      - activation: ReLU
+        in_features: 1024
+        type: Dense
+        units: 1024
+      - activation: ReLU
+        in_features: 1024
+        type: Dense
+        units: 512
+      - activation: ReLU
+        in_features: 512
+        type: Dense
+        units: 256
+      - activation: ReLU
+        in_features: 256
+        type: Dense
+        units: 128
+      - activation: ReLU
+        in_features: 128
+        type: Dense
+        units: 64
+      - activation: ReLU
+        in_features: 64
+        type: Dense
+        units: 2
     output_features:
-    - final_score_A
-    - final_score_B
+      - final_score_A
+      - final_score_B
     output_size: 2
     prediction_threshold: null
     type: tensorflow_model_v01
   dataset:
     joins:
-    - keys:
-      - GAME_ID
-      left: games
-      right: game_details
-      type: left
+      - keys:
+          - GAME_ID
+        left: games
+        right: game_details
+        type: left
     sources:
-    - columns:
-      - dtype: datetime
-        name: GAME_DATE_EST
-      - dtype: int
-        name: GAME_ID
-      - dtype: int
-        name: HOME_TEAM_ID
-      - dtype: int
-        name: VISITOR_TEAM_ID
-      - dtype: float
-        name: PTS_home
-      - dtype: float
-        name: PTS_away
-      file_type: csv
-      name: games
-      path: /Users/joaquinuriarte/Desktop/dataset/games.csv
-    - columns:
-      - dtype: int
-        name: GAME_ID
-      - dtype: int
-        name: TEAM_ID
-      - dtype: int
-        name: PLAYER_ID
-      - dtype: string
-        name: MIN
-        regex: ^(?:\d{1,2}:\d{2}|\d{1,2}:\d{2}:\d{2})$
-      - dtype: float
-        name: PTS
-      - dtype: float
-        name: AST
-      - dtype: float
-        name: TO
-      - dtype: float
-        name: PLUS_MINUS
-      - dtype: float
-        name: OREB
-      - dtype: float
-        name: DREB
-      - dtype: float
-        name: PF
-      - dtype: float
-        name: FG3_PCT
-      - dtype: float
-        name: FG_PCT
-      - dtype: float
-        name: FT_PCT
-      file_type: csv
-      name: game_details
-      path: /Users/joaquinuriarte/Desktop/dataset/games_details.csv
+      - columns:
+          - dtype: datetime
+            name: GAME_DATE_EST
+          - dtype: int
+            name: GAME_ID
+          - dtype: int
+            name: HOME_TEAM_ID
+          - dtype: int
+            name: VISITOR_TEAM_ID
+          - dtype: float
+            name: PTS_home
+          - dtype: float
+            name: PTS_away
+        file_type: csv
+        name: games
+        path: /Users/joaquinuriarte/Desktop/dataset/games.csv
+      - columns:
+          - dtype: int
+            name: GAME_ID
+          - dtype: int
+            name: TEAM_ID
+          - dtype: int
+            name: PLAYER_ID
+          - dtype: string
+            name: MIN
+            regex: ^(?:\d{1,2}:\d{2}|\d{1,2}:\d{2}:\d{2})$
+          - dtype: float
+            name: PTS
+          - dtype: float
+            name: AST
+          - dtype: float
+            name: TO
+          - dtype: float
+            name: PLUS_MINUS
+          - dtype: float
+            name: OREB
+          - dtype: float
+            name: DREB
+          - dtype: float
+            name: PF
+          - dtype: float
+            name: FG3_PCT
+          - dtype: float
+            name: FG_PCT
+          - dtype: float
+            name: FT_PCT
+        file_type: csv
+        name: game_details
+        path: /Users/joaquinuriarte/Desktop/dataset/games_details.csv
   feature_processor:
     look_back_window: 10
     player_stats_columns:
-    - MIN
-    - PTS
-    - AST
-    - TO
-    - PLUS_MINUS
-    - OREB
-    - DREB
-    - PF
-    - FG3_PCT
-    - FG_PCT
-    - FT_PCT
+      - MIN
+      - PTS
+      - AST
+      - TO
+      - PLUS_MINUS
+      - OREB
+      - DREB
+      - PF
+      - FG3_PCT
+      - FG_PCT
+      - FT_PCT
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v01
@@ -123,16 +123,16 @@ model:
     epochs: 20
     learning_rate: 0.001
     loss_function:
-    - mean_squarederror
-    - true
+      - mean_squarederror
+      - true
     metrics:
-    - mse
-    - mae
+      - mse
+      - mae
     optimizer: Adam
     split_strategy:
       strategy: random_split
       test_split: 10
-      train_split: 90
+      train_split: 80
       use_test: true
-      use_val: false
-      val_split: 0
+      use_val: true
+      val_split: 10
