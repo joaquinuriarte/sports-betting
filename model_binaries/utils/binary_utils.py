@@ -361,10 +361,10 @@ def compute_f1(precision: float, recall: float) -> float:
     return 2 * (precision * recall) / (precision + recall)
 
 
-def evaluate_modelV01_predictions(predictions: pd.DataFrame) -> dict:
+def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, final_score_B, target_final_score_A, target_final_score_B) -> dict:
     """
     Computes regression metrics (MSE, MAE) for predicting final scores,
-    and classification metrics (accuracy, precision, recall, F1) 
+    and classification metrics (accuracy, precision, recall, F1)
     by converting score predictions to a binary 'Team A Wins' vs. 'Team B Wins' label.
 
     Assumes the dataframe has these columns:
@@ -379,26 +379,34 @@ def evaluate_modelV01_predictions(predictions: pd.DataFrame) -> dict:
     """
 
     # 1) Compute regression metrics: MSE and MAE
-    mse_A = mean_squared_error(predictions["actual_A"], predictions["pred_A"])
-    mse_B = mean_squared_error(predictions["actual_B"], predictions["pred_B"])
-    mae_A = mean_absolute_error(predictions["actual_A"], predictions["pred_A"])
-    mae_B = mean_absolute_error(predictions["actual_B"], predictions["pred_B"])
+    mse_A = mean_squared_error(
+        predictions[target_final_score_A], predictions[final_score_A])
+    mse_B = mean_squared_error(
+        predictions[target_final_score_B], predictions[final_score_B])
+    mae_A = mean_absolute_error(
+        predictions[target_final_score_A], predictions[final_score_A])
+    mae_B = mean_absolute_error(
+        predictions[target_final_score_B], predictions[final_score_B])
 
     # Single MSE/MAE across both outputs combined, you can do:
     combined_mse = mean_squared_error(
-        np.hstack([predictions["actual_A"], predictions["actual_B"]]),
-        np.hstack([predictions["pred_A"], predictions["pred_B"]])
+        np.hstack([predictions[target_final_score_A],
+                  predictions[target_final_score_B]]),
+        np.hstack([predictions[final_score_A], predictions[final_score_B]])
     )
     combined_mae = mean_absolute_error(
-        np.hstack([predictions["actual_A"], predictions["actual_B"]]),
-        np.hstack([predictions["pred_A"], predictions["pred_B"]])
+        np.hstack([predictions[target_final_score_A],
+                  predictions[target_final_score_B]]),
+        np.hstack([predictions[final_score_A], predictions[final_score_B]])
     )
 
     # 2) Convert to a binary classification:
     #    Actual label = 1 if actual_A > actual_B else 0
     #    Pred label   = 1 if pred_A   > pred_B   else 0
-    y_true = (predictions["actual_A"] > predictions["actual_B"]).astype(int)
-    y_pred = (predictions["pred_A"] > predictions["pred_B"]).astype(int)
+    y_true = (predictions[target_final_score_A] >
+              predictions[target_final_score_B]).astype(int)
+    y_pred = (predictions[final_score_A] >
+              predictions[final_score_B]).astype(int)
 
     # 3) Compute classification metrics
     accuracy = accuracy_score(y_true, y_pred)
