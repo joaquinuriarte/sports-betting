@@ -415,8 +415,6 @@ def evaluate_modelV01_predictions(predictions: pd.DataFrame, final_score_A, fina
     f1 = f1_score(y_true, y_pred, zero_division=0)
 
     # 4) Return results
-    # You can choose how you structure the regression metrics
-    # (e.g., separate for Team A and Team B, or combined).
     results = {
         "mse_A": mse_A,
         "mse_B": mse_B,
