@@ -1,3 +1,7 @@
+from sklearn.metrics import (
+    mean_squared_error, mean_absolute_error,
+    accuracy_score, precision_score, recall_score, f1_score
+)
 from typing import List, Counter
 import os
 import pickle
@@ -355,3 +359,67 @@ def compute_f1(precision: float, recall: float) -> float:
         return 0.0
 
     return 2 * (precision * recall) / (precision + recall)
+
+
+def evaluate_modelV01_predictions(predictions: pd.DataFrame) -> dict:
+    """
+    Computes regression metrics (MSE, MAE) for predicting final scores,
+    and classification metrics (accuracy, precision, recall, F1) 
+    by converting score predictions to a binary 'Team A Wins' vs. 'Team B Wins' label.
+
+    Assumes the dataframe has these columns:
+      - 'actual_A' : float or int, true final score for Team A
+      - 'actual_B' : float or int, true final score for Team B
+      - 'pred_A'   : float or int, predicted final score for Team A
+      - 'pred_B'   : float or int, predicted final score for Team B
+
+    Returns:
+        A dictionary with keys:
+        'mse', 'mae', 'accuracy', 'precision', 'recall', 'f1'
+    """
+
+    # 1) Compute regression metrics: MSE and MAE
+    mse_A = mean_squared_error(predictions["actual_A"], predictions["pred_A"])
+    mse_B = mean_squared_error(predictions["actual_B"], predictions["pred_B"])
+    mae_A = mean_absolute_error(predictions["actual_A"], predictions["pred_A"])
+    mae_B = mean_absolute_error(predictions["actual_B"], predictions["pred_B"])
+
+    # Single MSE/MAE across both outputs combined, you can do:
+    combined_mse = mean_squared_error(
+        np.hstack([predictions["actual_A"], predictions["actual_B"]]),
+        np.hstack([predictions["pred_A"], predictions["pred_B"]])
+    )
+    combined_mae = mean_absolute_error(
+        np.hstack([predictions["actual_A"], predictions["actual_B"]]),
+        np.hstack([predictions["pred_A"], predictions["pred_B"]])
+    )
+
+    # 2) Convert to a binary classification:
+    #    Actual label = 1 if actual_A > actual_B else 0
+    #    Pred label   = 1 if pred_A   > pred_B   else 0
+    y_true = (predictions["actual_A"] > predictions["actual_B"]).astype(int)
+    y_pred = (predictions["pred_A"] > predictions["pred_B"]).astype(int)
+
+    # 3) Compute classification metrics
+    accuracy = accuracy_score(y_true, y_pred)
+    precision = precision_score(y_true, y_pred, zero_division=0)
+    recall = recall_score(y_true, y_pred, zero_division=0)
+    f1 = f1_score(y_true, y_pred, zero_division=0)
+
+    # 4) Return results
+    # You can choose how you structure the regression metrics
+    # (e.g., separate for Team A and Team B, or combined).
+    results = {
+        "mse_A": mse_A,
+        "mse_B": mse_B,
+        "mae_A": mae_A,
+        "mae_B": mae_B,
+        "combined_mse": combined_mse,
+        "combined_mae": combined_mae,
+        "accuracy": accuracy,
+        "precision": precision,
+        "recall": recall,
+        "f1": f1
+    }
+
+    return results
