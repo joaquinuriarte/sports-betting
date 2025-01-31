@@ -16,6 +16,7 @@ from sklearn.ensemble import RandomForestClassifier
 import seaborn as sns
 from sklearn.model_selection import KFold
 import numpy as np
+import random
 
 
 def load_entity(folder_path, file_name):
@@ -452,3 +453,150 @@ def evaluate_modelV01_predictions(
     }
 
     return results
+
+
+def plot_margin_distributions(
+    df: pd.DataFrame,
+    pred_score_a_col: str,
+    pred_score_b_col: str,
+    actual_score_a_col: str,
+    actual_score_b_col: str
+):
+    """
+    Plots histograms for predicted and actual margins, and a scatter plot of
+    (actual_margin vs. predicted_margin), color-coded by whether Team A actually won.
+
+    Args:
+        df: DataFrame containing at least four columns:
+            - pred_score_a_col
+            - pred_score_b_col
+            - actual_score_a_col
+            - actual_score_b_col
+        pred_score_a_col: Name of the column for Team A's predicted score
+        pred_score_b_col: Name of the column for Team B's predicted score
+        actual_score_a_col: Name of the column for Team A's actual score
+        actual_score_b_col: Name of the column for Team B's actual score
+    """
+    # 1. Compute predicted and actual margins
+    df["pred_margin"] = df[pred_score_a_col] - df[pred_score_b_col]
+    df["actual_margin"] = df[actual_score_a_col] - df[actual_score_b_col]
+
+    # 2. Plot histograms of predicted and actual margins side-by-side
+    fig, axes = plt.subplots(1, 2, figsize=(12, 5))
+    axes[0].hist(df["pred_margin"], bins=30, color="blue", alpha=0.7)
+    axes[0].set_title("Predicted Margin Distribution (A - B)")
+    axes[0].set_xlabel("Predicted Margin")
+    axes[0].set_ylabel("Count")
+
+    axes[1].hist(df["actual_margin"], bins=30, color="green", alpha=0.7)
+    axes[1].set_title("Actual Margin Distribution (A - B)")
+    axes[1].set_xlabel("Actual Margin")
+    axes[1].set_ylabel("Count")
+
+    plt.tight_layout()
+    plt.show()
+
+    # 3. Scatter plot: x = actual_margin, y = pred_margin
+    #    Color by whether Team A actually won
+    team_a_won = (df[actual_score_a_col] > df[actual_score_b_col])
+    # Map True-> 'blue', False-> 'red' for example
+    colors = np.where(team_a_won, "blue", "red")
+
+    plt.figure(figsize=(6, 6))
+    plt.scatter(df["actual_margin"], df["pred_margin"], c=colors, alpha=0.6)
+    plt.axline((0, 0), slope=1, color='gray', linestyle='--')  # diagonal line
+    plt.xlabel("Actual Margin (A - B)")
+    plt.ylabel("Predicted Margin (A - B)")
+    plt.title("Scatter Plot: Actual vs. Predicted Margins (Colored by A Wins)")
+
+    plt.show()
+
+    # Optionally, remove the temporary columns to keep df clean
+    df.drop(columns=["pred_margin", "actual_margin"],
+            inplace=True, errors="ignore")
+
+
+def swap_team_sides_in_dataset(
+    dataset: ModelDataset,
+    team_a_prefix: str = "A_",
+    team_b_prefix: str = "B_",
+    label_a_name: str = "A_final_score",
+    label_b_name: str = "B_final_score",
+    add_home_feature: bool = True,
+    swap_probability: float = 0.5
+) -> ModelDataset:
+    """
+    Randomly swaps the columns corresponding to "Team A" and "Team B" in each Example
+    with probability `swap_probability`.
+
+    - Keeps the chunk of columns that start with 'A_' together and the chunk that
+      starts with 'B_' together.
+    - If swapped, also swaps their label columns (A_final_score <-> B_final_score).
+    - Optionally adds a feature 'is_home' which is 1 if the chunk is 'A_' or 0 if it's 'B_'
+      after we do the swap or not.
+
+    Args:
+        dataset: A ModelDataset containing a list of Examples, each with .features dict
+        team_a_prefix: Prefix for Team A columns (default "A_")
+        team_b_prefix: Prefix for Team B columns (default "B_")
+        label_a_name: Name of label column for Team A's final score
+        label_b_name: Name of label column for Team B's final score
+        add_home_feature: Whether to add a "IS_HOME" feature or not
+        swap_probability: Probability of swapping the chunk for a given example
+
+    Returns:
+        A new ModelDataset with swapped columns for some examples.
+    """
+
+    new_examples = []
+    for example in dataset.examples:
+        # Copy the features to modify them
+        # shallow copy is fine if values are lists
+        new_features = dict(example.features)
+
+        # Decide if we swap for this example
+        if random.random() < swap_probability:
+            # 1) Gather A_* keys and B_* keys
+            a_keys = [k for k in new_features if k.startswith(team_a_prefix)]
+            b_keys = [k for k in new_features if k.startswith(team_b_prefix)]
+
+            temp_store_a = {}
+            for a_k in a_keys:
+                temp_store_a[a_k] = new_features.pop(a_k)
+
+            temp_store_b = {}
+            for b_k in b_keys:
+                temp_store_b[b_k] = new_features.pop(b_k)
+
+            # Now reinsert them swapped:
+            for b_k, b_val in temp_store_b.items():
+                # e.g. "B_PTS_1" -> "A_PTS_1" if you share the same suffix
+                new_key = team_a_prefix + b_k[len(team_b_prefix):]
+                new_features[new_key] = b_val
+
+            for a_k, a_val in temp_store_a.items():
+                # e.g. "A_PTS_1" -> "B_PTS_1"
+                new_key = team_b_prefix + a_k[len(team_a_prefix):]
+                new_features[new_key] = a_val
+
+            # 5) Swap the label columns
+            if label_a_name in new_features and label_b_name in new_features:
+                old_a_val = new_features[label_a_name]
+                old_b_val = new_features[label_b_name]
+                new_features[label_a_name] = old_b_val
+                new_features[label_b_name] = old_a_val
+
+            # 6) Possibly add "IS_HOME" = 0 if swapped, 1 if not, etc.
+            if add_home_feature:
+                # In swapped scenario => Team A is actually the away team
+                # We'll define "IS_HOME=1" means "Team A was home"
+                # but now that we've swapped, we set "IS_HOME=0"
+                new_features["IS_HOME"] = [0]
+        else:
+            # no swap
+            if add_home_feature:
+                new_features["IS_HOME"] = [1]
+
+        new_examples.append(Example(features=new_features))
+
+    return ModelDataset(examples=new_examples)
