@@ -9,6 +9,7 @@ import os
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
+from modules.model_manager.implementations.model_utils.custom_loss_fxns import mse_plus_hinge_margin_loss
 
 
 class TensorFlowModelV0(IModel):
@@ -49,10 +50,14 @@ class TensorFlowModelV0(IModel):
         layers_config = self.model_config.architecture["layers"]
         for layer_config in layers_config[:-1]:
             if layer_config["type"] == "Dense":
+                if layer_config.get("l2_reg", None) is not None:
+                    kernel_regularizer = tf.keras.regularizers.l2(
+                        layer_config.get("l2_reg", None))
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None) if layer_config.get(
                         "activation", None) != "None" else None,
+                    kernel_regularizer=kernel_regularizer
                 )(x)
             elif layer_config["type"] == "BatchNormalization":
                 x = tf.keras.layers.BatchNormalization(
@@ -117,6 +122,8 @@ class TensorFlowModelV0(IModel):
             loss = tf.keras.losses.MeanSquaredError()
         elif loss_fxn[0] == "categorical_crossentropy":
             loss = tf.keras.losses.CategoricalCrossentropy()
+        elif loss_fxn[0] == "mse_plus_hinge_margin_loss":
+            loss = mse_plus_hinge_margin_loss(alpha=loss_fxn[2])
         else:
             raise ValueError(
                 f"Loss function type '{loss_fxn['loss_function']}' is not implemented."
