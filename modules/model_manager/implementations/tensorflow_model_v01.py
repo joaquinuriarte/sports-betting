@@ -50,6 +50,8 @@ class TensorFlowModelV01(IModel):
                 if layer_config.get("l2_reg", None) is not None:
                     kernel_regularizer = tf.keras.regularizers.l2(
                         layer_config.get("l2_reg", None))
+                else:
+                    kernel_regularizer = None
                 x = tf.keras.layers.Dense(
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None) if layer_config.get(
