@@ -141,16 +141,16 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v01
-  model_signature: 3dd9eda383bd706d59aef0253eb63d6b
+  model_signature: 98bc8ccf4fb605a83bf72d54623f6d2a
   strategy: join_based
   training:
     batch_size: 32
     epochs: 20
     learning_rate: 0.0001
     loss_function:
-    - mean_squarederror
+    - mse_plus_hinge_margin_loss
     - true
-    - 0.3
+    - 0.65
     metrics:
     - mse
     - mae

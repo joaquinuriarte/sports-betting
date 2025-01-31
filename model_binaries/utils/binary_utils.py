@@ -505,6 +505,8 @@ def plot_margin_distributions(
     plt.figure(figsize=(6, 6))
     plt.scatter(df["actual_margin"], df["pred_margin"], c=colors, alpha=0.6)
     plt.axline((0, 0), slope=1, color='gray', linestyle='--')  # diagonal line
+    # Add horizontal line at y=0
+    plt.axhline(0, color='gray', linestyle='--')
     plt.xlabel("Actual Margin (A - B)")
     plt.ylabel("Predicted Margin (A - B)")
     plt.title("Scatter Plot: Actual vs. Predicted Margins (Colored by A Wins)")
