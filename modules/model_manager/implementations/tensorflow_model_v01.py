@@ -119,6 +119,8 @@ class TensorFlowModelV01(IModel):
                 loss = tf.keras.losses.BinaryCrossentropy(from_logits=False)
         elif loss_fxn[0] == "mean_squarederror":
             loss = tf.keras.losses.MeanSquaredError()
+        elif loss_fxn[0] == "mean_absolute_error":
+            loss = tf.keras.losses.MeanAbsoluteError()
         elif loss_fxn[0] == "categorical_crossentropy":
             loss = tf.keras.losses.CategoricalCrossentropy()
         elif loss_fxn[0] == "mse_plus_hinge_margin_loss":
