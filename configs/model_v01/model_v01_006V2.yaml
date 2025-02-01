@@ -141,7 +141,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v01
-  model_signature:
+  model_signature: d5c78cef33e3af060b68a1da094f738e
   strategy: join_based
   training:
     batch_size: 32
