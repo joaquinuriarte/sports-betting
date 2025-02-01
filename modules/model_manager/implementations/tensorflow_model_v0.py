@@ -9,7 +9,7 @@ import os
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
-from modules.model_manager.implementations.model_utils.custom_loss_fxns import mse_plus_hinge_margin_loss
+from modules.model_manager.implementations.model_utils.custom_loss_fxns import mse_plus_hinge_margin_loss, margin_sensitive_hinge_loss
 
 
 class TensorFlowModelV0(IModel):
@@ -129,7 +129,7 @@ class TensorFlowModelV0(IModel):
         elif loss_fxn[0] == "mse_plus_hinge_margin_loss":
             loss = mse_plus_hinge_margin_loss(alpha=loss_fxn[2])
         elif loss_fxn[0] == "margin_sensitive_hinge_loss":
-            loss = mse_plus_hinge_margin_loss(
+            loss = margin_sensitive_hinge_loss(
                 alpha=loss_fxn[2], delta=loss_fxn[3])
         else:
             raise ValueError(

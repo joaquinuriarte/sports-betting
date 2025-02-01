@@ -413,7 +413,10 @@ def evaluate_modelV01_predictions(
     # 2) Convert to binary classification:
     #    Actual label = 1 if Team A's actual > Team B's actual
     #    Pred label   = 1 if Team A's pred   > Team B's pred
-    ç
+    y_true = (predictions[target_final_score_A] >
+              predictions[target_final_score_B]).astype(int)
+    y_pred = (predictions[final_score_A] >
+              predictions[final_score_B]).astype(int)
 
     # 3) Classification metrics
     accuracy = accuracy_score(y_true, y_pred)
