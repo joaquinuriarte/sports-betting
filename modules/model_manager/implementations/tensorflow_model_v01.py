@@ -125,6 +125,9 @@ class TensorFlowModelV01(IModel):
             loss = tf.keras.losses.CategoricalCrossentropy()
         elif loss_fxn[0] == "mse_plus_hinge_margin_loss":
             loss = mse_plus_hinge_margin_loss(alpha=loss_fxn[2])
+        elif loss_fxn[0] == "margin_sensitive_hinge_loss":
+            loss = mse_plus_hinge_margin_loss(
+                alpha=loss_fxn[2], delta=loss_fxn[3])
         else:
             raise ValueError(
                 f"Loss function type '{loss_fxn['loss_function']}' is not implemented."

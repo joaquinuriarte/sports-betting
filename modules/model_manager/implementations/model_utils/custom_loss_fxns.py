@@ -18,7 +18,7 @@ def mse_plus_hinge_margin_loss(alpha=1.0):
     return loss_fn
 
 
-def margin_sensitive_hinge_loss(delta=5.0):
+def margin_sensitive_hinge_loss(alpha=1.0, delta=5.0):
     def loss_fn(y_true, y_pred):
         # 1) Mean Squared Error
         mse_value = tf.reduce_mean(tf.square(y_true - y_pred))
@@ -30,5 +30,5 @@ def margin_sensitive_hinge_loss(delta=5.0):
         product = actual_margin * pred_margin
         # margin-sensitive hinge
         losses = tf.nn.relu(delta - product)
-        return mse_value + tf.reduce_mean(losses)
+        return mse_value + alpha * tf.reduce_mean(losses)
     return loss_fn
