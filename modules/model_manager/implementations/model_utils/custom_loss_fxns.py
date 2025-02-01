@@ -30,5 +30,6 @@ def margin_sensitive_hinge_loss(alpha=1.0, delta=5.0):
         product = actual_margin * pred_margin
         # margin-sensitive hinge
         losses = tf.nn.relu(delta - product)
+        
         return mse_value + alpha * tf.reduce_mean(losses)
     return loss_fn
