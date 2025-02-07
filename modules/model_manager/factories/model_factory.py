@@ -2,7 +2,7 @@ from modules.interfaces.factory_interface import IFactory
 from modules.model_manager.interfaces.model_interface import IModel
 from modules.model_manager.implementations.tensorflow_model_v0 import TensorFlowModelV0
 from modules.model_manager.implementations.tensorflow_model_v01 import TensorFlowModelV01
-
+from modules.model_manager.implementations.tensorflow_model_v1 import TensorFlowModelV1
 from typing import Any
 
 
@@ -36,5 +36,12 @@ class ModelFactory(IFactory[IModel]):
                 raise ValueError(
                     "model_config must be provided to create a model")
             return TensorFlowModelV01(model_config)
+         elif type_name == "tensorflow_model_v1":
+            # Retrieve the model_config from args if present
+            model_config = kwargs.get("model_config")
+            if model_config is None:
+                raise ValueError(
+                    "model_config must be provided to create a model")
+            return TensorFlowModelV1(model_config)
         else:
             raise ValueError(f"Unsupported model type: {type_name}")
