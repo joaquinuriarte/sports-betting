@@ -147,7 +147,7 @@ model:
     epochs: 10000
     learning_rate: 0.0003
     loss_function:
-      - CategoricalCrossentropy
+      - categorical_crossentropy
       - null
       - null
       - null

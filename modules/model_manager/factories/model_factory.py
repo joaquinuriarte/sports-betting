@@ -36,7 +36,7 @@ class ModelFactory(IFactory[IModel]):
                 raise ValueError(
                     "model_config must be provided to create a model")
             return TensorFlowModelV01(model_config)
-         elif type_name == "tensorflow_model_v1":
+        elif type_name == "tensorflow_model_v1":
             # Retrieve the model_config from args if present
             model_config = kwargs.get("model_config")
             if model_config is None:
