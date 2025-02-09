@@ -9,7 +9,7 @@ from ..interfaces.feature_processor_operator_interface import (
 logging.basicConfig(level=logging.INFO)
 
 
-class TopNPlayersFeatureProcessorV01(IFeatureProcessorOperator):
+class TopNPlayersFeatureProcessorV11(IFeatureProcessorOperator):
     """
     A feature processor that generates feature vectors for games
     based on the top N players' statistics.
@@ -186,6 +186,7 @@ class TopNPlayersFeatureProcessorV01(IFeatureProcessorOperator):
             feature_vector["GAME_ID"] = game_id
             feature_vector["final_score_A"] = game_data.iloc[0]["PTS_home"]
             feature_vector["final_score_B"] = game_data.iloc[0]["PTS_away"]
+            feature_vector["game_date"] = game_date
 
             feature_vectors.append(feature_vector)
 

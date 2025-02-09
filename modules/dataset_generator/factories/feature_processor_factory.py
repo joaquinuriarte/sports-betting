@@ -1,8 +1,8 @@
-from modules.dataset_generator.implementations.feature_processing_operations_v0 import (
-    TopNPlayersFeatureProcessorV0,
+from modules.dataset_generator.implementations.feature_processing_operations_v10 import (
+    TopNPlayersFeatureProcessorV10,
 )
-from modules.dataset_generator.implementations.feature_processing_operations_v01 import (
-    TopNPlayersFeatureProcessorV01,
+from modules.dataset_generator.implementations.feature_processing_operations_v11 import (
+    TopNPlayersFeatureProcessorV11,
 )
 from modules.dataset_generator.interfaces.feature_processor_operator_interface import (
     IFeatureProcessorOperator,
@@ -34,8 +34,8 @@ class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
             ValueError: If the provided processing type is not supported.
         """
         # Default values should indicate error with yaml
-        if type_name == "top_n_players_v0":
-            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV0(
+        if type_name == "top_n_players_v10":
+            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV10(
                 top_n_players=kwargs.get("top_n_players", 8),
                 sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
                 look_back_window=kwargs.get("look_back_window", 10),
@@ -43,8 +43,8 @@ class FeatureProcessorFactory(IFactory[IFeatureProcessorOperator]):
                     "player_stats_columns", ["MIN"]),
             )
             return feature_processor
-        elif type_name == "top_n_players_v01":
-            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV01(
+        elif type_name == "top_n_players_v11":
+            feature_processor: IFeatureProcessorOperator = TopNPlayersFeatureProcessorV11(
                 top_n_players=kwargs.get("top_n_players", 8),
                 sorting_criteria=kwargs.get("sorting_criteria", "MIN"),
                 look_back_window=kwargs.get("look_back_window", 10),

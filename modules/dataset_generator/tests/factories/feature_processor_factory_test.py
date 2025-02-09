@@ -3,7 +3,7 @@ from typing import cast
 from modules.dataset_generator.factories.feature_processor_factory import (
     FeatureProcessorFactory,
 )
-from modules.dataset_generator.implementations.feature_processing_operations_v0 import (
+from modules.dataset_generator.implementations.feature_processing_operations_v10 import (
     TopNPlayersFeatureProcessorV0,
 )
 
