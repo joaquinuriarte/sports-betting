@@ -2,21 +2,29 @@ model:
   architecture:
     input_size: 177
     layers:
+      - in_features: 177
+        type: BatchNormalization
       - activation: ReLU
         in_features: 176
         type: Dense
         units: 512
         kernel_initializer: he_normal
+      - in_features: 512
+        type: BatchNormalization
       - activation: ReLU
         in_features: 512
         type: Dense
         units: 64
         kernel_initializer: he_normal
+      - in_features: 64
+        type: BatchNormalization
       - activation: ReLU
         in_features: 64
         type: Dense
         units: 64
         kernel_initializer: he_normal
+      - in_features: 64
+        type: BatchNormalization
       - activation: None
         in_features: 64
         type: Dense
