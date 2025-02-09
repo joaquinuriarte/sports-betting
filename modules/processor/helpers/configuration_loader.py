@@ -32,6 +32,7 @@ class ConfigurationLoader:
 
             return {
                 "strategy": split_strategy_config["strategy"],
+                "chronological_column": split_strategy_config.get("chronological_column", None),
                 "train_split": split_strategy_config.get("train_split"),
                 "val_split": split_strategy_config.get("val_split"),
                 "test_split": split_strategy_config.get("test_split"),
