@@ -114,7 +114,7 @@ model:
     optimizer: Adam
     split_strategy:
       strategy: chronological_split
-        chronological_column: game_date
+      chronological_column: game_date
       test_split: 10
       train_split: 90
       use_test: true
