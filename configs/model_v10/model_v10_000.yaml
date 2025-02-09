@@ -127,7 +127,7 @@ model:
       - true
     metrics:
       - accuracy
-      - recision
+      - precision
       - recall
       - AUC
     optimizer: Adam

@@ -109,7 +109,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v10
-  model_signature: 716ddf2e8ca06a039181a8ee8d2587fe
+  model_signature: 5105f8d3f5191ed990dc61ad415280a1
   strategy: join_based
   training:
     batch_size: 32
@@ -127,8 +127,8 @@ model:
     - true
     metrics:
     - accuracy
-    - recision
-    - recall
+    - Precision
+    - Recall
     - AUC
     optimizer: Adam
     split_strategy:
