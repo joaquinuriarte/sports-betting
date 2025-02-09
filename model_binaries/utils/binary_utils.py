@@ -611,3 +611,19 @@ def swap_team_sides_in_dataset(
         new_examples.append(Example(features=new_features))
 
     return ModelDataset(examples=new_examples)
+
+
+def get_subset(dataset: ModelDataset, n: int) -> ModelDataset:
+    """
+    Extracts the first n examples from the given ModelDataset.
+    If the dataset contains fewer than n examples, the entire dataset is returned.
+
+    Args:
+        dataset (ModelDataset): The original dataset.
+        n (int): The number of examples to extract.
+
+    Returns:
+        ModelDataset: A new ModelDataset containing the first n examples.
+    """
+    subset_examples = dataset.examples[:n]
+    return ModelDataset(examples=subset_examples)

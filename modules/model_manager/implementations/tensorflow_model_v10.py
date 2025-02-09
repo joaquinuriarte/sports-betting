@@ -12,7 +12,7 @@ from modules.data_structures.model_config import ModelConfig
 from modules.model_manager.implementations.model_utils.custom_loss_fxns import mse_plus_hinge_margin_loss, margin_sensitive_hinge_loss
 
 
-class TensorFlowModelV0(IModel):
+class TensorFlowModelV10(IModel):
     """
     A TensorFlow model wrapper that implements the IModel interface.
 
@@ -34,7 +34,7 @@ class TensorFlowModelV0(IModel):
             "prediction_threshold"
         ]
         self.early_stopping = self.model_config.training["early_stopping"]
-        self.learning_rate_schedule = self.model_config.architecture["learning_rate_schedule"]
+        self.learning_rate_schedule = self.model_config.training["learning_rate_schedule"]
         self.training_history: Optional[History] = None
 
     def _initialize_model(self) -> tf.keras.Model:

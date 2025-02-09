@@ -2,7 +2,7 @@ import unittest
 from unittest.mock import patch
 from modules.model_manager.factories.model_factory import ModelFactory
 from modules.model_manager.interfaces.model_interface import IModel
-from modules.model_manager.implementations.tensorflow_model_v0 import TensorFlowModelV0
+from modules.model_manager.implementations.tensorflow_model_v10 import TensorFlowModelV10
 
 
 class ModelFactoryTest(unittest.TestCase):
@@ -49,7 +49,7 @@ class ModelFactoryTest(unittest.TestCase):
         )
 
         # Assertions
-        self.assertIsInstance(model, TensorFlowModelV0)
+        self.assertIsInstance(model, TensorFlowModelV10)
         self.assertIsInstance(model, IModel)
 
     def test_create_unsupported_model_type(self) -> None:

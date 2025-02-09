@@ -3,7 +3,7 @@ from unittest.mock import patch, MagicMock
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from modules.model_manager.implementations.tensorflow_model_v0 import TensorFlowModelV0
+from modules.model_manager.implementations.tensorflow_model_v10 import TensorFlowModelV10
 from modules.data_structures.model_dataset import Example
 from modules.data_structures.model_config import ModelConfig
 from typing import List
@@ -45,7 +45,7 @@ class TensorFlowModelTest(unittest.TestCase):
         )
 
         # Instantiate TensorFlowModel with the sample model configuration
-        self.model: TensorFlowModelV0 = TensorFlowModelV0(self.model_config)
+        self.model: TensorFlowModelV10 = TensorFlowModelV10(self.model_config)
 
         self.examples: List[Example] = [
             Example(
@@ -123,7 +123,7 @@ class TensorFlowModelTest(unittest.TestCase):
             output.numpy(), expected_output.numpy())
 
     @patch.object(
-        TensorFlowModelV0,
+        TensorFlowModelV10,
         "forward",
         return_value=tf.constant([[0.5], [0.8]], dtype=tf.float32),
     )

@@ -6,30 +6,30 @@ model:
         type: BatchNormalization
       - activation: ReLU
         in_features: 176
+        kernel_initializer: he_normal
         type: Dense
         units: 512
-        kernel_initializer: he_normal
       - in_features: 512
         type: BatchNormalization
       - activation: ReLU
         in_features: 512
+        kernel_initializer: he_normal
         type: Dense
         units: 64
-        kernel_initializer: he_normal
       - in_features: 64
         type: BatchNormalization
       - activation: ReLU
         in_features: 64
+        kernel_initializer: he_normal
         type: Dense
         units: 64
-        kernel_initializer: he_normal
       - in_features: 64
         type: BatchNormalization
       - activation: None
         in_features: 64
+        kernel_initializer: he_normal
         type: Dense
         units: 1
-        kernel_initializer: he_normal
     output_features:
       - Team_A_Wins
     output_size: 1
@@ -113,10 +113,10 @@ model:
   strategy: join_based
   training:
     batch_size: 32
-    epochs: 20000
     early_stopping:
-      use: true
       patience: 11
+      use: false
+    epochs: 50
     learning_rate: 0.001
     learning_rate_schedule:
       name: ReduceLROnPlateau
@@ -132,8 +132,8 @@ model:
       - AUC
     optimizer: Adam
     split_strategy:
-      strategy: chronological_split
       chronological_column: game_date
+      strategy: chronological_split
       test_split: 10
       train_split: 80
       use_test: true
