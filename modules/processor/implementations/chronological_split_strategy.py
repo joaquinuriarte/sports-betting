@@ -30,7 +30,4 @@ class ChronologicalSplitStrategy(ISplitStrategy):
         train_df = sorted_df.iloc[:split_size].copy()
         remaining_df = sorted_df.iloc[split_size:].copy()
 
-        train_df.drop(columns=[self.chronological_column], inplace=True)
-        remaining_df.drop(columns=[self.chronological_column], inplace=True)
-
         return ProcessedDataset(features=train_df), ProcessedDataset(features=remaining_df)

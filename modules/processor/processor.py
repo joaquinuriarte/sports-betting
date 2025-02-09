@@ -80,26 +80,28 @@ class Processor(IProcessor):
     def build_model_dataset(self, processed_dataset: ProcessedDataset) -> ModelDataset:
         """
         Converts a ProcessedDataset into a ModelDataset by extracting examples.
-
-        Args:
-            processed_dataset (ProcessedDataset): The processed dataset containing features.
-
-        Returns:
-            ModelDataset: A dataset with examples containing features and labels combined.
+        Prior to conversion, the chronological column (if present) is dropped,
+        as it is not intended to be used as a feature.
         """
         examples = []
+        # Create a copy of the DataFrame to avoid modifying the original.
+        df = processed_dataset.features.copy()
 
-        # Iterate through the rows of features in processed_dataset
-        for game_id, feature_row in processed_dataset.features.iterrows():
+        # If the chronological column is set and exists in the DataFrame, drop it.
+        if self.chronological_column is not None and self.chronological_column in df.columns:
+            df = df.drop(columns=[self.chronological_column])
+
+        # Iterate through the rows of the cleaned DataFrame.
+        for game_id, feature_row in df.iterrows():
             assert game_id is not None, "Game ID cannot be None"
 
-            # Create the feature dictionary
+            # Create the feature dictionary, wrapping each value in a list.
             example_features = {
                 str(feature_name): [feature_value]
                 for feature_name, feature_value in feature_row.items()
             }
 
-            # Create an Example object and add it to the list
+            # Create an Example object and add it to the list.
             examples.append(Example(features=example_features))
 
         return ModelDataset(examples=examples)
