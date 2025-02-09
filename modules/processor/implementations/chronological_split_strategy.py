@@ -1,6 +1,7 @@
 from typing import Tuple
 from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
 from modules.data_structures.processed_dataset import ProcessedDataset
+from modules.data_structures.processed_dataset import ProcessedDataset
 
 
 class ChronologicalSplitStrategy(ISplitStrategy):
@@ -29,5 +30,4 @@ class ChronologicalSplitStrategy(ISplitStrategy):
         train_df = sorted_df.iloc[:split_size].copy()
         remaining_df = sorted_df.iloc[split_size:].copy()
 
-        from modules.data_structures.processed_dataset import ProcessedDataset
         return ProcessedDataset(features=train_df), ProcessedDataset(features=remaining_df)
