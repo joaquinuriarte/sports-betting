@@ -18,13 +18,6 @@ model:
       units: 64
     - in_features: 64
       type: BatchNormalization
-    - activation: ReLU
-      in_features: 64
-      kernel_initializer: he_normal
-      type: Dense
-      units: 64
-    - in_features: 64
-      type: BatchNormalization
     - activation: None
       in_features: 64
       kernel_initializer: he_normal
@@ -109,7 +102,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v10
-  model_signature: d2c2b3672ea9f6494e394194d518e62f
+  model_signature: 44ba629b768e0461efdb2453c479db1a
   strategy: join_based
   training:
     batch_size: 32

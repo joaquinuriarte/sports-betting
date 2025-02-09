@@ -8,25 +8,21 @@ model:
       in_features: 176
       kernel_initializer: he_normal
       type: Dense
-      units: 512
-    - in_features: 512
+      units: 256
+    - in_features: 256
       type: BatchNormalization
     - activation: ReLU
-      in_features: 512
+      in_features: 256
       kernel_initializer: he_normal
       type: Dense
-      units: 64
-    - in_features: 64
+      units: 32
+    - in_features: 32
       type: BatchNormalization
-    - activation: ReLU
-      in_features: 64
-      kernel_initializer: he_normal
-      type: Dense
-      units: 64
-    - in_features: 64
-      type: BatchNormalization
+    - in_features: 32
+      rate: 0.2
+      type: Dropout
     - activation: None
-      in_features: 64
+      in_features: 32
       kernel_initializer: he_normal
       type: Dense
       units: 1
@@ -109,7 +105,7 @@ model:
     sorting_criteria: MIN
     top_n_players: 8
     type: top_n_players_v10
-  model_signature: d2c2b3672ea9f6494e394194d518e62f
+  model_signature: fa74d1368d46ced5891cd2f7e647c56b
   strategy: join_based
   training:
     batch_size: 32
