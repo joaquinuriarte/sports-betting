@@ -1,6 +1,7 @@
 from modules.interfaces.factory_interface import IFactory
 from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
 from modules.processor.implementations.random_split_strategy import RandomSplitStrategy
+from modules.processor.implementations.chronological_split_strategy import ChronologicalSplitStrategy
 from typing import Any
 
 
@@ -23,5 +24,10 @@ class SplitStrategyFactory(IFactory[ISplitStrategy]):
         """
         if type_name == "random_split":
             return RandomSplitStrategy()
+        elif type_name == "chronological_split":
+            split_config = kwargs.get("split_config")
+            chronological_column = split_config.get(
+                "chronological_column", None)
+            return ChronologicalSplitStrategy(chronological_column=chronological_column)
         else:
             raise ValueError(f"Unsupported split strategy type: {type_name}")

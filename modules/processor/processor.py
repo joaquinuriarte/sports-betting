@@ -1,10 +1,10 @@
 from modules.data_structures.processed_dataset import ProcessedDataset
+from modules.data_structures.model_dataset import ModelDataset, Example
 from modules.interfaces.factory_interface import IFactory
 from modules.processor.interfaces.split_strategy_interface import ISplitStrategy
 from modules.processor.helpers.configuration_loader import ConfigurationLoader
 from modules.interfaces.processor_interface import IProcessor
-from modules.data_structures.model_dataset import ModelDataset, Example
-from typing import Tuple, Optional, List, Any
+from typing import Tuple, Optional
 
 
 class Processor(IProcessor):
@@ -25,6 +25,8 @@ class Processor(IProcessor):
         # Load split strategy and parameters
         split_config = configuration_loader.load_config(yaml_path)
         self.split_strategy_name = split_config["strategy"]
+        self.chronological_column = split_config.get(
+            "chronological_column", None)
         self.train_split = split_config["train_split"]
         self.val_split = split_config["val_split"]
         self.test_split = split_config["test_split"]
@@ -33,7 +35,7 @@ class Processor(IProcessor):
 
         # Create split strategy implementation
         self.split_strategy: ISplitStrategy = split_strategy_factory.create(
-            self.split_strategy_name
+            self.split_strategy_name, split_config=split_config
         )
 
     def generate(
@@ -42,8 +44,6 @@ class Processor(IProcessor):
         """
         Generates training, validation, and test datasets.
         """
-        # Create Model Dataset
-        model_dataset = self.build_model_dataset(self.processed_dataset)
 
         # Validate split percentages
         total_split = self.train_split + \
@@ -55,7 +55,7 @@ class Processor(IProcessor):
         # Split the dataset
         # TODO Provide a way to ingest seed so split is similar if ran more than once
         train_dataset, remaining_dataset = self.split_strategy.split(
-            model_dataset, self.train_split
+            self.processed_dataset, self.train_split
         )
 
         val_dataset, test_dataset = None, None
@@ -67,6 +67,13 @@ class Processor(IProcessor):
             )
         elif self.use_test and remaining_dataset is not None:
             test_dataset = remaining_dataset
+
+        # Convert each ProcessedDataset subset to a ModelDataset.
+        train_dataset = self.build_model_dataset(train_dataset)
+        val_dataset = self.build_model_dataset(
+            val_dataset) if val_dataset is not None else None
+        test_dataset = self.build_model_dataset(
+            test_dataset) if test_dataset is not None else None
 
         return train_dataset, val_dataset, test_dataset
 
