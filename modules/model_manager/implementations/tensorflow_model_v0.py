@@ -1,7 +1,7 @@
 import tensorflow as tf
 import numpy as np
 import pandas as pd
-from typing import List, Optional, Any, Dict
+from typing import List, Optional, Dict
 from keras.callbacks import History
 from numpy.typing import NDArray
 import datetime
@@ -33,6 +33,8 @@ class TensorFlowModelV0(IModel):
         self.prediction_threshold: float = self.model_config.architecture[
             "prediction_threshold"
         ]
+        self.early_stopping = self.model_config.training["early_stopping"]
+        self.learning_rate_schedule = self.model_config.architecture["learning_rate_schedule"]
         self.training_history: Optional[History] = None
 
     def _initialize_model(self) -> tf.keras.Model:
@@ -59,7 +61,9 @@ class TensorFlowModelV0(IModel):
                     units=layer_config["units"],
                     activation=layer_config.get("activation", None) if layer_config.get(
                         "activation", None) != "None" else None,
-                    kernel_regularizer=kernel_regularizer
+                    kernel_regularizer=kernel_regularizer,
+                    kernel_initializer=layer_config.get(
+                        "kernel_initializer", None)
                 )(x)
             elif layer_config["type"] == "BatchNormalization":
                 x = tf.keras.layers.BatchNormalization(
@@ -228,6 +232,25 @@ class TensorFlowModelV0(IModel):
             log_dir=log_dir
         )
 
+        # Learning rate schedule
+        if self.learning_rate_schedule["name"] is not None:
+            if self.learning_rate_schedule["name"] == "ReduceLROnPlateau":
+                lr_schedule = tf.keras.callbacks.ReduceLROnPlateau(
+                    factor=self.learning_rate_schedule["hyperparam_1"], patience=self.learning_rate_schedule["hyperparam_2"])
+            else:
+                raise ValueError(
+                    f"Learning Schedule type '{self.learning_rate_schedule}' is not implemented."
+                )
+        else:
+            lr_schedule = None
+
+        # Early stopping
+        if self.early_stopping["use"]:
+            early_stopping_cb = tf.keras.callbacks.EarlyStopping(
+                patience=self.early_stopping["patience"])
+        else:
+            early_stopping_cb = None
+
         # Call model fit with/without validation data
         if validation_examples:
             # Extract validation features dynamically excluding the output feature
@@ -257,7 +280,8 @@ class TensorFlowModelV0(IModel):
                 batch_size=batch_size,
                 validation_data=(validation_features_tensor,
                                  validation_labels_tensor),
-                callbacks=[tensorboard_callback],
+                callbacks=[tensorboard_callback,
+                           lr_schedule, early_stopping_cb],
                 shuffle=True,
             )
         else:
@@ -266,7 +290,8 @@ class TensorFlowModelV0(IModel):
                 training_labels_tensor,
                 epochs=epochs,
                 batch_size=batch_size,
-                callbacks=[tensorboard_callback],
+                callbacks=[tensorboard_callback,
+                           lr_schedule, early_stopping_cb],
                 shuffle=True,
             )
 
