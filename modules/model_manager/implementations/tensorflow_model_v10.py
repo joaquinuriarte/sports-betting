@@ -228,9 +228,11 @@ class TensorFlowModelV10(IModel):
         os.makedirs(log_dir, exist_ok=True)
 
         # Create the TensorBoard callback
+        my_callbacks = []
         tensorboard_callback = tf.keras.callbacks.TensorBoard(
             log_dir=log_dir
         )
+        my_callbacks.append(tensorboard_callback)
 
         # Learning rate schedule
         if self.learning_rate_schedule["name"] is not None:
@@ -243,6 +245,7 @@ class TensorFlowModelV10(IModel):
                 )
         else:
             lr_schedule = None
+        my_callbacks.append(lr_schedule)
 
         # Early stopping
         if self.early_stopping["use"]:
@@ -250,6 +253,10 @@ class TensorFlowModelV10(IModel):
                 patience=self.early_stopping["patience"])
         else:
             early_stopping_cb = None
+        my_callbacks.append(early_stopping_cb)
+
+        # Get not None callbacks
+        callbacks = [cb for cb in my_callbacks if cb is not None]
 
         # Call model fit with/without validation data
         if validation_examples:
@@ -280,8 +287,7 @@ class TensorFlowModelV10(IModel):
                 batch_size=batch_size,
                 validation_data=(validation_features_tensor,
                                  validation_labels_tensor),
-                callbacks=[tensorboard_callback,
-                           lr_schedule, early_stopping_cb],
+                callbacks=callbacks,
                 shuffle=True,
             )
         else:
@@ -290,8 +296,7 @@ class TensorFlowModelV10(IModel):
                 training_labels_tensor,
                 epochs=epochs,
                 batch_size=batch_size,
-                callbacks=[tensorboard_callback,
-                           lr_schedule, early_stopping_cb],
+                callbacks=callbacks,
                 shuffle=True,
             )
 
