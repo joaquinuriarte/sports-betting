@@ -116,7 +116,7 @@ model:
       strategy: chronological_split
       chronological_column: game_date
       test_split: 10
-      train_split: 90
+      train_split: 80
       use_test: true
-      use_val: false
-      val_split: 0
+      use_val: true
+      val_split: 10
