@@ -6,7 +6,7 @@ from typing import List, Counter
 import os
 import pickle
 from modules.data_structures.model_dataset import ModelDataset, Example
-from typing import List, Dict, Any
+from typing import List, Dict, Any, Optional, Union, Tuple
 from collections import Counter
 from sklearn.preprocessing import MinMaxScaler
 import pandas as pd
@@ -93,45 +93,54 @@ def assess_dataset_balance(dataset: ModelDataset, y_label_columns: List[str], di
                     f"  - Number of {label}s: {count} ({proportions[label]:.2f}%)")
 
 
-def scale_features(dataset: ModelDataset, exclude_columns: List[str] = None, return_scaler: bool = False):
+def scale_features(
+    dataset: ModelDataset,
+    exclude_columns: Optional[List[str]] = None,
+    return_scaler: bool = False,
+    scaler: Optional[MinMaxScaler] = None
+) -> Union[ModelDataset, Tuple[ModelDataset, MinMaxScaler]]:
     """
     Scale all features in a ModelDataset using MinMaxScaler, excluding specified columns.
 
+    If a scaler is provided, use its transform method; otherwise, create a new scaler and fit it.
+
     Args:
         dataset (ModelDataset): The dataset to scale.
-        exclude_columns (List[str]): List of column names to exclude from scaling.
+        exclude_columns (List[str], optional): List of column names to exclude from scaling.
         return_scaler (bool): Whether to return the fitted MinMaxScaler instance.
+        scaler (MinMaxScaler, optional): A precomputed scaler. If provided, its transform method is used.
 
     Returns:
         ModelDataset: A new scaled dataset.
-        MinMaxScaler (optional): The fitted scaler if return_scaler is True.
+        (Optional) MinMaxScaler: The fitted scaler if return_scaler is True.
     """
     if exclude_columns is None:
         exclude_columns = []
 
-    # Convert dataset to a pandas DataFrame for efficient processing
+    # Convert dataset to a pandas DataFrame for efficient processing.
     data = []
     feature_names = dataset.examples[0].features.keys()
-
     for example in dataset.examples:
+        # Assumes each feature is stored as a list; takes the first element.
         data.append({key: example.features[key][0] for key in feature_names})
-
     df = pd.DataFrame(data)
 
-    # Identify columns to scale
+    # Identify the columns to scale.
     columns_to_scale = [
         col for col in df.columns if col not in exclude_columns]
 
-    # Apply MinMaxScaler to the relevant columns
-    scaler = MinMaxScaler()
-    df[columns_to_scale] = scaler.fit_transform(df[columns_to_scale])
+    # If no scaler is provided, create one and fit on the data.
+    if scaler is None:
+        scaler = MinMaxScaler()
+        df[columns_to_scale] = scaler.fit_transform(df[columns_to_scale])
+    else:
+        df[columns_to_scale] = scaler.transform(df[columns_to_scale])
 
-    # Create a new ModelDataset with scaled values
+    # Create a new ModelDataset with the scaled values.
     scaled_examples = []
     for i in range(len(df)):
         scaled_features = {col: [df.at[i, col]] for col in df.columns}
         scaled_examples.append(Example(features=scaled_features))
-
     scaled_dataset = ModelDataset(examples=scaled_examples)
 
     if return_scaler:
