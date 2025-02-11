@@ -1,45 +1,28 @@
 model:
   architecture:
-    input_size: 176
+    input_size: 177
     layers:
-      - in_features: 176
-        type: BatchNormalization
-      - activation: None
+      - activation: ReLU
         in_features: 176
-        kernel_initializer: he_normal
         type: Dense
-        units: 16
-      - in_features: 16
-        type: BatchNormalization
+        units: 512
       - activation: ReLU
+        in_features: 512
         type: Dense
-        units: 16
-      - in_features: 16
-        rate: 0.05
-        type: Dropout
-      - activation: None
-        in_features: 16
-        kernel_initializer: he_normal
-        type: Dense
-        units: 16
-      - in_features: 16
-        type: BatchNormalization
+        units: 64
       - activation: ReLU
+        in_features: 64
         type: Dense
-        units: 16
-      - in_features: 16
-        rate: 0.1
-        type: Dropout
+        units: 64
       - activation: None
-        in_features: 16
-        kernel_initializer: he_normal
+        in_features: 64
         type: Dense
         units: 1
     output_features:
       - Team_A_Wins
     output_size: 1
     prediction_threshold: 0.5
-    type: tensorflow_model_v10
+    type: tensorflow_model_v0
   dataset:
     joins:
       - keys:
@@ -113,34 +96,27 @@ model:
       - FT_PCT
     sorting_criteria: MIN
     top_n_players: 8
-    type: top_n_players_v10
-  model_signature: 3c4679dacf6839fbe1c94f780ae83d27
+    type: top_n_players_v0
+  model_signature:
   strategy: join_based
   training:
     batch_size: 32
-    early_stopping:
-      patience: 11
-      use: true
     epochs: 20000
-    learning_rate: 0.0001
-    learning_rate_schedule:
-      hyperparam_1: 0.1
-      hyperparam_2: 7
-      name: ReduceLROnPlateau
+    learning_rate: 0.001
     loss_function:
       - binary_crossentropy
       - true
     metrics:
       - accuracy
-      - Precision
-      - Recall
+      - recision
+      - recall
       - AUC
     optimizer: Adam
     split_strategy:
-      chronological_column: game_date
       strategy: chronological_split
+        - chronological_column: GAME_DATE_EST
       test_split: 10
-      train_split: 80
+      train_split: 90
       use_test: true
-      use_val: true
-      val_split: 10
+      use_val: false
+      val_split: 0
